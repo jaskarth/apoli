@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 public record EntityActionContext(Entity entity) implements TypeActionContext<EntityConditionContext> {
 
 	@Override
-	public EntityConditionContext conditionContext() {
+	public EntityConditionContext forCondition() {
 		return new EntityConditionContext(entity());
 	}
 

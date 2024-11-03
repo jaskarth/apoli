@@ -23,7 +23,7 @@ public interface IfElseMetaActionType<AX extends TypeActionContext<CX>, CX exten
 
     default void executeAction(AX actionContext) {
 
-        if (condition().test(actionContext.conditionContext())) {
+        if (condition().test(actionContext.forCondition())) {
             ifAction().accept(actionContext);
         }
 

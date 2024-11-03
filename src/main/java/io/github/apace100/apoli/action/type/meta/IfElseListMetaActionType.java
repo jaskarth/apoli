@@ -20,7 +20,7 @@ public interface IfElseListMetaActionType<AX extends TypeActionContext<CX>, CX e
 
     default void executeActions(AX actionContext) {
 
-        CX convertedContext = actionContext.conditionContext();
+        CX convertedContext = actionContext.forCondition();
 
         for (ConditionedAction<A, C> conditionedAction : conditionedActions()) {
 

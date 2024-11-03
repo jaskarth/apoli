@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 public record ItemActionContext(World world, StackReference stackReference) implements TypeActionContext<ItemConditionContext> {
 
 	@Override
-	public ItemConditionContext conditionContext() {
+	public ItemConditionContext forCondition() {
 		return new ItemConditionContext(world(), stackReference().get());
 	}
 

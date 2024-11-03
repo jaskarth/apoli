@@ -81,7 +81,7 @@ public class ActionOnEntitySetEntityActionType extends EntityActionType {
             Entity entityFromSet = entitySet.getEntity(uuid);
             BiEntityActionContext context = new BiEntityActionContext(entity, entityFromSet);
 
-            if (biEntityCondition.map(condition -> condition.test(context.conditionContext())).orElse(true)) {
+            if (biEntityCondition.map(condition -> condition.test(context.forCondition())).orElse(true)) {
                 biEntityAction.accept(context);
             }
 

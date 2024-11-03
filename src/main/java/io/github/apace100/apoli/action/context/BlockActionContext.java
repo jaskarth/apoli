@@ -11,7 +11,7 @@ import java.util.Optional;
 public record BlockActionContext(World world, BlockPos pos, Optional<Direction> direction) implements TypeActionContext<BlockConditionContext> {
 
 	@Override
-	public BlockConditionContext conditionContext() {
+	public BlockConditionContext forCondition() {
 		return new BlockConditionContext(world(), pos());
 	}
 

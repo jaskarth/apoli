@@ -7,7 +7,7 @@ import net.minecraft.entity.Entity;
 public record BiEntityActionContext(Entity actor, Entity target) implements TypeActionContext<BiEntityConditionContext> {
 
 	@Override
-	public BiEntityConditionContext conditionContext() {
+	public BiEntityConditionContext forCondition() {
 		return new BiEntityConditionContext(actor(), target());
 	}
 

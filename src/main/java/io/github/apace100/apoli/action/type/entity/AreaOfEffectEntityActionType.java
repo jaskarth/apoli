@@ -70,7 +70,7 @@ public class AreaOfEffectEntityActionType extends EntityActionType {
 
             BiEntityActionContext context = new BiEntityActionContext(entity, target);
 
-            if (biEntityCondition.map(condition -> condition.test(context.conditionContext())).orElse(true)) {
+            if (biEntityCondition.map(condition -> condition.test(context.forCondition())).orElse(true)) {
                 biEntityAction.accept(context);
             }
 
