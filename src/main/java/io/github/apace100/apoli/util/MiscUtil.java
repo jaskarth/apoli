@@ -1,6 +1,9 @@
 package io.github.apace100.apoli.util;
 
+import com.mojang.serialization.DataResult;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.calio.data.SerializableData;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.pattern.CachedBlockPosition;
@@ -29,10 +32,9 @@ import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -89,6 +91,32 @@ public final class MiscUtil {
             @Override
             public boolean canDestroyBlock(Explosion explosion, BlockView blockView, BlockPos pos, BlockState state, float power) {
                 return !indestructibleCondition.test(new CachedBlockPosition(world, pos, true));
+            }
+
+        };
+    }
+
+    @Nullable
+    public static ExplosionBehavior createExplosionBehavior(@Nullable Predicate<BlockConditionContext> indestructibleCondition, float resistance) {
+        return indestructibleCondition == null ? null : new ExplosionBehavior() {
+
+            @Override
+            public Optional<Float> getBlastResistance(Explosion explosion, BlockView world, BlockPos pos, BlockState blockState, FluidState fluidState) {
+
+                Optional<Float> defaultValue = super.getBlastResistance(explosion, world, pos, blockState, fluidState);
+                Optional<Float> newValue = indestructibleCondition.test(new BlockConditionContext((World) world, pos))
+                    ? Optional.of(resistance)
+                    : Optional.empty();
+
+                return defaultValue
+                    .flatMap(defVal -> newValue
+                        .map(newVal -> defVal > newVal ? defVal : newVal));
+
+            }
+
+            @Override
+            public boolean canDestroyBlock(Explosion explosion, BlockView world, BlockPos pos, BlockState state, float power) {
+                return !indestructibleCondition.test(new BlockConditionContext((World) world, pos));
             }
 
         };
@@ -190,7 +218,11 @@ public final class MiscUtil {
 
     public static boolean allPresent(SerializableData.Instance data, String... fieldNames) {
 
-        for (String field : fieldNames) {
+        Set<String> fieldsToEvaluate = fieldNames.length > 0
+            ? new ObjectOpenHashSet<>(fieldNames)
+            : data.serializableData().getFieldNames();
+
+        for (String field : fieldsToEvaluate) {
 
             if (!data.isPresent(field)) {
                 return false;
@@ -202,9 +234,13 @@ public final class MiscUtil {
 
     }
 
-    public static boolean anyPresent(SerializableData.Instance data, String... fields) {
+    public static boolean anyPresent(SerializableData.Instance data, String... fieldNames) {
 
-        for (String field : fields) {
+        Set<String> fieldsToEvaluate = fieldNames.length > 0
+            ? new ObjectOpenHashSet<>(fieldNames)
+            : data.serializableData().getFieldNames();
+
+        for (String field : fieldsToEvaluate) {
 
             if (data.isPresent(field)) {
                 return true;
@@ -214,6 +250,42 @@ public final class MiscUtil {
 
         return false;
 
+    }
+
+    public static Function<SerializableData.Instance, DataResult<SerializableData.Instance>> validateAnyFieldsPresent(String... fields) {
+        return data -> {
+
+            if (anyPresent(data, fields)) {
+                return DataResult.success(data);
+            }
+
+            else {
+
+                StringBuilder message = new StringBuilder(fields.length > 1 ? "Any of the " : "The ");
+                String separator = "";
+
+                for (int i = 0; i < fields.length; i++) {
+
+                    String field = fields[i];
+                    message
+                        .append(separator)
+                        .append("'").append(field).append("'");
+
+                    separator = i == fields.length - 2
+                        ? ", and "
+                        : ", ";
+
+                }
+
+                message
+                    .append(" field").append(fields.length > 1 ? "s" : "")
+                    .append(" must be defined!");
+
+                return DataResult.error(message::toString);
+
+            }
+
+        };
     }
 
     public static boolean hasSpaceInInventory(PlayerEntity player, ItemStack stack) {
@@ -227,6 +299,19 @@ public final class MiscUtil {
             coll1.addAll(coll2);
             return coll1;
         };
+    }
+
+    @Nullable
+    public static <T> List<T> singletonListOrNull(@Nullable T value) {
+        return value != null
+            ? List.of(value)
+            : null;
+    }
+
+    public static <T> List<T> singletonListOrEmpty(@Nullable T value) {
+        return value != null
+            ? List.of(value)
+            : List.of();
     }
 
 }

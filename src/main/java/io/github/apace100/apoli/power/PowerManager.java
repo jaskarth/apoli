@@ -7,7 +7,6 @@ import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.integration.*;
 import io.github.apace100.apoli.networking.packet.s2c.SyncPowersS2CPacket;
-import io.github.apace100.apoli.power.factory.PowerTypeFactory;
 import io.github.apace100.apoli.power.type.PowerType;
 import io.github.apace100.apoli.power.type.PowerTypes;
 import io.github.apace100.apoli.registry.ApoliRegistries;
@@ -326,7 +325,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
             };
 
             if (subPower != null && subPower.isMultiple()) {
-                throw new IllegalStateException("Using the '" + PowerTypes.MULTIPLE.getSerializerId() + "' power type in sub-powers is not allowed!");
+                throw new IllegalStateException("Using the '" + PowerTypes.MULTIPLE.id() + "' power type in sub-powers is not allowed!");
             }
 
             else {
@@ -413,16 +412,16 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
 
     }
 
-    private <P extends Power> P finishReadingPower(BiFunction<Identifier, Power, Power> powerTypeProcessor, Identifier powerId, P power, JsonObject jsonObject, int priority) {
+    private <P extends Power> P finishReadingPower(BiFunction<Identifier, Power, Power> powerProcessor, Identifier powerId, P power, JsonObject jsonObject, int priority) {
 
-        Identifier powerFactoryId = power.getFactoryInstance().getFactory().getSerializerId();
+        Identifier powerTypeId = power.getPowerType().getConfig().id();
         boolean subPower = power.isSubPower();
 
-        powerTypeProcessor.apply(powerId, power);
+        powerProcessor.apply(powerId, power);
         LOADING_PRIORITIES.put(powerId, priority);
 
-        handleAdditionalData(powerId, powerFactoryId, subPower, jsonObject, power);
-        PostPowerLoadCallback.EVENT.invoker().onPostPowerLoad(powerId, powerFactoryId, subPower, jsonObject, power);
+        handleAdditionalData(powerId, powerTypeId, subPower, jsonObject, power);
+        PostPowerLoadCallback.EVENT.invoker().onPostPowerLoad(powerId, powerTypeId, subPower, jsonObject, power);
 
         return power;
 
@@ -622,10 +621,10 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
             return;
         }
 
-        for (PowerTypeFactory<?> powerTypeFactory : ApoliRegistries.POWER_FACTORY) {
+        for (PowerConfiguration<?> powerConfiguration : ApoliRegistries.POWER_TYPE) {
 
-            if (powerTypeFactory.getSerializableData().containsField(field)) {
-                Apoli.LOGGER.error("Cannot add additional data callback for field \"{}\" as it's already used by the \"{}\" power type!", field, powerTypeFactory.getSerializerId());
+            if (powerConfiguration.dataType().serializableData().containsField(field)) {
+                Apoli.LOGGER.error("Cannot add additional data callback for field \"{}\", as it's already used by the \"{}\" power type!", field, powerConfiguration.id());
                 return;
             }
 
@@ -640,7 +639,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
             || field.startsWith("$")
             || FIELDS_TO_IGNORE.contains(field)
             || ADDITIONAL_DATA.containsKey(field)
-            || Power.DATA_TYPE.serializableData().containsField(field);
+            || Power.SERIALIZABLE_DATA.containsField(field);
     }
 
 }
