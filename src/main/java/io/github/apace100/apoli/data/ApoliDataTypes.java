@@ -22,6 +22,7 @@ import io.github.apace100.calio.data.CompoundSerializableDataType;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
+import io.github.apace100.calio.registry.DataObjectFactories;
 import io.github.apace100.calio.util.ArgumentWrapper;
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.PlayerAbility;
@@ -72,31 +73,39 @@ public class ApoliDataTypes {
     public static final SerializableDataType<InventoryUtil.ProcessMode> PROCESS_MODE = SerializableDataType.enumValue(InventoryUtil.ProcessMode.class);
 
     public static final SerializableDataType<AttributedEntityAttributeModifier> ATTRIBUTED_ATTRIBUTE_MODIFIER = SerializableDataType.compound(
-        SerializableDataTypes.ATTRIBUTE_MODIFIER.serializableData().copy()
+        DataObjectFactories.ATTRIBUTE_MODIFIER.getSerializableData().copy()
             .add("attribute", SerializableDataTypes.ATTRIBUTE_ENTRY),
         data -> new AttributedEntityAttributeModifier(
             data.get("attribute"),
-            SerializableDataTypes.ATTRIBUTE_MODIFIER_OBJ_FACTORY.fromData(data)
+            DataObjectFactories.ATTRIBUTE_MODIFIER.fromData(data)
         ),
-        (attributedAttributeModifier, serializableData) -> SerializableDataTypes.ATTRIBUTE_MODIFIER_OBJ_FACTORY
+        (attributedAttributeModifier, serializableData) -> DataObjectFactories.ATTRIBUTE_MODIFIER
             .toData(attributedAttributeModifier.modifier(), serializableData)
             .set("attribute", attributedAttributeModifier.attribute())
     );
 
     public static final SerializableDataType<List<AttributedEntityAttributeModifier>> ATTRIBUTED_ATTRIBUTE_MODIFIERS = ATTRIBUTED_ATTRIBUTE_MODIFIER.list(1, Integer.MAX_VALUE);
 
+	/**
+	 * 	<b>Use {@link IndexedStack#DATA_TYPE} instead.</b>
+	 */
+	@Deprecated(forRemoval = true)
     public static final SerializableDataType<Pair<Integer, ItemStack>> POSITIONED_ITEM_STACK = SerializableDataType.compound(
-        SerializableDataTypes.ITEM_STACK.serializableData().copy()
+        DataObjectFactories.ITEM_STACK.getSerializableData().copy()
             .add("slot", SerializableDataTypes.INT, Integer.MIN_VALUE),
         data -> new Pair<>(
             data.getInt("slot"),
-            SerializableDataTypes.ITEM_STACK_OBJ_FACTORY.fromData(data)
+            DataObjectFactories.ITEM_STACK.fromData(data)
         ),
-        (positionedStack, serializableData) -> SerializableDataTypes.ITEM_STACK_OBJ_FACTORY
+        (positionedStack, serializableData) -> DataObjectFactories.ITEM_STACK
             .toData(positionedStack.getRight(), serializableData)
             .set("slot", positionedStack.getLeft())
     );
 
+	/**
+	 * 	<b>Use {@link IndexedStack#DATA_TYPE} instead.</b>
+	 */
+	@Deprecated(forRemoval = true)
     public static final SerializableDataType<List<Pair<Integer, ItemStack>>> POSITIONED_ITEM_STACKS = POSITIONED_ITEM_STACK.list();
 
     public static final SerializableDataType<Active.Key> KEY = SerializableDataType.compound(

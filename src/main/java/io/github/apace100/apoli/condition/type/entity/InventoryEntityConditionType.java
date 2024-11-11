@@ -82,8 +82,8 @@ public class InventoryEntityConditionType extends EntityConditionType {
 
         this.unwrappedSlots = new ObjectOpenHashSet<>();
 
-        this.slot.map(ArgumentWrapper::argument).ifPresent(this.unwrappedSlots::add);
-        this.slots.map(args -> args.stream().map(ArgumentWrapper::argument).toList()).ifPresent(this.unwrappedSlots::addAll);
+        this.slot.map(ArgumentWrapper::parsedValue).ifPresent(this.unwrappedSlots::add);
+        this.slots.map(args -> args.stream().map(ArgumentWrapper::parsedValue).toList()).ifPresent(this.unwrappedSlots::addAll);
 
         this.comparison = comparison;
         this.compareTo = compareTo;

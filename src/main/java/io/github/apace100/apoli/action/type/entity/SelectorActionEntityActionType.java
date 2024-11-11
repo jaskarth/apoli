@@ -48,7 +48,7 @@ public class SelectorActionEntityActionType extends EntityActionType {
 
     public SelectorActionEntityActionType(ArgumentWrapper<EntitySelector> selector, BiEntityAction biEntityAction, Optional<BiEntityCondition> biEntityCondition) {
         this.selector = selector;
-        this.unwrappedSelector = selector.argument();
+        this.unwrappedSelector = selector.parsedValue();
         this.biEntityAction = biEntityAction;
         this.biEntityCondition = biEntityCondition;
     }

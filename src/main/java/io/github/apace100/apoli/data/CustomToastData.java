@@ -6,7 +6,6 @@ import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.apace100.calio.registry.DataObjectFactory;
-import io.github.apace100.calio.registry.SimpleDataObjectFactory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -15,7 +14,7 @@ public record CustomToastData(Text title, Text description, Identifier texture, 
 
     public static final Identifier DEFAULT_TEXTURE = Apoli.identifier("toast/custom");
 
-    public static final DataObjectFactory<CustomToastData> FACTORY = new SimpleDataObjectFactory<>(
+    public static final DataObjectFactory<CustomToastData> FACTORY = DataObjectFactory.simple(
         new SerializableData()
             .add("title", SerializableDataTypes.TEXT)
             .add("description", SerializableDataTypes.TEXT)

@@ -36,6 +36,7 @@ import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class MiscUtil {
@@ -303,15 +304,17 @@ public final class MiscUtil {
 
     @Nullable
     public static <T> List<T> singletonListOrNull(@Nullable T value) {
-        return value != null
-            ? List.of(value)
-            : null;
+        return mapOr(value, List::of, () -> null);
     }
 
     public static <T> List<T> singletonListOrEmpty(@Nullable T value) {
-        return value != null
-            ? List.of(value)
-            : List.of();
+        return mapOr(value, List::of, List::of);
+    }
+
+    public static <T, U> U mapOr(@Nullable T value, Function<T, U> mapper, Supplier<U> defaultValue) {
+        return Optional.ofNullable(value)
+            .map(mapper)
+            .orElseGet(defaultValue);
     }
 
 }

@@ -96,8 +96,8 @@ public class DropInventoryEntityActionType extends EntityActionType {
 
         this.unwrappedSlots = new ObjectOpenHashSet<>();
 
-        this.slot.map(ArgumentWrapper::argument).ifPresent(this.unwrappedSlots::add);
-        this.slots.stream().flatMap(Collection::stream).map(ArgumentWrapper::argument).forEach(this.unwrappedSlots::add);
+        this.slot.map(ArgumentWrapper::parsedValue).ifPresent(this.unwrappedSlots::add);
+        this.slots.stream().flatMap(Collection::stream).map(ArgumentWrapper::parsedValue).forEach(this.unwrappedSlots::add);
 
         this.throwRandomly = throwRandomly;
         this.retainOwnership = retainOwnership;
