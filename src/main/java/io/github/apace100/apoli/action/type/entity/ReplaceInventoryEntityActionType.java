@@ -11,15 +11,14 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.InventoryPowerType;
 import io.github.apace100.apoli.util.InventoryUtil.InventoryType;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import io.github.apace100.calio.util.ArgumentWrapper;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.SlotRange;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -36,8 +35,8 @@ public class ReplaceInventoryEntityActionType extends EntityActionType {
             .add("item_action", ItemAction.DATA_TYPE.optional(), Optional.empty())
             .add("item_condition", ItemCondition.DATA_TYPE.optional(), Optional.empty())
             .add("stack", SerializableDataTypes.ITEM_STACK)
-            .add("slot", ApoliDataTypes.ITEM_SLOT.optional(), Optional.empty())
-            .add("slots", ApoliDataTypes.ITEM_SLOTS.optional(), Optional.empty())
+            .add("slot", ApoliDataTypes.SLOT_RANGE, null)
+            .addFunctionedDefault("slots", ApoliDataTypes.SLOT_RANGES, data -> MiscUtil.singletonListOrEmpty(data.get("slot")))
             .add("merge_nbt", SerializableDataTypes.BOOLEAN, false),
         data -> new ReplaceInventoryEntityActionType(
             data.get("inventory_type"),
@@ -46,7 +45,6 @@ public class ReplaceInventoryEntityActionType extends EntityActionType {
             data.get("item_action"),
             data.get("item_condition"),
             data.get("stack"),
-            data.get("slot"),
             data.get("slots"),
             data.get("merge_nbt")
         ),
@@ -57,8 +55,7 @@ public class ReplaceInventoryEntityActionType extends EntityActionType {
             .set("item_action", actionType.itemAction)
             .set("item_condition", actionType.itemCondition)
             .set("stack", actionType.stack)
-            .set("slot", actionType.slot)
-            .set("slots", actionType.slots)
+            .set("slots", actionType.slotRanges)
             .set("merge_nbt", actionType.mergeNbt)
     );
 
@@ -71,13 +68,12 @@ public class ReplaceInventoryEntityActionType extends EntityActionType {
     private final Optional<ItemCondition> itemCondition;
     private final ItemStack stack;
 
-    private final Optional<ArgumentWrapper<Integer>> slot;
-    private final Optional<List<ArgumentWrapper<Integer>>> slots;
+    private final List<SlotRange> slotRanges;
+    private final Set<Integer> slots;
 
-    private final Set<Integer> unwrappedSlots;
     private final boolean mergeNbt;
 
-    public ReplaceInventoryEntityActionType(InventoryType inventoryType, Optional<PowerReference> power, Optional<EntityAction> entityAction, Optional<ItemAction> itemAction, Optional<ItemCondition> itemCondition, ItemStack stack, Optional<ArgumentWrapper<Integer>> slot, Optional<List<ArgumentWrapper<Integer>>> slots, boolean mergeNbt) {
+    public ReplaceInventoryEntityActionType(InventoryType inventoryType, Optional<PowerReference> power, Optional<EntityAction> entityAction, Optional<ItemAction> itemAction, Optional<ItemCondition> itemCondition, ItemStack stack, List<SlotRange> slotRanges, boolean mergeNbt) {
 
         this.inventoryType = inventoryType;
         this.power = power;
@@ -88,13 +84,8 @@ public class ReplaceInventoryEntityActionType extends EntityActionType {
         this.itemCondition = itemCondition;
         this.stack = stack;
 
-        this.slot = slot;
-        this.slots = slots;
-
-        this.unwrappedSlots = new ObjectOpenHashSet<>();
-
-        this.slot.map(ArgumentWrapper::parsedValue).ifPresent(this.unwrappedSlots::add);
-        this.slots.stream().flatMap(Collection::stream).map(ArgumentWrapper::parsedValue).forEach(this.unwrappedSlots::add);
+        this.slotRanges = slotRanges;
+        this.slots = MiscUtil.toSlotIdSet(slotRanges);
 
         this.mergeNbt = mergeNbt;
 
@@ -109,7 +100,7 @@ public class ReplaceInventoryEntityActionType extends EntityActionType {
             .filter(InventoryPowerType.class::isInstance)
             .map(InventoryPowerType.class::cast);
 
-        replaceInventory(entity, unwrappedSlots, inventoryPowerType, entityAction, itemAction, itemCondition, stack, mergeNbt);
+        replaceInventory(entity, slots, inventoryPowerType, entityAction, itemAction, itemCondition, stack, mergeNbt);
 
     }
 

@@ -31,11 +31,9 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.ItemSlotArgumentType;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.inventory.SlotRange;
-import net.minecraft.inventory.SlotRanges;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.server.command.AdvancementCommand;
 import net.minecraft.text.Text;
@@ -43,7 +41,6 @@ import net.minecraft.text.TextCodecs;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.StringIdentifiable;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.explosion.Explosion;
 
@@ -176,7 +173,11 @@ public class ApoliDataTypes {
 
     public static final SerializableDataType<List<ArgumentWrapper<Integer>>> ITEM_SLOTS = ITEM_SLOT.list();
 
-	public static final SerializableDataType<SlotRange> SINGLE_SLOT_RANGE = SerializableDataType.of(SlotRangesUtil.SINGLE_SLOT_CODEC, PacketCodecs.STRING.xmap(SlotRanges::fromName, StringIdentifiable::asString).cast());
+	public static final SerializableDataType<SlotRange> SLOT_RANGE = SerializableDataType.of(SlotRangesUtil.INDEX_OR_STRING_CODEC, SlotRangesUtil.PACKET_CODEC.cast());
+
+	public static final SerializableDataType<List<SlotRange>> SLOT_RANGES = SLOT_RANGE.list();
+
+	public static final SerializableDataType<SlotRange> SINGLE_SLOT_RANGE = SerializableDataType.of(SlotRangesUtil.SINGLE_INDEX_OR_STRING_CODEC, SlotRangesUtil.PACKET_CODEC.cast());
 
 	public static final SerializableDataType<List<SlotRange>> SINGLE_SLOT_RANGES = SINGLE_SLOT_RANGE.list();
 

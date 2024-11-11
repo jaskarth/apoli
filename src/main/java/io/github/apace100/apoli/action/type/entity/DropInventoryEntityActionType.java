@@ -11,14 +11,13 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.InventoryPowerType;
 import io.github.apace100.apoli.util.InventoryUtil.InventoryType;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import io.github.apace100.calio.util.ArgumentWrapper;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.SlotRange;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -34,8 +33,8 @@ public class DropInventoryEntityActionType extends EntityActionType {
             .add("entity_action", EntityAction.DATA_TYPE.optional(), Optional.empty())
             .add("item_action", ItemAction.DATA_TYPE.optional(), Optional.empty())
             .add("item_condition", ItemCondition.DATA_TYPE.optional(), Optional.empty())
-            .add("slot", ApoliDataTypes.ITEM_SLOT.optional(), Optional.empty())
-            .add("slots", ApoliDataTypes.ITEM_SLOTS.optional(), Optional.empty())
+            .add("slot", ApoliDataTypes.SLOT_RANGE, null)
+            .addFunctionedDefault("slots", ApoliDataTypes.SLOT_RANGES, data -> MiscUtil.singletonListOrEmpty(data.get("slot")))
             .add("throw_randomly", SerializableDataTypes.BOOLEAN, false)
             .add("retain_ownership", SerializableDataTypes.BOOLEAN, false)
             .add("amount", SerializableDataTypes.POSITIVE_INT.optional(), Optional.empty()),
@@ -45,8 +44,7 @@ public class DropInventoryEntityActionType extends EntityActionType {
             data.get("entity_action"),
             data.get("item_action"),
             data.get("item_condition"),
-            data.get("slot"),
-            data.get("slots"),
+			data.get("slots"),
             data.get("throw_randomly"),
             data.get("retain_ownership"),
             data.get("amount")
@@ -57,8 +55,7 @@ public class DropInventoryEntityActionType extends EntityActionType {
             .set("entity_action", actionType.entityAction)
             .set("item_action", actionType.itemAction)
             .set("item_condition", actionType.itemCondition)
-            .set("slot", actionType.slot)
-            .set("slots", actionType.slots)
+            .set("slots", actionType.slotRanges)
             .set("throw_randomly", actionType.throwRandomly)
             .set("retain_ownership", actionType.retainOwnership)
             .set("amount", actionType.amount)
@@ -72,17 +69,15 @@ public class DropInventoryEntityActionType extends EntityActionType {
     private final Optional<ItemAction> itemAction;
     private final Optional<ItemCondition> itemCondition;
 
-    private final Optional<ArgumentWrapper<Integer>> slot;
-    private final Optional<List<ArgumentWrapper<Integer>>> slots;
-
-    private final Set<Integer> unwrappedSlots;
+    private final List<SlotRange> slotRanges;
+    private final Set<Integer> slots;
 
     private final boolean throwRandomly;
     private final boolean retainOwnership;
 
     private final Optional<Integer> amount;
 
-    public DropInventoryEntityActionType(InventoryType inventoryType, Optional<PowerReference> power, Optional<EntityAction> entityAction, Optional<ItemAction> itemAction, Optional<ItemCondition> itemCondition, Optional<ArgumentWrapper<Integer>> slot, Optional<List<ArgumentWrapper<Integer>>> slots, boolean throwRandomly, boolean retainOwnership, Optional<Integer> amount) {
+    public DropInventoryEntityActionType(InventoryType inventoryType, Optional<PowerReference> power, Optional<EntityAction> entityAction, Optional<ItemAction> itemAction, Optional<ItemCondition> itemCondition, List<SlotRange> slotRanges, boolean throwRandomly, boolean retainOwnership, Optional<Integer> amount) {
 
         this.inventoryType = inventoryType;
         this.power = power;
@@ -91,13 +86,8 @@ public class DropInventoryEntityActionType extends EntityActionType {
         this.itemAction = itemAction;
         this.itemCondition = itemCondition;
 
-        this.slot = slot;
-        this.slots = slots;
-
-        this.unwrappedSlots = new ObjectOpenHashSet<>();
-
-        this.slot.map(ArgumentWrapper::parsedValue).ifPresent(this.unwrappedSlots::add);
-        this.slots.stream().flatMap(Collection::stream).map(ArgumentWrapper::parsedValue).forEach(this.unwrappedSlots::add);
+        this.slotRanges = slotRanges;
+        this.slots = MiscUtil.toSlotIdSet(slotRanges);
 
         this.throwRandomly = throwRandomly;
         this.retainOwnership = retainOwnership;
@@ -114,7 +104,7 @@ public class DropInventoryEntityActionType extends EntityActionType {
             .filter(InventoryPowerType.class::isInstance)
             .map(InventoryPowerType.class::cast);
 
-        dropInventory(entity, unwrappedSlots, inventoryPowerType, entityAction, itemAction, itemCondition, throwRandomly, retainOwnership, amount);
+        dropInventory(entity, slots, inventoryPowerType, entityAction, itemAction, itemCondition, throwRandomly, retainOwnership, amount);
 
     }
 

@@ -10,11 +10,11 @@ import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.InventoryPowerType;
 import io.github.apace100.apoli.util.Comparison;
 import io.github.apace100.apoli.util.InventoryUtil;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import io.github.apace100.calio.util.ArgumentWrapper;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.SlotRange;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -30,8 +30,8 @@ public class InventoryEntityConditionType extends EntityConditionType {
             .add("process_mode", ApoliDataTypes.PROCESS_MODE, InventoryUtil.ProcessMode.ITEMS)
             .add("power", ApoliDataTypes.POWER_REFERENCE.optional(), Optional.empty())
             .add("item_condition", ItemCondition.DATA_TYPE.optional(), Optional.empty())
-            .add("slots", ApoliDataTypes.ITEM_SLOTS.optional(), Optional.empty())
-            .add("slot", ApoliDataTypes.ITEM_SLOT.optional(), Optional.empty())
+            .add("slot", ApoliDataTypes.SLOT_RANGE, null)
+            .addFunctionedDefault("slots", ApoliDataTypes.SLOT_RANGES, data -> MiscUtil.singletonListOrEmpty(data.get("slot")))
             .add("comparison", ApoliDataTypes.COMPARISON, Comparison.GREATER_THAN)
             .add("compare_to", SerializableDataTypes.INT, 0),
         data -> new InventoryEntityConditionType(
@@ -40,7 +40,6 @@ public class InventoryEntityConditionType extends EntityConditionType {
             data.get("power"),
             data.get("item_condition"),
             data.get("slots"),
-            data.get("slot"),
             data.get("comparison"),
             data.get("compare_to")
         ),
@@ -49,8 +48,7 @@ public class InventoryEntityConditionType extends EntityConditionType {
             .set("process_mode", conditionType.processMode)
             .set("power", conditionType.power)
             .set("item_condition", conditionType.itemCondition)
-            .set("slots", conditionType.slots)
-            .set("slot", conditionType.slot)
+            .set("slots", conditionType.slotRanges)
             .set("comparison", conditionType.comparison)
             .set("compare_to", conditionType.compareTo)
     );
@@ -61,15 +59,13 @@ public class InventoryEntityConditionType extends EntityConditionType {
     private final Optional<PowerReference> power;
     private final Optional<ItemCondition> itemCondition;
 
-    private final Optional<List<ArgumentWrapper<Integer>>> slots;
-    private final Optional<ArgumentWrapper<Integer>> slot;
-
-    private final Set<Integer> unwrappedSlots;
+    private final List<SlotRange> slotRanges;
+    private final Set<Integer> slots;
 
     private final Comparison comparison;
     private final int compareTo;
 
-    public InventoryEntityConditionType(EnumSet<InventoryUtil.InventoryType> inventoryTypes, InventoryUtil.ProcessMode processMode, Optional<PowerReference> power, Optional<ItemCondition> itemCondition, Optional<List<ArgumentWrapper<Integer>>> slots, Optional<ArgumentWrapper<Integer>> slot, Comparison comparison, int compareTo) {
+    public InventoryEntityConditionType(EnumSet<InventoryUtil.InventoryType> inventoryTypes, InventoryUtil.ProcessMode processMode, Optional<PowerReference> power, Optional<ItemCondition> itemCondition, List<SlotRange> slotRanges, Comparison comparison, int compareTo) {
 
         this.inventoryTypes = inventoryTypes;
         this.processMode = processMode;
@@ -77,13 +73,8 @@ public class InventoryEntityConditionType extends EntityConditionType {
         this.power = power;
         this.itemCondition = itemCondition;
 
-        this.slots = slots;
-        this.slot = slot;
-
-        this.unwrappedSlots = new ObjectOpenHashSet<>();
-
-        this.slot.map(ArgumentWrapper::parsedValue).ifPresent(this.unwrappedSlots::add);
-        this.slots.map(args -> args.stream().map(ArgumentWrapper::parsedValue).toList()).ifPresent(this.unwrappedSlots::addAll);
+        this.slotRanges = slotRanges;
+        this.slots = MiscUtil.toSlotIdSet(slotRanges);
 
         this.comparison = comparison;
         this.compareTo = compareTo;
@@ -95,7 +86,7 @@ public class InventoryEntityConditionType extends EntityConditionType {
 
         int matches = 0;
         if (inventoryTypes.contains(InventoryUtil.InventoryType.INVENTORY)) {
-            matches += InventoryUtil.checkInventory(entity, unwrappedSlots, Optional.empty(), itemCondition, processMode);
+            matches += InventoryUtil.checkInventory(entity, slots, Optional.empty(), itemCondition, processMode);
         }
 
         if (inventoryTypes.contains(InventoryUtil.InventoryType.POWER)) {
@@ -105,7 +96,7 @@ public class InventoryEntityConditionType extends EntityConditionType {
                 .filter(InventoryPowerType.class::isInstance)
                 .map(InventoryPowerType.class::cast);
 
-            matches += InventoryUtil.checkInventory(entity, unwrappedSlots, inventoryPowerType, itemCondition, processMode);
+            matches += InventoryUtil.checkInventory(entity, slots, inventoryPowerType, itemCondition, processMode);
 
         }
 

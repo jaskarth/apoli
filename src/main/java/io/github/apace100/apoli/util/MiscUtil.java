@@ -3,6 +3,7 @@ package io.github.apace100.apoli.util;
 import com.mojang.serialization.DataResult;
 import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.calio.data.SerializableData;
+import it.unimi.dsi.fastutil.ints.IntCollection;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -15,6 +16,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.inventory.SlotRange;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
@@ -37,6 +39,8 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class MiscUtil {
@@ -315,6 +319,15 @@ public final class MiscUtil {
         return Optional.ofNullable(value)
             .map(mapper)
             .orElseGet(defaultValue);
+    }
+
+    public static Set<Integer> toSlotIdSet(Collection<SlotRange> slotRanges) {
+        return slotRanges
+            .stream()
+            .map(SlotRange::getSlotIds)
+            .map(IntCollection::intStream)
+            .flatMap(IntStream::boxed)
+            .collect(Collectors.toSet());
     }
 
 }

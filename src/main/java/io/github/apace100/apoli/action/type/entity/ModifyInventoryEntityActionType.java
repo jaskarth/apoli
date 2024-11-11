@@ -12,14 +12,13 @@ import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.InventoryPowerType;
 import io.github.apace100.apoli.util.InventoryUtil.InventoryType;
 import io.github.apace100.apoli.util.InventoryUtil.ProcessMode;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import io.github.apace100.calio.util.ArgumentWrapper;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.SlotRange;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -36,8 +35,8 @@ public class ModifyInventoryEntityActionType extends EntityActionType {
             .add("item_action", ItemAction.DATA_TYPE)
             .add("power", ApoliDataTypes.POWER_REFERENCE.optional(), Optional.empty())
             .add("item_condition", ItemCondition.DATA_TYPE.optional(), Optional.empty())
-            .add("slot", ApoliDataTypes.ITEM_SLOT.optional(), Optional.empty())
-            .add("slots", ApoliDataTypes.ITEM_SLOTS.optional(), Optional.empty())
+            .add("slot", ApoliDataTypes.SLOT_RANGE, null)
+            .addFunctionedDefault("slots", ApoliDataTypes.SLOT_RANGES, data -> MiscUtil.singletonListOrEmpty(data.get("slot")))
             .add("limit", SerializableDataTypes.POSITIVE_INT.optional(), Optional.empty()),
         data -> new ModifyInventoryEntityActionType(
             data.get("inventory_type"),
@@ -46,7 +45,6 @@ public class ModifyInventoryEntityActionType extends EntityActionType {
             data.get("item_action"),
             data.get("power"),
             data.get("item_condition"),
-            data.get("slot"),
             data.get("slots"),
             data.get("limit")
         ),
@@ -57,8 +55,7 @@ public class ModifyInventoryEntityActionType extends EntityActionType {
             .set("item_action", actionType.itemAction)
             .set("power", actionType.power)
             .set("item_condition", actionType.itemCondition)
-            .set("slot", actionType.slot)
-            .set("slots", actionType.slots)
+            .set("slots", actionType.slotRanges)
             .set("limit", actionType.limit)
     );
 
@@ -71,14 +68,12 @@ public class ModifyInventoryEntityActionType extends EntityActionType {
     private final Optional<PowerReference> power;
     private final Optional<ItemCondition> itemCondition;
 
-    private final Optional<ArgumentWrapper<Integer>> slot;
-    private final Optional<List<ArgumentWrapper<Integer>>> slots;
-
-    private final Set<Integer> unwrappedSlots;
+    private final List<SlotRange> slotRanges;
+    private final Set<Integer> slots;
 
     private final Optional<Integer> limit;
 
-    public ModifyInventoryEntityActionType(InventoryType inventoryType, ProcessMode processMode, Optional<EntityAction> entityAction, ItemAction itemAction, Optional<PowerReference> power, Optional<ItemCondition> itemCondition, Optional<ArgumentWrapper<Integer>> slot, Optional<List<ArgumentWrapper<Integer>>> slots, Optional<Integer> limit) {
+    public ModifyInventoryEntityActionType(InventoryType inventoryType, ProcessMode processMode, Optional<EntityAction> entityAction, ItemAction itemAction, Optional<PowerReference> power, Optional<ItemCondition> itemCondition, List<SlotRange> slotRanges, Optional<Integer> limit) {
 
         this.inventoryType = inventoryType;
         this.processMode = processMode;
@@ -89,13 +84,8 @@ public class ModifyInventoryEntityActionType extends EntityActionType {
         this.power = power;
         this.itemCondition = itemCondition;
 
-        this.slot = slot;
-        this.slots = slots;
-
-        this.unwrappedSlots = new ObjectOpenHashSet<>();
-
-        this.slot.map(ArgumentWrapper::parsedValue).ifPresent(this.unwrappedSlots::add);
-        this.slots.stream().flatMap(Collection::stream).map(ArgumentWrapper::parsedValue).forEach(this.unwrappedSlots::add);
+        this.slotRanges = slotRanges;
+        this.slots = MiscUtil.toSlotIdSet(slotRanges);
 
         this.limit = limit;
 
@@ -110,7 +100,7 @@ public class ModifyInventoryEntityActionType extends EntityActionType {
             .filter(InventoryPowerType.class::isInstance)
             .map(InventoryPowerType.class::cast);
 
-        modifyInventory(entity, unwrappedSlots, inventoryPowerType, entityAction, itemAction, itemCondition, limit, processMode);
+        modifyInventory(entity, slots, inventoryPowerType, entityAction, itemAction, itemCondition, limit, processMode);
 
     }
 
