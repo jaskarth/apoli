@@ -40,15 +40,21 @@ public abstract class ValueModifyingPowerType extends PowerType {
         return new ObjectArrayList<>(modifiers);
     }
 
-    protected final SerializableData.Instance setField(SerializableData.Instance data) {
+    protected final SerializableData.Instance setModifiersField(SerializableData.Instance data) {
         return data.set("modifiers", getModifiers());
     }
 
-    private static SerializableData addFields(SerializableData serializableData) {
+    public static SerializableData addRequiredModifierFields(SerializableData serializableData) {
         return serializableData
             .add("modifier", Modifier.DATA_TYPE, null)
             .addFunctionedDefault("modifiers", Modifier.LIST_TYPE, data -> MiscUtil.singletonListOrNull(data.get("modifier")))
             .validate(MiscUtil.validateAnyFieldsPresent("modifier", "modifiers"));
+    }
+
+    public static SerializableData addModifierFields(SerializableData serializableData) {
+        return serializableData
+            .add("modifier", Modifier.DATA_TYPE, null)
+            .addFunctionedDefault("modifiers", Modifier.LIST_TYPE, data -> MiscUtil.singletonListOrEmpty(data.get("modifier")));
     }
 
     private static List<Modifier> getField(SerializableData.Instance data) {
@@ -57,26 +63,26 @@ public abstract class ValueModifyingPowerType extends PowerType {
 
     public static <T extends ValueModifyingPowerType> TypedDataObjectFactory<T> createModifyingDataFactory(SerializableData serializableData, BiFunction<SerializableData.Instance, List<Modifier>, T> fromData, BiFunction<T, SerializableData, SerializableData.Instance> toData) {
         return TypedDataObjectFactory.simple(
-            addFields(serializableData),
+            addRequiredModifierFields(serializableData),
             data -> fromData.apply(
                 data,
                 getField(data)
             ),
 			(t, _serializableData) ->
-                t.setField(toData.apply(t, _serializableData))
+                t.setModifiersField(toData.apply(t, _serializableData))
         );
     }
 
     public static <T extends ValueModifyingPowerType> TypedDataObjectFactory<T> createConditionedModifyingDataFactory(SerializableData serializableData, TriFunction<SerializableData.Instance, List<Modifier>, Optional<EntityCondition>, T> fromData, BiFunction<T, SerializableData, SerializableData.Instance> toData) {
         return PowerType.createConditionedDataFactory(
-            addFields(serializableData),
+            addRequiredModifierFields(serializableData),
             (data, condition) -> fromData.apply(
                 data,
                 getField(data),
                 condition
             ),
             (t, _serializableData) ->
-                t.setField(toData.apply(t, _serializableData))
+                t.setModifiersField(toData.apply(t, _serializableData))
         );
     }
 

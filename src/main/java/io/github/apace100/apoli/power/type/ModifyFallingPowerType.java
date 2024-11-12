@@ -18,17 +18,17 @@ import java.util.function.Predicate;
 
 public class ModifyFallingPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyFallingPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
-        new SerializableData()
+    public static final TypedDataObjectFactory<ModifyFallingPowerType> DATA_FACTORY = createConditionedDataFactory(
+        ValueModifyingPowerType.addModifierFields(new SerializableData()
             .add("velocity", SerializableDataTypes.DOUBLE.optional(), Optional.empty())
-            .add("take_fall_damage", SerializableDataTypes.BOOLEAN, true),
-        (data, modifiers, condition) -> new ModifyFallingPowerType(
+            .add("take_fall_damage", SerializableDataTypes.BOOLEAN, true)),
+        (data, condition) -> new ModifyFallingPowerType(
             data.get("velocity"),
             data.get("take_fall_damage"),
-            modifiers,
+            data.get("modifiers"),
             condition
         ),
-        (powerType, serializableData) -> serializableData.instance()
+        (powerType, serializableData) -> powerType.setModifiersField(serializableData.instance())
             .set("velocity", powerType.velocity)
             .set("take_fall_damage", powerType.takeFallDamage)
     );
