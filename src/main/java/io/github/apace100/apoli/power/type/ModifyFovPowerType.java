@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ModifyFovPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyFovPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyFovPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("affected_by_fov_effect_scale", SerializableDataTypes.BOOLEAN, true),
         (data, modifiers, condition) -> new ModifyFovPowerType(

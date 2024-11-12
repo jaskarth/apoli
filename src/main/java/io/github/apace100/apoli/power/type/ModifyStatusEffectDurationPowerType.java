@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class ModifyStatusEffectDurationPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyStatusEffectDurationPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyStatusEffectDurationPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("status_effect", SerializableDataTypes.STATUS_EFFECT_ENTRY, null)
             .addFunctionedDefault("status_effects", SerializableDataTypes.STATUS_EFFECT_ENTRIES, data -> MiscUtil.singletonListOrEmpty(data.get("status_effect"))),

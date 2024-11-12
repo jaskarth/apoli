@@ -39,7 +39,7 @@ public class ModifyEnchantmentLevelPowerType extends ValueModifyingPowerType {
     private static final ConcurrentHashMap<UUID, ItemStack> MODIFIED_EMPTY_STACKS = new ConcurrentHashMap<>();
     private static final WeakHashMap<Pair<UUID, ItemStack>, ConcurrentHashMap<ModifyEnchantmentLevelPowerType, Pair<Integer, Boolean>>> POWER_MODIFIER_CACHE = new WeakHashMap<>(256);
 
-    public static final TypedDataObjectFactory<ModifyEnchantmentLevelPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyEnchantmentLevelPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("enchantment", SerializableDataTypes.ENCHANTMENT)
             .add("item_condition", ItemCondition.DATA_TYPE.optional(), Optional.empty()),

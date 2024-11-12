@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class ModifyAttributePowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyAttributePowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyAttributePowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("attribute", SerializableDataTypes.ATTRIBUTE_ENTRY),
         (data, modifiers, condition) -> new ModifyAttributePowerType(

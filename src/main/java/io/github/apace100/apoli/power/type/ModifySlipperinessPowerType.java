@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class ModifySlipperinessPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifySlipperinessPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifySlipperinessPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("block_condition", BlockCondition.DATA_TYPE.optional(), Optional.empty()),
         (data, modifiers, condition) -> new ModifySlipperinessPowerType(

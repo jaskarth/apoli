@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ModifyJumpPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyJumpPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyJumpPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("entity_action", EntityAction.DATA_TYPE.optional(), Optional.empty()),
         (data, modifiers, condition) -> new ModifyJumpPowerType(

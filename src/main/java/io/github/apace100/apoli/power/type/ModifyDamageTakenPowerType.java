@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public class ModifyDamageTakenPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyDamageTakenPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyDamageTakenPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("self_action", EntityAction.DATA_TYPE.optional(), Optional.empty())
             .add("attacker_action", EntityAction.DATA_TYPE.optional(), Optional.empty())

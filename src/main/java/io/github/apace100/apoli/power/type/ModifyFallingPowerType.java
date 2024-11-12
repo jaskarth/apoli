@@ -18,19 +18,19 @@ import java.util.function.Predicate;
 
 public class ModifyFallingPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyFallingPowerType> DATA_FACTORY = createConditionedDataFactory(
-        ValueModifyingPowerType.addModifierFields(new SerializableData()
+    public static final TypedDataObjectFactory<ModifyFallingPowerType> DATA_FACTORY = ValueModifyingPowerType.createConditionedModifyingDataFactory(
+        new SerializableData()
             .add("velocity", SerializableDataTypes.DOUBLE.optional(), Optional.empty())
-            .add("take_fall_damage", SerializableDataTypes.BOOLEAN, true)),
-        (data, condition) -> new ModifyFallingPowerType(
+            .add("take_fall_damage", SerializableDataTypes.BOOLEAN, true),
+        (data, modifiers, condition) -> new ModifyFallingPowerType(
+            modifiers,
             data.get("velocity"),
             data.get("take_fall_damage"),
-            data.get("modifiers"),
             condition
         ),
-        (powerType, serializableData) -> powerType.setModifiersField(serializableData.instance())
+        (powerType, serializableData) -> serializableData.instance()
             .set("velocity", powerType.velocity)
-            .set("take_fall_damage", powerType.takeFallDamage)
+            .set("take_fall_damage", powerType.shouldTakeFallDamage())
     );
 
     protected final Optional<Double> velocity;
@@ -38,7 +38,7 @@ public class ModifyFallingPowerType extends ValueModifyingPowerType {
 
     private final Optional<List<Modifier>> velocityModifier;
 
-    public ModifyFallingPowerType(Optional<Double> velocity, boolean takeFallDamage, List<Modifier> modifiers, Optional<EntityCondition> condition) {
+    public ModifyFallingPowerType(List<Modifier> modifiers, Optional<Double> velocity, boolean takeFallDamage, Optional<EntityCondition> condition) {
         super(modifiers, condition);
         this.velocity = velocity;
         this.takeFallDamage = takeFallDamage;

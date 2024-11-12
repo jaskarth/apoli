@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class ModifyVelocityPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyVelocityPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyVelocityPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("axes", SerializableDataTypes.AXIS_SET, EnumSet.allOf(Direction.Axis.class)),
         (data, modifiers, condition) -> new ModifyVelocityPowerType(

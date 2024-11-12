@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class ModifyBreakSpeedPowerType extends ValueModifyingPowerType {
 
-    public static final TypedDataObjectFactory<ModifyBreakSpeedPowerType> DATA_FACTORY = createConditionedModifyingDataFactory(
+    public static final TypedDataObjectFactory<ModifyBreakSpeedPowerType> DATA_FACTORY = createConditionedModifyingRequiredDataFactory(
         new SerializableData()
             .add("block_condition", BlockCondition.DATA_TYPE.optional(), Optional.empty())
             .add("hardness_modifier", Modifier.DATA_TYPE, null)
