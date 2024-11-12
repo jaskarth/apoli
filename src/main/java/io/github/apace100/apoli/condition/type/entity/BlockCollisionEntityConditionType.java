@@ -25,20 +25,15 @@ public class BlockCollisionEntityConditionType extends EntityConditionType {
             .add("block_condition", BlockCondition.DATA_TYPE.optional(), Optional.empty())
             .add("offset_x", SerializableDataTypes.DOUBLE, 0.0)
             .add("offset_y", SerializableDataTypes.DOUBLE, 0.0)
-            .add("offset_z", SerializableDataTypes.DOUBLE, 0.0),
+            .add("offset_z", SerializableDataTypes.DOUBLE, 0.0)
+            .addFunctionedDefault("offset", SerializableDataTypes.VECTOR, data -> new Vec3d(data.get("offset_x"), data.get("offset_y"), data.get("offset_z"))),
         data -> new BlockCollisionEntityConditionType(
-            data.get("block_collision"),
-            new Vec3d(
-                data.get("offset_x"),
-                data.get("offset_y"),
-                data.get("offset_z")
-            )
+            data.get("block_condition"),
+            data.get("offset")
         ),
         (conditionType, serializableData) -> serializableData.instance()
             .set("block_condition", conditionType.blockCondition)
-            .set("offset_x", conditionType.offset.getX())
-            .set("offset_y", conditionType.offset.getY())
-            .set("offset_z", conditionType.offset.getZ())
+            .set("offset", conditionType.offset)
     );
 
     private final Optional<BlockCondition> blockCondition;
