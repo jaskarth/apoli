@@ -41,7 +41,9 @@ public class DamageConditionTypes {
     public static final ConditionConfiguration<UnblockableDamageConditionType> UNBLOCKABLE = register(ConditionConfiguration.simple(Apoli.identifier("unblockable"), UnblockableDamageConditionType::new));
 
     public static void register() {
-
+        ALIASES.addPathAlias("and", ALL_OF.id().getPath());
+        ALIASES.addPathAlias("or", ANY_OF.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

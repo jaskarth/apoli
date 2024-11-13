@@ -45,7 +45,9 @@ public class BlockConditionTypes {
     public static final ConditionConfiguration<WaterLoggableBlockConditionType> WATER_LOGGABLE = register(ConditionConfiguration.simple(Apoli.identifier("water_loggable"), WaterLoggableBlockConditionType::new));
 
 	public static void register() {
-
+        ALIASES.addPathAlias("and", ALL_OF.id().getPath());
+        ALIASES.addPathAlias("or", ANY_OF.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

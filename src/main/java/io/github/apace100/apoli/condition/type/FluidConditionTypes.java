@@ -32,7 +32,9 @@ public class FluidConditionTypes {
     public static final ConditionConfiguration<InTagFluidConditionType> IN_TAG = register(ConditionConfiguration.of(Apoli.identifier("in_tag"), InTagFluidConditionType.DATA_FACTORY));
 
     public static void register() {
-
+        ALIASES.addPathAlias("and", ALL_OF.id().getPath());
+        ALIASES.addPathAlias("or", ANY_OF.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

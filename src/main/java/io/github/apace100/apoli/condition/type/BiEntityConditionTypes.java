@@ -44,7 +44,9 @@ public class BiEntityConditionTypes {
     public static final ConditionConfiguration<RidingRootBiEntityConditionType> RIDING_ROOT = register(ConditionConfiguration.simple(Apoli.identifier("riding_root"), RidingRootBiEntityConditionType::new));
 
     public static void register() {
-
+        ALIASES.addPathAlias("and", ALL_OF.id().getPath());
+        ALIASES.addPathAlias("or", ANY_OF.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

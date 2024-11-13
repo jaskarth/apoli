@@ -36,7 +36,9 @@ public class BiomeConditionTypes {
     public static final ConditionConfiguration<TemperatureBiomeConditionType> TEMPERATURE = register(ConditionConfiguration.of(Apoli.identifier("temperature"), TemperatureBiomeConditionType.DATA_FACTORY));
 
     public static void register() {
-
+        ALIASES.addPathAlias("and", ALL_OF.id().getPath());
+        ALIASES.addPathAlias("or", ANY_OF.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

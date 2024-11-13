@@ -48,7 +48,9 @@ public class ItemConditionTypes {
     public static final ConditionConfiguration<SmeltableItemConditionType> SMELTABLE = register(ConditionConfiguration.simple(Apoli.identifier("smeltable"), SmeltableItemConditionType::new));
 
     public static void register() {
-
+        ALIASES.addPathAlias("and", ALL_OF.id().getPath());
+        ALIASES.addPathAlias("or", ANY_OF.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

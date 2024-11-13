@@ -96,7 +96,9 @@ public class EntityConditionTypes {
     public static final ConditionConfiguration<XpPointsEntityConditionType> XP_POINTS = register(ConditionConfiguration.of(Apoli.identifier("xp_points"), XpPointsEntityConditionType.DATA_FACTORY));
 
 	public static void register() {
-
+        ALIASES.addPathAlias("and", ALL_OF.id().getPath());
+        ALIASES.addPathAlias("or", ANY_OF.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")
