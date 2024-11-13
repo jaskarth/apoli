@@ -135,6 +135,7 @@ public class PowerTypes {
     public static final PowerConfiguration<WalkOnFluidPowerType> WALK_ON_FLUID = register(PowerConfiguration.dataFactory(Apoli.identifier("walk_on_fluid"), WalkOnFluidPowerType.DATA_FACTORY));
 
     public static void register() {
+        ALIASES.addPathAlias("simple", DUMMY.id().getPath());
         ALIASES.addPathAlias("self_action_when_hit", "action_when_damage_taken");
     }
 
