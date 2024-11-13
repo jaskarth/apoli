@@ -5,7 +5,7 @@ import io.github.apace100.apoli.action.BlockAction;
 import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
-import io.github.apace100.apoli.action.type.meta.ChanceMetaActionType;
+import io.github.apace100.apoli.action.type.meta.RandomChanceMetaActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -13,14 +13,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class ChanceBlockActionType extends BlockActionType implements ChanceMetaActionType<BlockActionContext, BlockAction> {
+public class RandomChanceBlockActionType extends BlockActionType implements RandomChanceMetaActionType<BlockActionContext, BlockAction> {
 
 	private final BlockAction successAction;
 	private final Optional<BlockAction> failAction;
 
 	private final float chance;
 
-	public ChanceBlockActionType(BlockAction successAction, Optional<BlockAction> failAction, float chance) {
+	public RandomChanceBlockActionType(BlockAction successAction, Optional<BlockAction> failAction, float chance) {
 		this.successAction = successAction;
 		this.failAction = failAction;
 		this.chance = chance;
@@ -33,7 +33,7 @@ public class ChanceBlockActionType extends BlockActionType implements ChanceMeta
 
 	@Override
 	public @NotNull ActionConfiguration<?> getConfig() {
-		return BlockActionTypes.CHANCE;
+		return BlockActionTypes.RANDOM_CHANCE;
 	}
 
 	@Override

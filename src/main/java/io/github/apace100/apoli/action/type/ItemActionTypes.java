@@ -17,8 +17,8 @@ public class ItemActionTypes {
     public static final IdentifierAlias ALIASES = new IdentifierAlias();
     public static final SerializableDataType<ActionConfiguration<ItemActionType>> DATA_TYPE = SerializableDataType.registry(ApoliRegistries.ITEM_ACTION_TYPE, Apoli.MODID, ALIASES, (configurations, id) -> "Item action type \"" + id + "\" is undefined!");
 
-    public static final ActionConfiguration<AndItemActionType> AND = register(AndMetaActionType.createConfiguration(ItemAction.DATA_TYPE, AndItemActionType::new));
-    public static final ActionConfiguration<ChanceItemActionType> CHANCE = register(ChanceMetaActionType.createConfiguration(ItemAction.DATA_TYPE, ChanceItemActionType::new));
+    public static final ActionConfiguration<SequenceItemActionType> SEQUENCE = register(SequenceMetaActionType.createConfiguration(ItemAction.DATA_TYPE, SequenceItemActionType::new));
+    public static final ActionConfiguration<RandomChanceItemActionType> RANDOM_CHANCE = register(RandomChanceMetaActionType.createConfiguration(ItemAction.DATA_TYPE, RandomChanceItemActionType::new));
     public static final ActionConfiguration<ChoiceItemActionType> CHOICE = register(ChoiceMetaActionType.createConfiguration(ItemAction.DATA_TYPE, ChoiceItemActionType::new));
     public static final ActionConfiguration<DelayItemActionType> DELAY = register(DelayMetaActionType.createConfiguration(ItemAction.DATA_TYPE, DelayItemActionType::new));
     public static final ActionConfiguration<IfElseListItemActionType> IF_ELSE_LIST = register(IfElseListMetaActionType.createConfiguration(ItemAction.DATA_TYPE, ItemCondition.DATA_TYPE, IfElseListItemActionType::new));
@@ -35,7 +35,8 @@ public class ItemActionTypes {
     public static final ActionConfiguration<RemoveEnchantmentItemActionType> REMOVE_ENCHANTMENT = register(ActionConfiguration.of(Apoli.identifier("remove_enchantment"), RemoveEnchantmentItemActionType.DATA_FACTORY));
 
     public static void register() {
-
+        ALIASES.addPathAlias("and", SEQUENCE.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

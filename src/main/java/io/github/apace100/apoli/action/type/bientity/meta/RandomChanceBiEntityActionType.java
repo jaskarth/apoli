@@ -5,20 +5,20 @@ import io.github.apace100.apoli.action.BiEntityAction;
 import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
-import io.github.apace100.apoli.action.type.meta.ChanceMetaActionType;
+import io.github.apace100.apoli.action.type.meta.RandomChanceMetaActionType;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class ChanceBiEntityActionType extends BiEntityActionType implements ChanceMetaActionType<BiEntityActionContext, BiEntityAction> {
+public class RandomChanceBiEntityActionType extends BiEntityActionType implements RandomChanceMetaActionType<BiEntityActionContext, BiEntityAction> {
 
 	private final BiEntityAction successAction;
 	private final Optional<BiEntityAction> failAction;
 
 	private final float chance;
 
-	public ChanceBiEntityActionType(BiEntityAction successAction, Optional<BiEntityAction> failAction, float chance) {
+	public RandomChanceBiEntityActionType(BiEntityAction successAction, Optional<BiEntityAction> failAction, float chance) {
 		this.successAction = successAction;
 		this.failAction = failAction;
 		this.chance = chance;
@@ -31,7 +31,7 @@ public class ChanceBiEntityActionType extends BiEntityActionType implements Chan
 
 	@Override
 	public @NotNull ActionConfiguration<?> getConfig() {
-		return BiEntityActionTypes.CHANCE;
+		return BiEntityActionTypes.RANDOM_CHANCE;
 	}
 
 	@Override

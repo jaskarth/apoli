@@ -11,7 +11,7 @@ import io.github.apace100.calio.data.SerializableDataType;
 import java.util.List;
 import java.util.function.Function;
 
-public interface AndMetaActionType<T extends TypeActionContext<?>, A extends AbstractAction<T, ? extends AbstractActionType<T, A>>> {
+public interface SequenceMetaActionType<T extends TypeActionContext<?>, A extends AbstractAction<T, ? extends AbstractActionType<T, A>>> {
 
     List<A> actions();
 
@@ -19,9 +19,9 @@ public interface AndMetaActionType<T extends TypeActionContext<?>, A extends Abs
         actions().forEach(action -> action.accept(context));
     }
 
-    static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & AndMetaActionType<T, A>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, Function<List<A>, M> constructor) {
+    static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & SequenceMetaActionType<T, A>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, Function<List<A>, M> constructor) {
         return ActionConfiguration.of(
-            Apoli.identifier("and"),
+            Apoli.identifier("sequence"),
             new SerializableData()
                 .add("actions", actionDataType.list()),
             data -> constructor.apply(

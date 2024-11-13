@@ -5,7 +5,7 @@ import io.github.apace100.apoli.action.BlockAction;
 import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
-import io.github.apace100.apoli.action.type.meta.AndMetaActionType;
+import io.github.apace100.apoli.action.type.meta.SequenceMetaActionType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-public class AndBlockActionType extends BlockActionType implements AndMetaActionType<BlockActionContext, BlockAction> {
+public class SequenceBlockActionType extends BlockActionType implements SequenceMetaActionType<BlockActionContext, BlockAction> {
 
 	private final List<BlockAction> actions;
 
-	public AndBlockActionType(List<BlockAction> actions) {
+	public SequenceBlockActionType(List<BlockAction> actions) {
 		this.actions = actions;
 	}
 
@@ -29,7 +29,7 @@ public class AndBlockActionType extends BlockActionType implements AndMetaAction
 
 	@Override
 	public @NotNull ActionConfiguration<?> getConfig() {
-		return BlockActionTypes.AND;
+		return BlockActionTypes.SEQUENCE;
 	}
 
 	@Override

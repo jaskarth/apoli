@@ -5,20 +5,20 @@ import io.github.apace100.apoli.action.EntityAction;
 import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
-import io.github.apace100.apoli.action.type.meta.ChanceMetaActionType;
+import io.github.apace100.apoli.action.type.meta.RandomChanceMetaActionType;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class ChanceEntityActionType extends EntityActionType implements ChanceMetaActionType<EntityActionContext, EntityAction> {
+public class RandomChanceEntityActionType extends EntityActionType implements RandomChanceMetaActionType<EntityActionContext, EntityAction> {
 
 	private final EntityAction successAction;
 	private final Optional<EntityAction> failAction;
 
 	private final float chance;
 
-	public ChanceEntityActionType(EntityAction successAction, Optional<EntityAction> failAction, float chance) {
+	public RandomChanceEntityActionType(EntityAction successAction, Optional<EntityAction> failAction, float chance) {
 		this.successAction = successAction;
 		this.failAction = failAction;
 		this.chance = chance;
@@ -31,7 +31,7 @@ public class ChanceEntityActionType extends EntityActionType implements ChanceMe
 
 	@Override
 	public @NotNull ActionConfiguration<?> getConfig() {
-		return EntityActionTypes.CHANCE;
+		return EntityActionTypes.RANDOM_CHANCE;
 	}
 
 	@Override

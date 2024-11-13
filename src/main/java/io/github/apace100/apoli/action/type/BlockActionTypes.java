@@ -17,8 +17,8 @@ public class BlockActionTypes {
     public static final IdentifierAlias ALIASES = new IdentifierAlias();
     public static final SerializableDataType<ActionConfiguration<BlockActionType>> DATA_TYPE = SerializableDataType.registry(ApoliRegistries.BLOCK_ACTION_TYPE, Apoli.MODID, ALIASES, (configurations, id) -> "Block action type \"" + id + "\" is undefined!");
 
-	public static final ActionConfiguration<AndBlockActionType> AND = register(AndMetaActionType.createConfiguration(BlockAction.DATA_TYPE, AndBlockActionType::new));
-    public static final ActionConfiguration<ChanceBlockActionType> CHANCE = register(ChanceMetaActionType.createConfiguration(BlockAction.DATA_TYPE, ChanceBlockActionType::new));
+	public static final ActionConfiguration<SequenceBlockActionType> SEQUENCE = register(SequenceMetaActionType.createConfiguration(BlockAction.DATA_TYPE, SequenceBlockActionType::new));
+    public static final ActionConfiguration<RandomChanceBlockActionType> RANDOM_CHANCE = register(RandomChanceMetaActionType.createConfiguration(BlockAction.DATA_TYPE, RandomChanceBlockActionType::new));
     public static final ActionConfiguration<ChoiceBlockActionType> CHOICE = register(ChoiceMetaActionType.createConfiguration(BlockAction.DATA_TYPE, ChoiceBlockActionType::new));
     public static final ActionConfiguration<DelayBlockActionType> DELAY = register(DelayMetaActionType.createConfiguration(BlockAction.DATA_TYPE, DelayBlockActionType::new));
     public static final ActionConfiguration<IfElseListBlockActionType> IF_ELSE_LIST = register(IfElseListMetaActionType.createConfiguration(BlockAction.DATA_TYPE, BlockCondition.DATA_TYPE, IfElseListBlockActionType::new));
@@ -38,7 +38,8 @@ public class BlockActionTypes {
     public static final ActionConfiguration<SpawnEntityBlockActionType> SPAWN_ENTITY = register(ActionConfiguration.of(Apoli.identifier("spawn_entity"), SpawnEntityBlockActionType.DATA_FACTORY));
 
     public static void register() {
-
+        ALIASES.addPathAlias("and", SEQUENCE.id().getPath());
+        ALIASES.addPathAlias("chance", RANDOM_CHANCE.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

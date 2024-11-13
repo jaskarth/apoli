@@ -6,7 +6,7 @@ import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.action.AbstractAction;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.type.AbstractActionType;
-import io.github.apace100.apoli.action.type.meta.AndMetaActionType;
+import io.github.apace100.apoli.action.type.meta.SequenceMetaActionType;
 import io.github.apace100.apoli.condition.AbstractCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.type.AbstractConditionType;
@@ -399,7 +399,7 @@ public class ApoliDataTypes {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & AndMetaActionType<T, A>> SerializableDataType<A> actions(String typeField, SerializableDataType<ActionConfiguration<AT>> registryDataType, Function<List<A>, M> multiActionsConstructor, Function<AT, A> constructor) {
+	public static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & SequenceMetaActionType<T, A>> SerializableDataType<A> actions(String typeField, SerializableDataType<ActionConfiguration<AT>> registryDataType, Function<List<A>, M> multiActionsConstructor, Function<AT, A> constructor) {
 
 		CompoundSerializableDataType<A> dataType = action(typeField, registryDataType, constructor);
 		SerializableDataType<List<A>> listDataType = dataType.list();

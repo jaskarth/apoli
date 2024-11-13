@@ -5,17 +5,17 @@ import io.github.apace100.apoli.action.BiEntityAction;
 import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
-import io.github.apace100.apoli.action.type.meta.AndMetaActionType;
+import io.github.apace100.apoli.action.type.meta.SequenceMetaActionType;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class AndBiEntityActionType extends BiEntityActionType implements AndMetaActionType<BiEntityActionContext, BiEntityAction> {
+public class SequenceBiEntityActionType extends BiEntityActionType implements SequenceMetaActionType<BiEntityActionContext, BiEntityAction> {
 
 	private final List<BiEntityAction> actions;
 
-	public AndBiEntityActionType(List<BiEntityAction> actions) {
+	public SequenceBiEntityActionType(List<BiEntityAction> actions) {
 		this.actions = actions;
 	}
 
@@ -26,7 +26,7 @@ public class AndBiEntityActionType extends BiEntityActionType implements AndMeta
 
 	@Override
 	public @NotNull ActionConfiguration<?> getConfig() {
-		return BiEntityActionTypes.AND;
+		return BiEntityActionTypes.SEQUENCE;
 	}
 
 	@Override

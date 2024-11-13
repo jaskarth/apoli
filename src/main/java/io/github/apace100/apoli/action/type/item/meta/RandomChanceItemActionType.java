@@ -5,21 +5,21 @@ import io.github.apace100.apoli.action.ItemAction;
 import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
-import io.github.apace100.apoli.action.type.meta.ChanceMetaActionType;
+import io.github.apace100.apoli.action.type.meta.RandomChanceMetaActionType;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class ChanceItemActionType extends ItemActionType implements ChanceMetaActionType<ItemActionContext, ItemAction> {
+public class RandomChanceItemActionType extends ItemActionType implements RandomChanceMetaActionType<ItemActionContext, ItemAction> {
 
 	private final ItemAction successAction;
 	private final Optional<ItemAction> failAction;
 
 	private final float chance;
 
-	public ChanceItemActionType(ItemAction successAction, Optional<ItemAction> failAction, float chance) {
+	public RandomChanceItemActionType(ItemAction successAction, Optional<ItemAction> failAction, float chance) {
 		this.successAction = successAction;
 		this.failAction = failAction;
 		this.chance = chance;
@@ -32,7 +32,7 @@ public class ChanceItemActionType extends ItemActionType implements ChanceMetaAc
 
 	@Override
 	public @NotNull ActionConfiguration<?> getConfig() {
-		return ItemActionTypes.CHANCE;
+		return ItemActionTypes.RANDOM_CHANCE;
 	}
 
 	@Override
