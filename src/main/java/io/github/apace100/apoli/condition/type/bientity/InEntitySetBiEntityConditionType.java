@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.bientity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -32,6 +33,18 @@ public class InEntitySetBiEntityConditionType extends BiEntityConditionType {
     @Override
     public @NotNull ConditionConfiguration<?> getConfig() {
         return BiEntityConditionTypes.IN_ENTITY_SET;
+    }
+
+    @Override
+    public boolean test(BiEntityConditionContext context) {
+
+        Entity actor = context.actor();
+        Entity target = context.target();
+
+        return actor != null
+            && target != null
+            && this.test(actor, target);
+
     }
 
     @Override
