@@ -86,22 +86,24 @@ public class PreventItemPickupPowerType extends PowerType implements Prioritized
 
     public void executeActions(ItemEntity itemEntity, Entity thrower) {
 
-        StackReference itemEntityStackReference = InventoryUtil.createStackReference(itemEntity.getStack());
-        itemAction.ifPresent(action -> action.execute(getHolder().getWorld(), itemEntityStackReference));
+        StackReference stackReference = InventoryUtil.createStackReference(itemEntity.getStack());
+        itemAction.ifPresent(action -> action.execute(getHolder().getWorld(), stackReference));
 
         biEntityActionThrower.ifPresent(action -> action.execute(thrower, getHolder()));
         biEntityActionItem.ifPresent(action -> action.execute(getHolder(), itemEntity));
+
+        itemEntity.setStack(stackReference.get());
 
     }
 
     public static boolean doesPrevent(ItemEntity itemEntity, Entity entity) {
 
-        if (!PowerHolderComponent.KEY.isProvidedBy(entity)) {
+        if (PowerHolderComponent.getOptional(entity).isEmpty()) {
             return false;
         }
 
         ItemStack stack = itemEntity.getStack();
-        Entity throwerEntity = MiscUtil.getEntityByUuid(((ItemEntityAccessor) itemEntity).getThrower(), entity.getServer());
+        Entity throwerEntity = MiscUtil.getEntityByUuid(((ItemEntityAccessor) itemEntity).getThrowerUuid(), entity.getServer());
 
         CallInstance<PreventItemPickupPowerType> pippci = new CallInstance<>();
         pippci.add(entity, PreventItemPickupPowerType.class, p -> p.doesPrevent(stack, throwerEntity));

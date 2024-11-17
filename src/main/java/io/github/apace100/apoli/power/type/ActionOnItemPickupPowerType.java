@@ -7,19 +7,19 @@ import io.github.apace100.apoli.condition.BiEntityCondition;
 import io.github.apace100.apoli.condition.EntityCondition;
 import io.github.apace100.apoli.condition.ItemCondition;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
-import io.github.apace100.apoli.mixin.ItemEntityAccessor;
 import io.github.apace100.apoli.power.PowerConfiguration;
-import io.github.apace100.apoli.util.InventoryUtil;
-import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+//  TODO: Maybe change how the actions are executed? Currently, the item action is executed regardless of whether
+//   inserting the item into an entity's inventory succeeded or not, while the bi-entity action is only executed if
+//   it succeeded. -eggohito
 public class ActionOnItemPickupPowerType extends PowerType implements Prioritized<ActionOnItemPickupPowerType> {
 
     public static final TypedDataObjectFactory<ActionOnItemPickupPowerType> DATA_FACTORY = PowerType.createConditionedDataFactory(
@@ -53,7 +53,7 @@ public class ActionOnItemPickupPowerType extends PowerType implements Prioritize
 
     private final int priority;
 
-    public ActionOnItemPickupPowerType(Optional<BiEntityAction> biEntityAction, Optional<BiEntityCondition> biEntityCondition, Optional<ItemAction> itemAction, Optional<ItemCondition> itemCondition, int priority, Optional<EntityCondition> condition) {
+    public ActionOnItemPickupPowerType(Optional<BiEntityAction> biEntityAction, Optional<ItemAction> itemAction, Optional<BiEntityCondition> biEntityCondition, Optional<ItemCondition> itemCondition, int priority, Optional<EntityCondition> condition) {
         super(condition);
         this.biEntityAction = biEntityAction;
         this.itemAction = itemAction;
@@ -77,26 +77,36 @@ public class ActionOnItemPickupPowerType extends PowerType implements Prioritize
             && biEntityCondition.map(condition -> condition.test(thrower, getHolder())).orElse(true);
     }
 
-    public void executeActions(ItemStack stack, Entity thrower) {
-        itemAction.ifPresent(action -> action.execute(getHolder().getWorld(), InventoryUtil.getStackReferenceFromStack(getHolder(), stack)));
+    public void executeBiEntityAction(Entity thrower) {
         biEntityAction.ifPresent(action -> action.execute(thrower, getHolder()));
     }
 
-    public static void executeActions(ItemEntity itemEntity, Entity entity) {
+    public void executeItemAction(StackReference stackReference) {
+        itemAction.ifPresent(action -> action.execute(getHolder().getWorld(), stackReference));
+    }
 
-        if (!PowerHolderComponent.KEY.isProvidedBy(entity)) {
-            return;
+    public static void executeBiEntityAction(CallInstance<ActionOnItemPickupPowerType> callInstance, Entity throwerEntity) {
+
+        for (int i = callInstance.getMaxPriority(); i >= callInstance.getMinPriority(); i--) {
+            callInstance.forEach(i, powerType -> powerType.executeBiEntityAction(throwerEntity));
         }
 
-        ItemStack stack = itemEntity.getStack();
-        Entity throwerEntity = MiscUtil.getEntityByUuid(((ItemEntityAccessor) itemEntity).getThrower(), entity.getServer());
+    }
 
-        CallInstance<ActionOnItemPickupPowerType> aoippci = new CallInstance<>();
-        aoippci.add(entity, ActionOnItemPickupPowerType.class, p -> p.doesApply(stack, throwerEntity));
+    public static CallInstance<ActionOnItemPickupPowerType> executeItemAction(Entity throwerEntity, StackReference stackReference, Entity entity) {
 
-        for (int i = aoippci.getMaxPriority(); i >= aoippci.getMinPriority(); i--) {
-            aoippci.forEach(i, p -> p.executeActions(stack, throwerEntity));
+        if (PowerHolderComponent.getOptional(entity).isEmpty()) {
+            return new CallInstance<>();
         }
+
+        CallInstance<ActionOnItemPickupPowerType> callInstance = new CallInstance<>();
+        callInstance.add(entity, ActionOnItemPickupPowerType.class, powerType -> powerType.doesApply(stackReference.get(), throwerEntity));
+
+        for (int i = callInstance.getMaxPriority(); i >= callInstance.getMinPriority(); i--) {
+            callInstance.forEach(i, powerType -> powerType.executeItemAction(stackReference));
+        }
+
+        return callInstance;
 
     }
 

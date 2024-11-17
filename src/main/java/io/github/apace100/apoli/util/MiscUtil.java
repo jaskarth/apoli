@@ -293,10 +293,29 @@ public final class MiscUtil {
         };
     }
 
+    public static OptionalInt getSpaceInInventory(PlayerEntity player, ItemStack stack) {
+        return getSpaceInInventory(player.getInventory(), stack);
+    }
+
+    public static OptionalInt getSpaceInInventory(PlayerInventory playerInventory, ItemStack stack) {
+
+        int slot = playerInventory.getOccupiedSlotWithRoomForStack(stack);
+        if (slot == -1) {
+            slot = playerInventory.getEmptySlot();
+        }
+
+        return slot == -1
+            ? OptionalInt.empty()
+            : OptionalInt.of(slot);
+
+    }
+
     public static boolean hasSpaceInInventory(PlayerEntity player, ItemStack stack) {
-        PlayerInventory inventory = player.getInventory();
-        return inventory.getOccupiedSlotWithRoomForStack(stack) != -1
-            || inventory.getEmptySlot() != -1;
+        return getSpaceInInventory(player, stack).isPresent();
+    }
+
+    public static boolean hasSpaceInInventory(PlayerInventory playerInventory, ItemStack stack) {
+        return getSpaceInInventory(playerInventory, stack).isPresent();
     }
 
     public static <E, C extends Collection<E>> BinaryOperator<C> mergeCollections() {
