@@ -231,7 +231,7 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
 
     public void dropItemsOnDeath() {
 
-        if (!(getHolder() instanceof PlayerEntity playerEntity)) {
+        if (!(getHolder() instanceof PlayerEntity playerEntity) || playerEntity.getWorld().isClient()) {
             return;
         }
 
@@ -253,7 +253,7 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
 
     public void dropItemsOnLost() {
 
-        if (!(getHolder() instanceof PlayerEntity playerEntity)) {
+        if (!(getHolder() instanceof PlayerEntity playerEntity) || playerEntity.getWorld().isClient()) {
             return;
         }
 
