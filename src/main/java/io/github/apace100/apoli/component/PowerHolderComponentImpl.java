@@ -7,6 +7,7 @@ import io.github.apace100.apoli.power.PowerConfiguration;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.PowerType;
 import io.github.apace100.apoli.util.GainedPowerCriterion;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     private final ConcurrentHashMap<Power, PowerType> powers = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Power, List<Identifier>> powerSources = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Power, Set<Identifier>> powerSources = new ConcurrentHashMap<>();
 
     private final LivingEntity owner;
 
@@ -107,8 +108,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     protected boolean removePower(Power power, Identifier source, Consumer<Power> adder) {
 
-        List<Identifier> sources = powerSources.getOrDefault(power, new ArrayList<>());
-
+        Set<Identifier> sources = powerSources.getOrDefault(power, new ObjectOpenHashSet<>());
         if (!sources.remove(source)) {
             return false;
         }
@@ -173,19 +173,16 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     protected boolean addPower(Power power, Identifier source, BiConsumer<Power, PowerType> adder) {
 
-        List<Identifier> sources = powerSources.computeIfAbsent(power, pt -> new LinkedList<>());
-
-        if (sources.contains(source)) {
+        Set<Identifier> sources = powerSources.computeIfAbsent(power, pt -> new ObjectOpenHashSet<>());
+        if (!sources.add(source)) {
             return false;
         }
 
         PowerType powerType = power.getPowerType().init(owner, power);
-        sources.add(source);
-
-        powerSources.put(power, sources);
-        powers.put(power, powerType);
-
         adder.accept(power, powerType);
+
+        powers.put(power, powerType);
+        powerSources.put(power, sources);
 
         if (power instanceof MultiplePower multiplePower) {
             multiplePower.getSubPowers().forEach(subPower -> this.addPower(subPower, source, adder));
@@ -224,6 +221,8 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
     public void readFromNbt(@NotNull NbtCompound compoundTag, RegistryWrapper.WrapperLookup lookup) {
 
         powers.clear();
+        powerSources.clear();
+
         NbtList powersTag = compoundTag.getList("powers", NbtElement.COMPOUND_TYPE);
 
         //  Migrate compound NBTs from the old 'Powers' NBT path to the new 'powers' NBT path
@@ -237,8 +236,8 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
             try {
 
-                Power.Entry powerEntry = Power.Entry.CODEC.read(lookup.getOps(NbtOps.INSTANCE), powerTag).getOrThrow();
-                PowerReference powerReference = powerEntry.powerReference();
+                Power.DataEntry powerDataEntry = Power.DataEntry.CODEC.read(lookup.getOps(NbtOps.INSTANCE), powerTag).getOrThrow();
+                PowerReference powerReference = powerDataEntry.powerReference();
 
                 try {
 
@@ -246,7 +245,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
                     PowerType powerType = power.getPowerType().init(owner, power);
 
                     try {
-                        powerType.fromTag(powerEntry.nbtData());
+                        powerType.fromTag(powerDataEntry.nbtData());
                     }
 
                     catch (ClassCastException cce) {
@@ -255,8 +254,8 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
                         Apoli.LOGGER.warn("Data type of power \"{}\" has changed, skipping data for that power on entity {} (UUID: {})", powerReference.id(), owner.getName().getString(), owner.getUuidAsString());
                     }
 
-                    powerSources.put(power, powerEntry.sources());
                     powers.put(power, powerType);
+                    powerSources.put(power, powerDataEntry.sources());
 
                 }
 
@@ -283,7 +282,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
             PowerConfiguration<?> typeConfig = power.getPowerType().getConfig();
             PowerReference powerReference = PowerReference.of(power.getId());
 
-            Power.Entry.CODEC.codec().encodeStart(lookup.getOps(NbtOps.INSTANCE), new Power.Entry(typeConfig, powerReference, powerType.toTag(), powerSources.get(power)))
+            Power.DataEntry.CODEC.codec().encodeStart(lookup.getOps(NbtOps.INSTANCE), new Power.DataEntry(typeConfig, powerReference, powerType.toTag(), powerSources.get(power)))
                 .mapError(err -> "Error encoding power \"" + power.getId() + "\" to NBT of entity " + owner.getName().getString() + " (UUID: " + owner.getUuidAsString() + ") (skipping): " + err)
                 .resultOrPartial(Apoli.LOGGER::warn)
                 .ifPresent(powersTag::add);

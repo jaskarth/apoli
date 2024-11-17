@@ -239,6 +239,42 @@ public final class MiscUtil {
 
     }
 
+    public static Function<SerializableData.Instance, DataResult<SerializableData.Instance>> validateAllFieldsPresent(String... fields) {
+        return data -> {
+
+            if (allPresent(data, fields)) {
+                return DataResult.success(data);
+            }
+
+            else {
+
+                StringBuilder message = new StringBuilder(fields.length > 1 ? "All of " : "The ");
+                String separator = "";
+
+                for (int i = 0; i < fields.length; i++) {
+
+                    String field = fields[i];
+                    message
+                        .append(separator)
+                        .append("'").append(field).append("'");
+
+                    separator = i == fields.length - 2
+                        ? ", and "
+                        : ", ";
+
+                }
+
+                message
+                    .append(" field").append(fields.length > 1 ? "s" : "")
+                    .append(" must be defined!");
+
+                return DataResult.error(message::toString);
+
+            }
+
+        };
+    }
+
     public static boolean anyPresent(SerializableData.Instance data, String... fieldNames) {
 
         Set<String> fieldsToEvaluate = fieldNames.length > 0

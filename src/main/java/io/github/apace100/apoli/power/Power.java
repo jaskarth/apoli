@@ -7,14 +7,16 @@ import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.power.type.PowerType;
 import io.github.apace100.apoli.power.type.PowerTypes;
 import io.github.apace100.apoli.power.type.meta.MultiplePowerType;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.apoli.util.TextUtil;
-import io.github.apace100.calio.Calio;
 import io.github.apace100.calio.data.CompoundSerializableDataType;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.apace100.calio.util.Validatable;
 import io.netty.handler.codec.DecoderException;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -27,11 +29,9 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class Power implements Validatable {
@@ -283,11 +283,11 @@ public class Power implements Validatable {
         return description.copy();
     }
 
-    public record Entry(PowerConfiguration<?> typeConfig, PowerReference powerReference, NbtElement nbtData, List<Identifier> sources) {
+    public record DataEntry(PowerConfiguration<?> typeConfig, PowerReference powerReference, NbtElement nbtData, Set<Identifier> sources) {
 
-        private static final SerializableDataType<List<Identifier>> MUTABLE_IDENTIFIERS = SerializableDataTypes.IDENTIFIER.list(1, Integer.MAX_VALUE).xmap(LinkedList::new, Function.identity());
+        private static final SerializableDataType<Set<Identifier>> MUTABLE_IDENTIFIERS = SerializableDataTypes.IDENTIFIER.list(1, Integer.MAX_VALUE).xmap(ObjectOpenHashSet::new, ObjectArrayList::new);
 
-        public static final SerializableDataType<Entry> CODEC = SerializableDataType.compound(
+        public static final SerializableDataType<DataEntry> CODEC = SerializableDataType.compound(
             new SerializableData()
                 .add("Factory", PowerTypes.DATA_TYPE, null)
                 .addFunctionedDefault("type", PowerTypes.DATA_TYPE, data -> data.get("Factory"))
@@ -297,36 +297,18 @@ public class Power implements Validatable {
                 .addFunctionedDefault("data", SerializableDataTypes.NBT_ELEMENT, data -> data.get("Data"))
                 .add("Sources", MUTABLE_IDENTIFIERS, null)
                 .addFunctionedDefault("sources", MUTABLE_IDENTIFIERS, data -> data.get("Sources"))
-                .validate(data -> {
-
-                    if (!data.isPresent("type")) {
-                        return Calio.createMissingRequiredFieldError("type");
-                    }
-
-                    else if (!data.isPresent("id")) {
-                        return Calio.createMissingRequiredFieldError("id");
-                    }
-
-                    else if (!data.isPresent("sources")) {
-                        return Calio.createMissingRequiredFieldError("sources");
-                    }
-
-                    else {
-                        return DataResult.success(data);
-                    }
-
-                }),
-            data -> new Entry(
+                .validate(MiscUtil.validateAllFieldsPresent("type", "id", "data", "sources")),
+            data -> new DataEntry(
                 data.get("type"),
                 data.get("id"),
                 data.get("data"),
                 data.get("sources")
             ),
-            (entry, serializableData) -> serializableData.instance()
-                .set("type", entry.typeConfig())
-                .set("id", entry.powerReference())
-                .set("data", entry.nbtData())
-                .set("sources", entry.sources())
+            (dataEntry, serializableData) -> serializableData.instance()
+                .set("type", dataEntry.typeConfig())
+                .set("id", dataEntry.powerReference())
+                .set("data", dataEntry.nbtData())
+                .set("sources", dataEntry.sources())
         );
 
     }

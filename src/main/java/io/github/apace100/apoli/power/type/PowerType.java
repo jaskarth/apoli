@@ -51,7 +51,6 @@ public abstract class PowerType implements Validatable {
     @NotNull
     public abstract PowerConfiguration<?> getConfig();
 
-    @SuppressWarnings("unchecked")
 	@ApiStatus.Internal
     public final PowerType init(@NotNull final LivingEntity holder, @NotNull final Power power) {
 
@@ -65,7 +64,8 @@ public abstract class PowerType implements Validatable {
 
         else {
 
-            PowerConfiguration<PowerType> config = (PowerConfiguration<PowerType>) this.getConfig();
+			//noinspection unchecked
+			PowerConfiguration<PowerType> config = (PowerConfiguration<PowerType>) this.getConfig();
             SerializableData.Instance selfData = config.dataFactory().toData(this);
 
             PowerType copy = config.dataFactory().fromData(selfData);
