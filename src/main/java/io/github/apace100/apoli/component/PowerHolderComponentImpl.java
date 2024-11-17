@@ -179,9 +179,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
             return false;
         }
 
-        PowerType powerType = power.getPowerType();
-        powerType.init(owner, power);
-
+        PowerType powerType = power.getPowerType().init(owner, power);
         sources.add(source);
 
         powerSources.put(power, sources);
@@ -245,9 +243,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
                 try {
 
                     Power power = powerReference.getStrictReference();
-                    PowerType powerType = power.getPowerType();
-
-                    powerType.init(owner, power);
+                    PowerType powerType = power.getPowerType().init(owner, power);
 
                     try {
                         powerType.fromTag(powerEntry.nbtData());

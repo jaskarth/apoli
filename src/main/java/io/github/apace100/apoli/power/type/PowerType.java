@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+//  TODO: Separate the holder entity reference from power types -eggohito
 public abstract class PowerType implements Validatable {
 
     protected final Optional<EntityCondition> condition;
@@ -50,18 +51,34 @@ public abstract class PowerType implements Validatable {
     @NotNull
     public abstract PowerConfiguration<?> getConfig();
 
-    @ApiStatus.Internal
-    public final void init(@NotNull final LivingEntity holder, @NotNull final Power power) {
+    @SuppressWarnings("unchecked")
+	@ApiStatus.Internal
+    public final PowerType init(@NotNull final LivingEntity holder, @NotNull final Power power) {
 
-        if (power.getPowerType() != this) {
-            throw new IllegalArgumentException("Cannot initialize power type with a mismatched power!");
+        if (initialized) {
+            return this;
         }
 
-        this.holder = holder;
-        this.power = power;
+        else if (power.getPowerType() != this) {
+            throw new IllegalArgumentException("Cannot initialize power type with a mismatch power!");
+        }
 
-        this.initialized = true;
-        onInit();
+        else {
+
+            PowerConfiguration<PowerType> config = (PowerConfiguration<PowerType>) this.getConfig();
+            SerializableData.Instance selfData = config.dataFactory().toData(this);
+
+            PowerType copy = config.dataFactory().fromData(selfData);
+
+            copy.holder = holder;
+            copy.power = power;
+
+            copy.initialized = true;
+            copy.onInit();
+
+            return copy;
+
+        }
 
     }
 

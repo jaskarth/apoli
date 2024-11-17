@@ -38,6 +38,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+//  TODO: Maybe use data attachments instead? -eggohito
 public interface PowerHolderComponent extends AutoSyncedComponent, CommonTickingComponent {
 
     /**
