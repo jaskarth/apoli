@@ -1,37 +1,24 @@
 package io.github.apace100.apoli.data.container;
 
-import com.google.common.base.Preconditions;
 import io.github.apace100.apoli.util.TextAlignment;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandlerFactory;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
-import java.util.Optional;
+public interface ContainerType {
 
-public record ContainerType(TextAlignment titleAlignment, int columns, int rows, Optional<Factory> factory) {
+	TextAlignment titleAlignment();
 
-	public ContainerType {
-		Preconditions.checkArgument(columns > 0, "Container type must have at least 1 column!");
-		Preconditions.checkArgument(rows > 0, "Container type must have at least 1 row!");
-	}
+	ScreenHandlerFactory create(Inventory inventory);
 
-	public ScreenHandlerFactory create(Inventory inventory) {
-		return factory()
-			.map(factory -> factory.create(inventory, columns(), rows()))
-			.orElseThrow(() -> new IllegalStateException("Dynamic screen handler for dynamic container types aren't implemented yet!"));
-	}
-
-	public int size() {
+	default int size() {
 		return columns() * rows();
 	}
 
-	public static ContainerType preset(int columns, int rows, @NotNull Factory factory) {
-		return new ContainerType(TextAlignment.NONE, columns, rows, Optional.of(factory));
-	}
+	@Range(from = 1, to = Integer.MAX_VALUE)
+	int columns();
 
-	@FunctionalInterface
-	public interface Factory {
-		ScreenHandlerFactory create(Inventory inventory, int columns, int rows);
-	}
+	@Range(from = 1, to = Integer.MAX_VALUE)
+	int rows();
 
 }

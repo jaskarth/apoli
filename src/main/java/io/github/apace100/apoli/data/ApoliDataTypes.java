@@ -11,6 +11,7 @@ import io.github.apace100.apoli.condition.AbstractCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.type.AbstractConditionType;
 import io.github.apace100.apoli.data.container.ContainerType;
+import io.github.apace100.apoli.data.container.DynamicContainerType;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.Active;
 import io.github.apace100.apoli.registry.ApoliRegistries;
@@ -251,7 +252,82 @@ public class ApoliDataTypes {
 
 	public static final SerializableDataType<Float> NORMALIZED_FLOAT = SerializableDataType.boundNumber(SerializableDataTypes.FLOAT, 0F, 1F);
 
-	public static final SerializableDataType<ContainerType> CONTAINER_TYPE = SerializableDataType.registry(ApoliRegistries.CONTAINER_TYPE, Apoli.MODID, true);
+	private static final SerializableDataType<ContainerType> CONTAINER_TYPE_FROM_REGISTRY = SerializableDataType.registry(ApoliRegistries.CONTAINER_TYPE, Apoli.MODID, true);
+
+	private static final SerializableDataType<DynamicContainerType> DYNAMIC_CONTAINER_TYPE = DynamicContainerType.DATA_FACTORY.getDataType();
+
+	public static final SerializableDataType<ContainerType> CONTAINER_TYPE = new SerializableDataType<>(
+		new Codec<>() {
+
+			@Override
+			public <T> DataResult<com.mojang.datafixers.util.Pair<ContainerType, T>> decode(DynamicOps<T> ops, T input) {
+
+				DataResult<String> stringInput = ops.getStringValue(input);
+				var stringInputError = stringInput.error();
+
+				if (stringInput.isSuccess()) {
+					return CONTAINER_TYPE_FROM_REGISTRY.codec().decode(ops, input);
+				}
+
+				DataResult<MapLike<T>> mapInput = ops.getMap(input);
+				var mapInputError = mapInput.error();
+
+				if (mapInput.isSuccess()) {
+					return DYNAMIC_CONTAINER_TYPE.codec().decode(ops, input)
+						.map(containerTypeAndInput -> containerTypeAndInput
+							.mapFirst(Function.identity()));
+				}
+
+				return DataResult.error(() -> "Couldn't decode as a container type (" + stringInputError.orElseThrow() + ") or as a dynamic container type (" + mapInputError.orElseThrow() + ")!");
+
+			}
+
+			@Override
+			public <T> DataResult<T> encode(ContainerType input, DynamicOps<T> ops, T prefix) {
+
+				if (input instanceof DynamicContainerType dynamicContainerType) {
+					return DYNAMIC_CONTAINER_TYPE.write(ops, dynamicContainerType);
+				}
+
+				else {
+					return CONTAINER_TYPE_FROM_REGISTRY.write(ops, input);
+				}
+
+			}
+
+		},
+		new PacketCodec<>() {
+
+			@Override
+			public ContainerType decode(RegistryByteBuf buf) {
+
+				if (buf.readBoolean()) {
+					return DYNAMIC_CONTAINER_TYPE.receive(buf);
+				}
+
+				else {
+					return CONTAINER_TYPE_FROM_REGISTRY.receive(buf);
+				}
+
+			}
+
+			@Override
+			public void encode(RegistryByteBuf buf, ContainerType value) {
+
+				if (value instanceof DynamicContainerType dynamicContainerType) {
+					buf.writeBoolean(true);
+					DYNAMIC_CONTAINER_TYPE.send(buf, dynamicContainerType);
+				}
+
+				else {
+					buf.writeBoolean(false);
+					CONTAINER_TYPE_FROM_REGISTRY.send(buf, value);
+				}
+
+			}
+
+		}
+	);
 
 	@SuppressWarnings("unchecked")
 	public static <T extends TypeConditionContext, C extends AbstractCondition<T, CT>, CT extends AbstractConditionType<T, C>> CompoundSerializableDataType<C> condition(String typeField, SerializableDataType<ConditionConfiguration<CT>> registryDataType, BiFunction<CT, Boolean, C> constructor) {
