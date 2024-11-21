@@ -99,7 +99,6 @@
 		"ClientPlayerInteractionManagerMixin",
 		"ClientWorldMixin",
 		"ConfigScreenProviderMixin",
-		"ElytraFeatureRendererMixin",
 		"EntityMixinClient",
 		"EntityParticleMixin",
 		"EntityRenderDispatcherMixin",
@@ -118,7 +117,8 @@
 		"SpriteAtlasTextureAccessor",
 		"TextureManagerAccessor",
 		"ToastManagerEntryMixin",
-		"WorldRendererMixin"
+		"WorldRendererMixin",
+		"power.type.ElytraFlightPowerTypeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

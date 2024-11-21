@@ -44,7 +44,7 @@ public class ElytraFlightPowerType extends PowerType {
 
     @Override
     public boolean isActive() {
-        return getTextureLocation().isPresent() && super.isActive();
+        return super.isActive();
     }
 
     public Optional<Identifier> getTextureLocation() {
