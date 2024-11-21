@@ -24,13 +24,18 @@ public abstract class ActiveCooldownPowerType extends CooldownPowerType implemen
     public abstract @NotNull PowerConfiguration<?> getConfig();
 
     @Override
+    public Key getKey() {
+        return key;
+    }
+
+    @Override
     public void onUse() {
         use();
     }
 
     @Override
-    public Key getKey() {
-        return key;
+    public boolean canTrigger() {
+        return super.isActive();
     }
 
 }

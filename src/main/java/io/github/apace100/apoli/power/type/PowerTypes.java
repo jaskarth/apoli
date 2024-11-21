@@ -27,12 +27,12 @@ public class PowerTypes {
     public static final PowerConfiguration<ActionOnHitPowerType> ACTION_ON_HIT = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_hit"), ActionOnHitPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnItemPickupPowerType> ACTION_ON_ITEM_PICKUP = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_item_pickup"), ActionOnItemPickupPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnItemUsePowerType> ACTION_ON_ITEM_USE = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_item_use"), ActionOnItemUsePowerType.DATA_FACTORY));
+    public static final PowerConfiguration<ActionOnKeyPressPowerType> ACTION_ON_KEY_PRESS = register(PowerConfiguration.dataFactory(Apoli.identifier("active_self"), ActionOnKeyPressPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnLandPowerType> ACTION_ON_LAND = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_land"), ActionOnLandPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnWakeUpPowerType> ACTION_ON_WAKE_UP = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_wake_up"), ActionOnWakeUpPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOverTimePowerType> ACTION_OVER_TIME = register(PowerConfiguration.dataFactory(Apoli.identifier("action_over_time"), ActionOverTimePowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionWhenDamageTakenPowerType> ACTION_WHEN_DAMAGE_TAKEN = register(PowerConfiguration.dataFactory(Apoli.identifier("action_when_damage_taken"), ActionWhenDamageTakenPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionWhenHitPowerType> ACTION_WHEN_HIT = register(PowerConfiguration.dataFactory(Apoli.identifier("action_when_hit"), ActionWhenHitPowerType.DATA_FACTORY));
-    public static final PowerConfiguration<ActiveSelfPowerType> ACTIVE_SELF = register(PowerConfiguration.dataFactory(Apoli.identifier("active_self"), ActiveSelfPowerType.DATA_FACTORY));
     public static final PowerConfiguration<AttackerActionWhenHitPowerType> ATTACKER_ACTION_WHEN_HIT = register(PowerConfiguration.dataFactory(Apoli.identifier("attacker_action_when_hit"), AttackerActionWhenHitPowerType.DATA_FACTORY));
     public static final PowerConfiguration<AttributeModifyTransferPowerType> ATTRIBUTE_MODIFY_TRANSFER = register(PowerConfiguration.dataFactory(Apoli.identifier("attribute_modify_transfer"), AttributeModifyTransferPowerType.DATA_FACTORY));
     public static final PowerConfiguration<AttributePowerType> ATTRIBUTE = register(PowerConfiguration.dataFactory(Apoli.identifier("attribute"), AttributePowerType.DATA_FACTORY));
@@ -136,7 +136,8 @@ public class PowerTypes {
 
     public static void register() {
         ALIASES.addPathAlias("simple", DUMMY.id().getPath());
-        ALIASES.addPathAlias("self_action_when_hit", "action_when_damage_taken");
+        ALIASES.addPathAlias("self_action_when_hit", ACTION_WHEN_DAMAGE_TAKEN.id().getPath());
+        ALIASES.addPathAlias("active_self", ACTION_ON_KEY_PRESS.id().getPath());
     }
 
     @SuppressWarnings("unchecked")

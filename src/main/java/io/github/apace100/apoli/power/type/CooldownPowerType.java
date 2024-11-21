@@ -7,8 +7,10 @@ import io.github.apace100.apoli.power.PowerConfiguration;
 import io.github.apace100.apoli.util.HudRender;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtLong;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -50,7 +52,7 @@ public class CooldownPowerType extends PowerType implements HudRendered {
 
     @Override
     public boolean isActive() {
-        return canUse();
+        return canUse() && super.isActive();
     }
 
     @Override
@@ -80,17 +82,25 @@ public class CooldownPowerType extends PowerType implements HudRendered {
 
     public boolean canUse() {
         return isInitialized()
-            && getHolder().getWorld().getTime() >= lastUseTime + cooldown
-            && super.isActive();
+            && getHolder().getWorld().getTime() >= lastUseTime + cooldown;
     }
 
     public void use() {
-        this.lastUseTime = getHolder().getWorld().getTime();
-        PowerHolderComponent.syncPower(getHolder(), getPower());
+
+        LivingEntity holder = getHolder();
+        World world = holder.getWorld();
+
+        if (world.isClient()) {
+            return;
+        }
+
+        this.lastUseTime = world.getTime();
+        PowerHolderComponent.syncPower(holder, getPower());
+
     }
 
     public float getProgress() {
-        float time = getHolder().getEntityWorld().getTime() - lastUseTime;
+        float time = getHolder().getWorld().getTime() - lastUseTime;
         return Math.min(1F, Math.max(time / (float) cooldown, 0F));
     }
 
@@ -103,14 +113,8 @@ public class CooldownPowerType extends PowerType implements HudRendered {
     }
 
     public void modify(int changeInTicks) {
-
-        this.lastUseTime += changeInTicks;
         long currentTime = getHolder().getWorld().getTime();
-
-        if (this.lastUseTime > currentTime) {
-            lastUseTime = currentTime;
-        }
-
+        this.lastUseTime = Math.min(lastUseTime + changeInTicks, currentTime);
     }
 
     public void setCooldown(int cooldownInTicks) {

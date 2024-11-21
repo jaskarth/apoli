@@ -16,6 +16,10 @@ public interface Active {
 
     void onUse();
 
+    default boolean canTrigger() {
+        return true;
+    }
+
     @Environment(EnvType.CLIENT)
     static void integrateCallback(MinecraftClient client) {
 
@@ -29,11 +33,11 @@ public interface Active {
         Map<String, Boolean> currentKeybindingStates = new HashMap<>();
         for (PowerType powerType : powerTypes) {
 
-            if (!(powerType instanceof Active activePower) || !powerType.isActive()) {
+            if (!(powerType instanceof Active activePowerType) || !activePowerType.canTrigger()) {
                 continue;
             }
 
-            Key key = activePower.getKey();
+            Key key = activePowerType.getKey();
             KeyBinding keyBinding = KeyBindingAccessor.getKeysById().get(key.key);
 
             if (keyBinding == null) {
