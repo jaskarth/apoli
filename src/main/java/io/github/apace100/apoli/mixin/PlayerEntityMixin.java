@@ -375,7 +375,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Nameable
 
     @WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;updatePose()V"))
     private boolean apoli$preventUpdatingPose(PlayerEntity player) {
-        return this.apoli$getModifiedEntityPose() == null;
+        return this.apoli$getModifiedEntityPose().isEmpty();
     }
 
 }
