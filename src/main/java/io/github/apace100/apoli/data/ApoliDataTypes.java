@@ -42,6 +42,7 @@ import net.minecraft.text.TextCodecs;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.explosion.Explosion;
 
@@ -327,6 +328,22 @@ public class ApoliDataTypes {
 			}
 
 		}
+	);
+
+	public static final SerializableDataType<Vec3i> VECTOR_3_INT = SerializableDataType.compound(
+		new SerializableData()
+			.add("x", SerializableDataTypes.INT, 0)
+			.add("y", SerializableDataTypes.INT, 0)
+			.add("z", SerializableDataTypes.INT, 0),
+		data -> new Vec3i(
+			data.get("x"),
+			data.get("y"),
+			data.get("z")
+		),
+		(vec3i, serializableData) -> serializableData.instance()
+			.set("x", vec3i.getX())
+			.set("y", vec3i.getY())
+			.set("z", vec3i.getZ())
 	);
 
 	@SuppressWarnings("unchecked")
