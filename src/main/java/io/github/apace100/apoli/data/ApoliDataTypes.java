@@ -45,6 +45,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.explosion.Explosion;
+import org.joml.Vector3f;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -344,6 +345,22 @@ public class ApoliDataTypes {
 			.set("x", vec3i.getX())
 			.set("y", vec3i.getY())
 			.set("z", vec3i.getZ())
+	);
+
+	public static final SerializableDataType<Vector3f> VECTOR_3_FLOAT = SerializableDataType.compound(
+		new SerializableData()
+			.add("x", SerializableDataTypes.FLOAT, 0F)
+			.add("y", SerializableDataTypes.FLOAT, 0F)
+			.add("z", SerializableDataTypes.FLOAT, 0F),
+		data -> new Vector3f(
+			data.get("x"),
+			data.get("y"),
+			data.get("z")
+		),
+		(vector3f, serializableData) -> serializableData.instance()
+			.set("x", vector3f.x())
+			.set("y", vector3f.y())
+			.set("z", vector3f.z())
 	);
 
 	@SuppressWarnings("unchecked")
