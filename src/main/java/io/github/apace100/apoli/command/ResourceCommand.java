@@ -62,7 +62,7 @@ public class ResourceCommand {
             Power power = PowerArgumentType.getResource(context, "resource");
 
             ServerCommandSource commandSource = context.getSource();
-            PowerType powerType = power.getPowerTypeFrom(target);
+            PowerType powerType = PowerUtil.getOptionalPowerType(power, target).orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), power.getId().toString()));
 
             if (powerType != null) {
                 commandSource.sendFeedback(() -> Text.translatable("commands.execute.conditional.pass"), false);
@@ -95,7 +95,7 @@ public class ResourceCommand {
             Power power = PowerArgumentType.getResource(context, "resource");
 
             ServerCommandSource commandSource = context.getSource();
-            PowerType powerType = power.getPowerTypeFrom(target);
+            PowerType powerType = PowerUtil.getOptionalPowerType(power, target).orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), power.getId().toString()));
 
             if (powerType != null) {
 
@@ -135,9 +135,7 @@ public class ResourceCommand {
             int newValue;
 
             ServerCommandSource commandSource = context.getSource();
-            PowerType powerType = Optional
-                .ofNullable(power.getPowerTypeFrom(target))
-                .orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), power.getId().toString()));
+            PowerType powerType = PowerUtil.getOptionalPowerType(power, target).orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), power.getId().toString()));
 
             if (PowerUtil.setResourceValue(powerType, value)) {
                 PowerHolderComponent.syncPower(target, power);
@@ -172,9 +170,7 @@ public class ResourceCommand {
             int newValue;
             
             ServerCommandSource commandSource = context.getSource();
-            PowerType powerType = Optional
-                .ofNullable(resource.getPowerTypeFrom(target))
-                .orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), resource.getId().toString()));
+            PowerType powerType = PowerUtil.getOptionalPowerType(resource, target).orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), resource.getId().toString()));
             
             if (PowerUtil.changeResourceValue(powerType, value)) {
                 PowerHolderComponent.syncPower(target, resource);
@@ -213,9 +209,7 @@ public class ResourceCommand {
             ScoreboardObjective objective = ScoreboardObjectiveArgumentType.getObjective(context, "objective");
 
             ServerCommandSource commandSource = context.getSource();
-            PowerType powerType = Optional
-                .ofNullable(resource.getPowerTypeFrom(target))
-                .orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), resource.getId().toString()));
+            PowerType powerType = PowerUtil.getOptionalPowerType(resource, target).orElseThrow(() -> PowerArgumentType.POWER_NOT_GRANTED.create(target.getName(), resource.getId().toString()));
 
             ScoreAccess scoreAccess = commandSource.getServer().getScoreboard().getOrCreateScore(source, objective);
 

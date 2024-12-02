@@ -195,6 +195,7 @@ public class Power implements Validatable {
         this.description = TextUtil.forceTranslatable(baseTranslationKey + ".description", description);
 
         this.hidden = hidden;
+        this.powerType.setPower(this);
 
     }
 
@@ -240,13 +241,6 @@ public class Power implements Validatable {
     @NotNull
     public PowerType getPowerType() {
         return powerType;
-    }
-
-    @Nullable
-    public PowerType getPowerTypeFrom(Entity entity) {
-        return PowerHolderComponent.getOptional(entity)
-            .map(powerComponent -> powerComponent.getPowerType(this))
-            .orElse(null);
     }
 
     public PowerReference asReference() {

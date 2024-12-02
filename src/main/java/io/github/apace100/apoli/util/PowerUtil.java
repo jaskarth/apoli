@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.util;
 
 import com.mojang.serialization.DataResult;
+import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.SubPower;
 import io.github.apace100.apoli.power.type.CooldownPowerType;
@@ -8,10 +9,12 @@ import io.github.apace100.apoli.power.type.PowerType;
 import io.github.apace100.apoli.power.type.VariableIntPowerType;
 import io.github.apace100.apoli.util.modifier.Modifier;
 import io.github.apace100.apoli.util.modifier.ModifierUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class PowerUtil {
 
@@ -133,6 +136,15 @@ public class PowerUtil {
 
 		return oldValue != newValue;
 
+	}
+
+	@Nullable
+	public static PowerType getNullablePowerType(Power power, Entity holder) {
+		return getOptionalPowerType(power, holder).orElse(null);
+	}
+
+	public static Optional<PowerType> getOptionalPowerType(Power power, Entity holder) {
+		return PowerHolderComponent.getOptional(holder).map(powerComponent -> powerComponent.getPowerType(power));
 	}
 
 }

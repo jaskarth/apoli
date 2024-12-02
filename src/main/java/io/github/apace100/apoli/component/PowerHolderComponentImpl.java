@@ -1,12 +1,14 @@
 package io.github.apace100.apoli.component;
 
 import io.github.apace100.apoli.Apoli;
+import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.MultiplePower;
 import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerConfiguration;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.PowerType;
 import io.github.apace100.apoli.util.GainedPowerCriterion;
+import io.github.apace100.calio.data.SerializableData;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -178,7 +180,12 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
             return false;
         }
 
-        PowerType powerType = power.getPowerType().init(owner, power);
+        PowerType powerType = shallowCopy(power.getPowerType());
+
+        powerType.setPower(power);
+        powerType.setHolder(owner);
+
+        powerType.onInit();
         adder.accept(power, powerType);
 
         powers.put(power, powerType);
@@ -241,8 +248,13 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
                 try {
 
-                    Power power = powerReference.getStrictReference();
-                    PowerType powerType = power.getPowerType().init(owner, power);
+                    Power power = powerReference.getPower();
+                    PowerType powerType = shallowCopy(power.getPowerType());
+
+                    powerType.setPower(power);
+                    powerType.setHolder(owner);
+
+                    powerType.onInit();
 
                     try {
                         powerType.fromTag(powerDataEntry.nbtData());
@@ -331,6 +343,17 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
         }
         str.append("]");
         return str.toString();
+    }
+
+    private static PowerType shallowCopy(PowerType powerType) {
+
+		//noinspection unchecked
+		PowerConfiguration<PowerType> config = (PowerConfiguration<PowerType>) powerType.getConfig();
+        TypedDataObjectFactory<PowerType> dataFactory = config.dataFactory();
+
+        SerializableData.Instance data = dataFactory.toData(powerType);
+        return dataFactory.fromData(data);
+
     }
 
 }

@@ -50,7 +50,7 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
     boolean removePower(Power power, Identifier source);
 
     default boolean removePower(PowerReference powerReference, Identifier source) {
-        return powerReference.getResultReference()
+        return powerReference.getResultPower()
             .mapError(err -> "Couldn't revoke non-existing power with ID \"" + powerReference.id() + "\"!")
             .resultOrPartial(Apoli.LOGGER::warn)
             .map(power -> removePower(power, source))
@@ -64,7 +64,7 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
     boolean addPower(Power power, Identifier source);
 
     default boolean addPower(PowerReference powerReference, Identifier source) {
-        return powerReference.getResultReference()
+        return powerReference.getResultPower()
             .mapError(error -> "Couldn't grant non-existing power with ID \"" + powerReference.id() + "\"!")
             .resultOrPartial(Apoli.LOGGER::warn)
             .map(power -> addPower(power, source))
@@ -74,7 +74,7 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
     boolean hasPower(Power power);
 
     default boolean hasPower(PowerReference powerReference) {
-        return powerReference.getOptionalReference()
+        return powerReference.getOptionalPower()
             .map(this::hasPower)
             .orElse(false);
     }
@@ -82,7 +82,7 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
     boolean hasPower(Power power, Identifier source);
 
     default boolean hasPower(PowerReference powerReference, Identifier source) {
-        return powerReference.getOptionalReference()
+        return powerReference.getOptionalPower()
             .map(power -> hasPower(power, source))
             .orElse(false);
     }
@@ -100,7 +100,7 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
     List<Identifier> getSources(Power power);
 
     default List<Identifier> getSources(PowerReference powerReference) {
-        return powerReference.getOptionalReference()
+        return powerReference.getOptionalPower()
             .map(this::getSources)
             .orElseGet(ArrayList::new);
     }
@@ -234,7 +234,7 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
     }
 
     static void syncPower(Entity entity, PowerReference powerReference) {
-        syncPower(entity, powerReference.getReference());
+        syncPower(entity, powerReference.getNullablePower());
     }
 
     static void syncPower(@Nullable Entity entity, @Nullable Power power) {

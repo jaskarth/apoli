@@ -49,7 +49,7 @@ public class AddPowerLootFunction extends ConditionalLootFunction {
     @Override
     public ItemStack process(ItemStack stack, LootContext context) {
 
-        power().getOptionalReference().ifPresent(power -> {
+        power().getOptionalPower().ifPresent(power -> {
 
             ItemPowersComponent itemPowers = stack.getOrDefault(ApoliDataComponentTypes.POWERS, ItemPowersComponent.DEFAULT);
             stack.set(ApoliDataComponentTypes.POWERS, ItemPowersComponent.builder(itemPowers)
