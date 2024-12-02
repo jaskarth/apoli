@@ -27,7 +27,7 @@ public class PowerTypes {
     public static final PowerConfiguration<ActionOnHitPowerType> ACTION_ON_HIT = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_hit"), ActionOnHitPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnItemPickupPowerType> ACTION_ON_ITEM_PICKUP = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_item_pickup"), ActionOnItemPickupPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnItemUsePowerType> ACTION_ON_ITEM_USE = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_item_use"), ActionOnItemUsePowerType.DATA_FACTORY));
-    public static final PowerConfiguration<ActionOnKeyPressPowerType> ACTION_ON_KEY_PRESS = register(PowerConfiguration.dataFactory(Apoli.identifier("active_self"), ActionOnKeyPressPowerType.DATA_FACTORY));
+    public static final PowerConfiguration<ActionOnKeyPressPowerType> ACTION_ON_KEY_PRESS = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_key_press"), ActionOnKeyPressPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnLandPowerType> ACTION_ON_LAND = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_land"), ActionOnLandPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOnWakeUpPowerType> ACTION_ON_WAKE_UP = register(PowerConfiguration.dataFactory(Apoli.identifier("action_on_wake_up"), ActionOnWakeUpPowerType.DATA_FACTORY));
     public static final PowerConfiguration<ActionOverTimePowerType> ACTION_OVER_TIME = register(PowerConfiguration.dataFactory(Apoli.identifier("action_over_time"), ActionOverTimePowerType.DATA_FACTORY));
