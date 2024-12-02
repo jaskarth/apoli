@@ -25,17 +25,21 @@ public class LavaVisionPowerType extends PowerType implements AttributeModifying
             .set("v", powerType.v)
     );
 
-    private final AttributedEntityAttributeModifier modifier;
+    private AttributedEntityAttributeModifier modifier;
     private final float v;
 
     public LavaVisionPowerType(float v) {
-        this.modifier = new AttributedEntityAttributeModifier(AdditionalEntityAttributes.LAVA_VISIBILITY, new EntityAttributeModifier(this.getPower().getId(), v - 1, EntityAttributeModifier.Operation.ADD_VALUE));
         this.v = v;
     }
 
     @Override
     public @NotNull PowerConfiguration<?> getConfig() {
         return PowerTypes.LAVA_VISION;
+    }
+
+    @Override
+    public void onInit() {
+        this.modifier = new AttributedEntityAttributeModifier(AdditionalEntityAttributes.LAVA_VISIBILITY, new EntityAttributeModifier(this.getPower().getId(), v - 1, EntityAttributeModifier.Operation.ADD_VALUE));
     }
 
     @Override
