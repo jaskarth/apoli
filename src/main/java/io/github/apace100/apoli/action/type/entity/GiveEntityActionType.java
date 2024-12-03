@@ -55,7 +55,7 @@ public class GiveEntityActionType extends EntityActionType {
             return;
         }
 
-        StackReference stackReference = InventoryUtil.createStackReference(stack);
+        StackReference stackReference = InventoryUtil.createStackReference(stack.copy());
         itemAction.ifPresent(action -> action.execute(entity.getWorld(), stackReference));
 
         ItemStack stackToGive = stackReference.get();
