@@ -57,6 +57,20 @@ public class ServerPlayerInteractionManagerMixin {
         modifiedCanHarvestRef.set(false);
     }
 
+    @Unique
+    private Direction apoli$blockBreakDirection;
+
+    @Inject(method = "processBlockBreakingAction", at = @At("HEAD"))
+    private void apoli$cacheBlockBreakDirection(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int sequence, CallbackInfo ci) {
+        this.apoli$blockBreakDirection = direction;
+    }
+
+    @ModifyExpressionValue(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z"))
+    private boolean apoli$cacheBlockRemovedResult(boolean original, @Share("blockRemoved") LocalBooleanRef blockRemovedRef) {
+        blockRemovedRef.set(original);
+        return original;
+    }
+
     @ModifyExpressionValue(method = "tryBreakBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;canHarvest(Lnet/minecraft/block/BlockState;)Z"))
     private boolean apoli$modifyEffectiveTool(boolean original, @Share("cachedMinedBlock") LocalRef<SavedBlockPosition> cachedMinedBlockRef, @Share("modifiedCanHarvest") LocalBooleanRef modifiedCanHarvestRef) {
 
@@ -72,20 +86,10 @@ public class ServerPlayerInteractionManagerMixin {
 
     }
 
-    @Unique
-    private Direction apoli$blockBreakDirection;
-
-    @Inject(method = "processBlockBreakingAction", at = @At("HEAD"))
-    private void apoli$cacheBlockBreakDirection(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int sequence, CallbackInfo ci) {
-        this.apoli$blockBreakDirection = direction;
-    }
-
-    @Inject(method = "tryBreakBlock", at = {@At(value = "RETURN", ordinal = 3), @At(value = "RETURN", ordinal = 4, shift = At.Shift.BEFORE)})
-    private void apoli$actionOnBlockBreak(BlockPos pos, CallbackInfoReturnable<Boolean> cir, @Local(ordinal = 0) boolean blockRemoved, @Share("cachedMinedBlock") LocalRef<SavedBlockPosition> cachedMinedBlockRef, @Share("modifiedCanHarvest") LocalBooleanRef modifiedCanHarvestRef) {
-        boolean harvestedSuccessfully = blockRemoved && modifiedCanHarvestRef.get();
-        PowerHolderComponent.withPowerTypes(this.player, ActionOnBlockBreakPowerType.class,
-            aobbp -> aobbp.doesApply(cachedMinedBlockRef.get()),
-            aobbp -> aobbp.executeActions(harvestedSuccessfully, pos, apoli$blockBreakDirection));
+    @Inject(method = "tryBreakBlock", at = {@At(value = "RETURN", ordinal = 3), @At(value = "RETURN", ordinal = 4)})
+    private void apoli$actionOnBlockBreak(BlockPos pos, CallbackInfoReturnable<Boolean> cir, @Share("cachedMinedBlock") LocalRef<SavedBlockPosition> cachedMinedBlockRef, @Share("modifiedCanHarvest") LocalBooleanRef modifiedCanHarvestRef, @Share("blockRemoved") LocalBooleanRef blockRemovedRef) {
+        boolean harvestedSuccessfully = blockRemovedRef.get() && modifiedCanHarvestRef.get();
+        PowerHolderComponent.withPowerTypes(this.player, ActionOnBlockBreakPowerType.class, powerType -> powerType.doesApply(cachedMinedBlockRef.get(), harvestedSuccessfully), powerType -> powerType.executeActions(pos, apoli$blockBreakDirection));
     }
 
     @WrapOperation(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;onUse(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/hit/BlockHitResult;)Lnet/minecraft/util/ActionResult;"))
