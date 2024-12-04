@@ -164,7 +164,7 @@ public abstract class ItemStackMixinClient implements ComponentHolder {
                 .stream()
                 .filter(p -> p.doesApply((ItemStack) (Object) this))
                 .sorted(Comparator.comparing(TooltipPowerType::getOrder))
-                .forEach(p -> p.addToTooltip(tooltipConsumer));
+                .forEach(p -> p.processTooltips(tooltipConsumer));
         }
 
     }
