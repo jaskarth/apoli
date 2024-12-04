@@ -1,6 +1,5 @@
 package io.github.apace100.apoli.power.type;
 
-import com.mojang.serialization.DataResult;
 import io.github.apace100.apoli.condition.EntityCondition;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -22,17 +21,7 @@ public class ConditionedAttributePowerType extends AttributePowerType {
             .addFunctionedDefault("modifiers", ApoliDataTypes.ATTRIBUTED_ATTRIBUTE_MODIFIERS, data -> MiscUtil.singletonListOrNull(data.get("modifier")))
             .add("update_health", SerializableDataTypes.BOOLEAN, true)
             .add("tick_rate", SerializableDataTypes.POSITIVE_INT, 20)
-            .validate(data -> {
-
-                if (MiscUtil.anyPresent(data, "modifier", "modifiers")) {
-                    return DataResult.success(data);
-                }
-
-                else {
-                    return DataResult.error(() -> "Any of the 'modifier' and 'modifiers' fields must be defined!");
-                }
-
-            }),
+            .validate(MiscUtil.validateAnyFieldsPresent("modifier", "modifiers")),
         (data, condition) -> new ConditionedAttributePowerType(
             data.get("modifiers"),
             data.get("update_health"),
