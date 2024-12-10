@@ -4,9 +4,9 @@ import io.github.apace100.apoli.condition.BlockCondition;
 import io.github.apace100.apoli.condition.EntityCondition;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerConfiguration;
+import io.github.apace100.apoli.util.SavedBlockPosition;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.block.pattern.CachedBlockPosition;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -55,7 +55,7 @@ public class ModifyHarvestPowerType extends PowerType implements Prioritized<Mod
         int priorityResult = Integer.compare(this.getPriority(), other.getPriority());
         return priorityResult != 0
             ? priorityResult
-            : Boolean.compare(this.isHarvestAllowed(), other.isHarvestAllowed());
+            : Boolean.compare(this.isAllowed(), other.isAllowed());
     }
 
     @Override
@@ -69,11 +69,13 @@ public class ModifyHarvestPowerType extends PowerType implements Prioritized<Mod
             .orElse(true);
     }
 
-    public boolean doesApply(CachedBlockPosition cachedBlock) {
-        return doesApply(cachedBlock.getWorld(), cachedBlock.getBlockPos());
+    public boolean doesApply(SavedBlockPosition savedBlockPosition) {
+        return blockCondition
+            .map(condition -> condition.test(savedBlockPosition))
+            .orElse(true);
     }
 
-    public boolean isHarvestAllowed() {
+    public boolean isAllowed() {
         return allow;
     }
 

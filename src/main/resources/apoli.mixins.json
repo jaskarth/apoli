@@ -83,7 +83,9 @@
 		"VibrationsMixin$CallbackMixin",
 		"VibrationsMixin$TickerMixin",
 		"WeightedListEntryAccessor",
-		"integration.appleskin.FoodHelperMixin"
+		"integration.appleskin.FoodHelperMixin",
+		"power.type.ModifyHarvestPowerTypeMixin$BlockBreakingDeltaProxy",
+		"power.type.ModifyHarvestPowerTypeMixin$HarvestabilityProxy"
 	],
 	"client": [
 		"AbstractClientPlayerEntityMixin",

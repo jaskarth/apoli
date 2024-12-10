@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.type.ModifyBreakSpeedPowerType;
-import io.github.apace100.apoli.power.type.ModifyHarvestPowerType;
 import io.github.apace100.apoli.util.modifier.Modifier;
 import io.github.apace100.apoli.util.modifier.ModifierUtil;
 import net.minecraft.block.AbstractBlock;
@@ -19,16 +18,6 @@ import java.util.List;
 
 @Mixin(AbstractBlock.class)
 public abstract class AbstractBlockMixin {
-
-    @ModifyExpressionValue(method = "calcBlockBreakingDelta", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;canHarvest(Lnet/minecraft/block/BlockState;)Z"))
-    private boolean apoli$modifyEffectiveTool(boolean original, BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
-        return PowerHolderComponent.getPowerTypes(player, ModifyHarvestPowerType.class)
-            .stream()
-            .filter(mhp -> mhp.doesApply(world, pos))
-            .max(ModifyHarvestPowerType::compareTo)
-            .map(ModifyHarvestPowerType::isHarvestAllowed)
-            .orElse(original);
-    }
 
     @ModifyExpressionValue(method = "calcBlockBreakingDelta", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;getHardness(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F"))
     private float apoli$modifyBlockHardness(float original, BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
