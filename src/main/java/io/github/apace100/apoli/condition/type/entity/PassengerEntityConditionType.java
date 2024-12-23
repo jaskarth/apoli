@@ -19,7 +19,7 @@ public class PassengerEntityConditionType extends EntityConditionType {
     public static final TypedDataObjectFactory<PassengerEntityConditionType> DATA_FACTORY = TypedDataObjectFactory.simple(
         new SerializableData()
             .add("bientity_condition", BiEntityCondition.DATA_TYPE.optional(), Optional.empty())
-            .add("comparison", ApoliDataTypes.COMPARISON, Comparison.GREATER_THAN)
+            .add("comparison", ApoliDataTypes.COMPARISON, Comparison.GREATER_THAN_OR_EQUAL)
             .add("compare_to", SerializableDataTypes.INT, 1),
         data -> new PassengerEntityConditionType(
             data.get("bientity_condition"),
