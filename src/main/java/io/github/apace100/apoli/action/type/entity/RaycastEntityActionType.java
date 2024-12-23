@@ -356,7 +356,7 @@ public class RaycastEntityActionType extends EntityActionType {
             return;
         }
 
-        Vec3d direction = destination.subtract(origin);
+        Vec3d direction = destination.subtract(origin).normalize();
         double distance = origin.distanceTo(destination);
 
         ServerCommandSource commandSource = entity.getCommandSource()
