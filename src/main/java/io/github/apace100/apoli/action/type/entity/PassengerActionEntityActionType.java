@@ -7,6 +7,7 @@ import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.condition.BiEntityCondition;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
@@ -62,11 +63,12 @@ public class PassengerActionEntityActionType extends EntityActionType {
 
         for (Entity passenger : passengers) {
 
-            BiEntityActionContext context = new BiEntityActionContext(passenger, entity);
+            BiEntityActionContext actionContext = new BiEntityActionContext(entity, passenger);
+            BiEntityConditionContext conditionContext = actionContext.forCondition();
 
-            if (biEntityCondition.map(condition -> condition.test(context.forCondition())).orElse(true)) {
+            if (biEntityCondition.map(condition -> condition.test(conditionContext)).orElse(true)) {
                 entityAction.ifPresent(action -> action.execute(entity));
-                biEntityAction.ifPresent(action -> action.accept(context));
+                biEntityAction.ifPresent(action -> action.accept(actionContext));
             }
 
         }
