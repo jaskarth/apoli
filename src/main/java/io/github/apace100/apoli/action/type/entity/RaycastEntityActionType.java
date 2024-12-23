@@ -163,7 +163,7 @@ public class RaycastEntityActionType extends EntityActionType {
 
         beforeAction.ifPresent(action -> action.execute(entity));
 
-        Vec3d origin = entity.getPos();
+        Vec3d origin = entity.getEyePos();
         Vec3d direction = this.direction
             .map(dir -> transformDirection(entity, dir))
             .orElseGet(() -> entity.getRotationVec(1.0F));
