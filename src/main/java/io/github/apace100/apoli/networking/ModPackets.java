@@ -1,7 +1,7 @@
 package io.github.apace100.apoli.networking;
 
 import io.github.apace100.apoli.networking.packet.VersionHandshakePacket;
-import io.github.apace100.apoli.networking.packet.c2s.UseActivePowersC2SPacket;
+import io.github.apace100.apoli.networking.packet.c2s.UseActivePowerTypesC2SPacket;
 import io.github.apace100.apoli.networking.packet.s2c.*;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 
@@ -22,7 +22,7 @@ public class ModPackets {
         PayloadTypeRegistry.playS2C().register(SyncPowersS2CPacket.PACKET_ID, SyncPowersS2CPacket.PACKET_CODEC);
         PayloadTypeRegistry.playS2C().register(SyncEntityTypeTagCacheS2CPacket.PACKET_ID, SyncEntityTypeTagCacheS2CPacket.PACKET_CODEC);
 
-        PayloadTypeRegistry.playC2S().register(UseActivePowersC2SPacket.PACKET_ID, UseActivePowersC2SPacket.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(UseActivePowerTypesC2SPacket.PACKET_ID, UseActivePowerTypesC2SPacket.PACKET_CODEC);
 
     }
 

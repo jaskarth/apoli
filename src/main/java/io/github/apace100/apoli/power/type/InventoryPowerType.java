@@ -8,6 +8,7 @@ import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.data.container.ContainerType;
 import io.github.apace100.apoli.power.PowerConfiguration;
+import io.github.apace100.apoli.util.keybinding.KeyBindingReference;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
@@ -34,7 +35,7 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
             .add("title", ApoliDataTypes.DEFAULT_TRANSLATABLE_TEXT, Text.translatable("container.inventory"))
             .add("container_type", ApoliDataTypes.CONTAINER_TYPE, ApoliContainerTypes.GENERIC_3X3)
             .add("drop_on_death_filter", ItemCondition.DATA_TYPE.optional(), Optional.empty())
-            .add("key", ApoliDataTypes.BACKWARDS_COMPATIBLE_KEY, new Key())
+            .add("key", ApoliDataTypes.BACKWARDS_COMPATIBLE_KEY, KeyBindingReference.NONE)
             .add("drop_on_death", SerializableDataTypes.BOOLEAN, false)
             .add("recoverable", SerializableDataTypes.BOOLEAN, true),
         (data, condition) -> new InventoryPowerType(
@@ -59,7 +60,7 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
     private final ContainerType containerType;
 
     private final Optional<ItemCondition> dropOnDeathFilter;
-    private final Key key;
+    private final KeyBindingReference key;
 
     private final boolean shouldDropOnDeath;
     private final boolean recoverable;
@@ -69,7 +70,7 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
 
     private boolean dirty;
 
-    public InventoryPowerType(Text containerTitle, ContainerType containerType, Optional<ItemCondition> dropOnDeathFilter, Key key, boolean shouldDropOnDeath, boolean recoverable, Optional<EntityCondition> condition) {
+    public InventoryPowerType(Text containerTitle, ContainerType containerType, Optional<ItemCondition> dropOnDeathFilter, KeyBindingReference key, boolean shouldDropOnDeath, boolean recoverable, Optional<EntityCondition> condition) {
         super(condition);
         this.containerTitle = containerTitle;
         this.containerType = containerType;
@@ -204,7 +205,7 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
     }
 
     @Override
-    public Key getKey() {
+    public KeyBindingReference getKey() {
         return key;
     }
 

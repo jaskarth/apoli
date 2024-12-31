@@ -11,7 +11,7 @@ import io.github.apace100.apoli.component.item.ItemPowersComponent;
 import io.github.apace100.apoli.power.type.PreventItemUsePowerType;
 import io.github.apace100.apoli.power.type.TooltipPowerType;
 import io.github.apace100.apoli.util.ApoliConfigClient;
-import io.github.apace100.apoli.util.KeyBindingUtil;
+import io.github.apace100.apoli.util.keybinding.KeyBindingUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

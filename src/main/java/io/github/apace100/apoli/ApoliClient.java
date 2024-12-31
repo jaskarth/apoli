@@ -1,14 +1,17 @@
 package io.github.apace100.apoli;
 
 import io.github.apace100.apoli.integration.PowerIntegrationClient;
+import io.github.apace100.apoli.mixin.KeyBindingAccessor;
 import io.github.apace100.apoli.networking.ModPacketsS2C;
-import io.github.apace100.apoli.networking.packet.c2s.UseActivePowersC2SPacket;
+import io.github.apace100.apoli.networking.packet.c2s.UseActivePowerTypesC2SPacket;
+import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.type.Active;
 import io.github.apace100.apoli.power.type.PowerType;
 import io.github.apace100.apoli.registry.ApoliClassDataClient;
 import io.github.apace100.apoli.screen.GameHudRender;
 import io.github.apace100.apoli.screen.PowerHudRenderer;
 import io.github.apace100.apoli.util.ApoliConfigClient;
+import io.github.apace100.apoli.util.keybinding.KeyBindingUtil;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,37 +19,28 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class ApoliClient implements ClientModInitializer {
 
 	public static KeyBinding showPowersOnUsabilityHint;
 
-	public static final HashMap<String, KeyBinding> idToKeyBindingMap = new HashMap<>();
-	public static final HashMap<String, Boolean> lastKeyBindingStates = new HashMap<>();
-
-	private static boolean initializedKeyBindingMap = false;
+	public static final Map<String, Boolean> lastKeyBindingStates = new HashMap<>();
 	public static boolean shouldReloadWorldRenderer = false;
-
-	public static void registerPowerKeybinding(String keyId, KeyBinding keyBinding) {
-		idToKeyBindingMap.put(keyId, keyBinding);
-	}
 
 	@Override
 	public void onInitializeClient() {
 
-		showPowersOnUsabilityHint = new KeyBinding("key.apoli.usability_hint.show_powers", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "category." + Apoli.MODID);
-		KeyBindingHelper.registerKeyBinding(showPowersOnUsabilityHint);
-
+		showPowersOnUsabilityHint = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.apoli.usability_hint.show_powers", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "category." + Apoli.MODID));
 		ModPacketsS2C.register();
 
 		ApoliClassDataClient.registerAll();
@@ -56,41 +50,50 @@ public class ApoliClient implements ClientModInitializer {
 
 		AutoConfig.register(ApoliConfigClient.class, JanksonConfigSerializer::new);
 		Apoli.config = AutoConfig.getConfigHolder(ApoliConfigClient.class).getConfig();
-	}
-
-	public static void performActivePowers(List<PowerType> powerTypes) {
-
-		List<Identifier> powerTypeIds = new LinkedList<>();
-		for (PowerType powerType : powerTypes) {
-
-			if (powerType instanceof Active activePower) {
-				activePower.onUse();
-			}
-
-			powerTypeIds.add(powerType.getPower().getId());
-
-		}
-
-		ClientPlayNetworking.send(new UseActivePowersC2SPacket(powerTypeIds));
 
 	}
 
-	public static KeyBinding getKeyBinding(String key) {
+	public static <P extends PowerType & Active> void performActivePowerTypes(List<P> activePowerTypes) {
 
-		if (idToKeyBindingMap.containsKey(key)) {
-			return idToKeyBindingMap.get(key);
+		List<Identifier> powerTypeIds = activePowerTypes
+			.stream()
+			.peek(pt -> {if (pt.isActive()) {pt.onUse();}})
+			.map(PowerType::getPower)
+			.map(Power::getId)
+			.toList();
+
+		if (!powerTypeIds.isEmpty()) {
+			ClientPlayNetworking.send(new UseActivePowerTypesC2SPacket(powerTypeIds));
 		}
 
-		if (initializedKeyBindingMap) {
+	}
+
+	/**
+	 * 	Add aliases to {@link KeyBindingUtil#ALIASES} instead.
+	 */
+	@Deprecated(forRemoval = true)
+	public static void registerPowerKeybinding(String keyId, KeyBinding keyBinding) {
+		KeyBindingUtil.ALIASES.addAlias(keyId, keyBinding.getTranslationKey());
+	}
+
+	@Nullable
+	public static KeyBinding getKeyBinding(String keyBindingId) {
+
+		Map<String, KeyBinding> keyBindings = KeyBindingAccessor.getKeysById();
+		String aliasedKeyBindingId;
+
+		if (keyBindings.containsKey(keyBindingId)) {
+			return keyBindings.get(keyBindingId);
+		}
+
+		try {
+			aliasedKeyBindingId = KeyBindingUtil.ALIASES.resolveAlias(keyBindingId);
+			return keyBindings.get(aliasedKeyBindingId);
+		}
+
+		catch (Exception e) {
 			return null;
 		}
-
-		for (KeyBinding keyBinding : MinecraftClient.getInstance().options.allKeys) {
-			idToKeyBindingMap.put(keyBinding.getTranslationKey(), keyBinding);
-		}
-
-		initializedKeyBindingMap = true;
-		return getKeyBinding(key);
 
 	}
 

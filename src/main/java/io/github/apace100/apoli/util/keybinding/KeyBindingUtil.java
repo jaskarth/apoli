@@ -1,6 +1,7 @@
-package io.github.apace100.apoli.util;
+package io.github.apace100.apoli.util.keybinding;
 
 import io.github.apace100.apoli.mixin.KeyBindingAccessor;
+import io.github.apace100.apoli.util.StringAlias;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.option.KeyBinding;
@@ -9,6 +10,8 @@ import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
 public class KeyBindingUtil {
+
+    public static final StringAlias ALIASES = new StringAlias();
 
     /**
      *  Get the localized name of the keybind from the specified ID. If no such keybind exists or if the keybind is

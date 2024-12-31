@@ -11,12 +11,13 @@ import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.type.AbstractConditionType;
 import io.github.apace100.apoli.data.container.ContainerType;
 import io.github.apace100.apoli.data.container.DynamicContainerType;
+import io.github.apace100.apoli.data.container.PresetContainerType;
+import io.github.apace100.apoli.integration.ContainerTypeCodecEvents;
 import io.github.apace100.apoli.power.PowerReference;
-import io.github.apace100.apoli.power.type.Active;
-import io.github.apace100.apoli.registry.ApoliRegistries;
 import io.github.apace100.apoli.util.*;
 import io.github.apace100.apoli.util.context.TypeActionContext;
 import io.github.apace100.apoli.util.context.TypeConditionContext;
+import io.github.apace100.apoli.util.keybinding.KeyBindingReference;
 import io.github.apace100.calio.SerializationHelper;
 import io.github.apace100.calio.data.CompoundSerializableDataType;
 import io.github.apace100.calio.data.SerializableData;
@@ -108,41 +109,19 @@ public class ApoliDataTypes {
 	@Deprecated(forRemoval = true)
     public static final SerializableDataType<List<Pair<Integer, ItemStack>>> POSITIONED_ITEM_STACKS = POSITIONED_ITEM_STACK.list();
 
-    public static final SerializableDataType<Active.Key> KEY = SerializableDataType.compound(
-        new SerializableData()
-            .add("key", SerializableDataTypes.STRING)
-            .add("continuous", SerializableDataTypes.BOOLEAN, false),
-        data -> {
+    public static final SerializableDataType<KeyBindingReference> KEY = KeyBindingReference.DATA_FACTORY.getDataType();
 
-            Active.Key key = new Active.Key();
-
-            key.key = data.getString("key");
-            key.continuous = data.getBoolean("continuous");
-
-            return key;
-
-        },
-        (key, serializableData) -> serializableData.instance()
-            .set("key", key.key)
-            .set("continuous", key.continuous)
-    );
-
-    public static final SerializableDataType<Active.Key> BACKWARDS_COMPATIBLE_KEY = SerializableDataType.of(
+    public static final SerializableDataType<KeyBindingReference> BACKWARDS_COMPATIBLE_KEY = SerializableDataType.of(
         new Codec<>() {
 
             @Override
-            public <T> DataResult<com.mojang.datafixers.util.Pair<Active.Key, T>> decode(DynamicOps<T> ops, T input) {
+            public <T> DataResult<com.mojang.datafixers.util.Pair<KeyBindingReference, T>> decode(DynamicOps<T> ops, T input) {
 
                 DataResult<String> stringInput = ops.getStringValue(input);
                 if (stringInput.isSuccess()) {
-
-                    Active.Key key = new Active.Key();
-
-                    key.key = stringInput.getOrThrow();
-                    key.continuous = false;
-
-                    return DataResult.success(com.mojang.datafixers.util.Pair.of(key, input));
-
+					return stringInput
+						.map(KeyBindingReference::new)
+						.map(key -> com.mojang.datafixers.util.Pair.of(key, input));
                 }
 
                 else {
@@ -152,7 +131,7 @@ public class ApoliDataTypes {
             }
 
             @Override
-            public <T> DataResult<T> encode(Active.Key input, DynamicOps<T> ops, T prefix) {
+            public <T> DataResult<T> encode(KeyBindingReference input, DynamicOps<T> ops, T prefix) {
                 return KEY.codec().encode(input, ops, prefix);
             }
 

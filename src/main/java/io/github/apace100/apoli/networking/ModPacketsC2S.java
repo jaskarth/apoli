@@ -3,7 +3,7 @@ package io.github.apace100.apoli.networking;
 import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.networking.packet.VersionHandshakePacket;
-import io.github.apace100.apoli.networking.packet.c2s.UseActivePowersC2SPacket;
+import io.github.apace100.apoli.networking.packet.c2s.UseActivePowerTypesC2SPacket;
 import io.github.apace100.apoli.networking.task.VersionHandshakeTask;
 import io.github.apace100.apoli.power.PowerManager;
 import io.github.apace100.apoli.power.type.Active;
@@ -28,7 +28,7 @@ public class ModPacketsC2S {
         }
 
         ServerPlayConnectionEvents.INIT.register((handler, server) ->
-            ServerPlayNetworking.registerReceiver(handler, UseActivePowersC2SPacket.PACKET_ID, ModPacketsC2S::onUseActivePowers)
+            ServerPlayNetworking.registerReceiver(handler, UseActivePowerTypesC2SPacket.PACKET_ID, ModPacketsC2S::onUseActivePowers)
         );
 
     }
@@ -80,23 +80,25 @@ public class ModPacketsC2S {
     }
 
 
-    private static void onUseActivePowers(UseActivePowersC2SPacket payload, ServerPlayNetworking.Context context) {
+    private static void onUseActivePowers(UseActivePowerTypesC2SPacket payload, ServerPlayNetworking.Context context) {
 
         ServerPlayerEntity player = context.player();
         PowerHolderComponent component = PowerHolderComponent.KEY.get(player);
 
-        for (Identifier powerTypeId : payload.powerTypeIds()) {
+        for (Identifier powerId : payload.powerIds()) {
 
-            PowerType powerType = (PowerType) PowerManager.getOptional(powerTypeId)
+            PowerType powerType = PowerManager.getOptional(powerId)
                 .map(component::getPowerType)
+                .filter(PowerType::isActive)
                 .orElse(null);
 
-            if (powerType == null) {
-                Apoli.LOGGER.warn("Found unknown power \"{}\" while receiving packet for triggering active powers of player {}!", powerTypeId, player.getName().getString());
-            }
-
-            else if (powerType instanceof Active activePower) {
-                activePower.onUse();
+            switch (powerType) {
+                case Active activePowerType ->
+                    activePowerType.onUse();
+                case null ->
+                    Apoli.LOGGER.warn("Found unknown power \"{}\" while receiving packet for triggering active power types of player {}!", powerId, player.getName().getString());
+                default ->
+                    Apoli.LOGGER.warn("Unexpectedly found power \"{}\" (which doesn't have an active power type) while receiving packet for triggering active power types of player {}!", powerId, player.getName().getString());
             }
 
         }

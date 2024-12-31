@@ -2,81 +2,57 @@ package io.github.apace100.apoli.power.type;
 
 import io.github.apace100.apoli.ApoliClient;
 import io.github.apace100.apoli.component.PowerHolderComponent;
-import io.github.apace100.apoli.mixin.KeyBindingAccessor;
+import io.github.apace100.apoli.util.keybinding.KeyBindingReference;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public interface Active {
 
-    Key getKey();
+    KeyBindingReference getKey();
 
     void onUse();
 
-    default boolean canTrigger() {
-        return true;
-    }
-
     @Environment(EnvType.CLIENT)
-    static void integrateCallback(MinecraftClient client) {
+    static <P extends PowerType & Active> void integrateCallback(MinecraftClient client) {
 
         if (client.player == null) {
             return;
         }
 
         List<PowerType> powerTypes = PowerHolderComponent.getOptional(client.player).orElseThrow().getPowerTypes();
-        List<PowerType> triggeredPowerTypes = new LinkedList<>();
+        List<P> triggeredPowerTypes = new LinkedList<>();
 
         Map<String, Boolean> currentKeybindingStates = new HashMap<>();
         for (PowerType powerType : powerTypes) {
 
-            if (!(powerType instanceof Active activePowerType) || !activePowerType.canTrigger()) {
+            if (!(powerType instanceof Active activePowerType)) {
                 continue;
             }
 
-            Key key = activePowerType.getKey();
-            KeyBinding keyBinding = KeyBindingAccessor.getKeysById().get(key.key);
+            KeyBindingReference keyBindingReference = activePowerType.getKey();
+            KeyBinding keyBinding = keyBindingReference.asKeyBinding();
 
             if (keyBinding == null) {
                 continue;
             }
 
-            if (currentKeybindingStates.computeIfAbsent(key.key, k -> keyBinding.isPressed()) && (key.continuous || !ApoliClient.lastKeyBindingStates.getOrDefault(key.key, false))) {
-                triggeredPowerTypes.add(powerType);
+            if (currentKeybindingStates.computeIfAbsent(keyBindingReference.key(), k -> keyBinding.isPressed()) && (keyBindingReference.continuous() || !ApoliClient.lastKeyBindingStates.getOrDefault(keyBindingReference.key(), false))) {
+				//noinspection unchecked
+				triggeredPowerTypes.add((P) powerType);
             }
 
         }
 
         ApoliClient.lastKeyBindingStates.putAll(currentKeybindingStates);
-        if (!triggeredPowerTypes.isEmpty()) {
-            ApoliClient.performActivePowers(triggeredPowerTypes);
-        }
+        ApoliClient.performActivePowerTypes(triggeredPowerTypes);
 
-    }
-
-    class Key {
-
-        public String key = "none";
-        public boolean continuous = false;
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj == this)
-                return true;
-
-            if (!(obj instanceof Active.Key otherKey))
-                return false;
-
-            return otherKey.key.equals(this.key) && otherKey.continuous == this.continuous;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.key, this.continuous);
-        }
     }
 
 }
