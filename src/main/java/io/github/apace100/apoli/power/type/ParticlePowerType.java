@@ -20,11 +20,11 @@ public class ParticlePowerType extends PowerType {
         new SerializableData()
             .add("bientity_condition", BiEntityCondition.DATA_TYPE.optional(), Optional.empty())
             .add("particle", SerializableDataTypes.PARTICLE_EFFECT_OR_TYPE)
-            .add("spread", SerializableDataTypes.VECTOR, new Vec3d(0.5, 0.5, 0.5))
             .add("offset_x", SerializableDataTypes.DOUBLE, 0.0D)
             .add("offset_y", SerializableDataTypes.DOUBLE, 0.0D)
             .add("offset_z", SerializableDataTypes.DOUBLE, 0.0D)
             .addFunctionedDefault("offset", SerializableDataTypes.VECTOR, data -> new Vec3d(data.get("offset_x"), data.get("offset_y"), data.get("offset_z")))
+            .add("spread", SerializableDataTypes.VECTOR, new Vec3d(0.5, 0.5, 0.5))
             .add("frequency", SerializableDataTypes.POSITIVE_INT)
             .add("count", SerializableDataTypes.NON_NEGATIVE_INT, 1)
             .add("speed", SerializableDataTypes.FLOAT, 0.0F)
@@ -34,8 +34,8 @@ public class ParticlePowerType extends PowerType {
         (data, condition) -> new ParticlePowerType(
             data.get("bientity_condition"),
             data.get("particle"),
-            data.get("spread"),
             data.get("offset"),
+            data.get("spread"),
             data.get("frequency"),
             data.get("count"),
             data.get("speed"),
@@ -47,8 +47,8 @@ public class ParticlePowerType extends PowerType {
         (powerType, serializableData) -> serializableData.instance()
             .set("bientity_condition", powerType.biEntityCondition)
             .set("particle", powerType.getParticle())
-            .set("spread", powerType.getSpread())
             .set("offset", powerType.getOffset())
+            .set("spread", powerType.getSpread())
             .set("frequency", powerType.getFrequency())
             .set("count", powerType.getCount())
             .set("speed", powerType.getSpeed())
@@ -72,7 +72,7 @@ public class ParticlePowerType extends PowerType {
     private final boolean visibleWhileInvisible;
     private final boolean force;
 
-    public ParticlePowerType(Optional<BiEntityCondition> biEntityCondition, ParticleEffect particleEffect, Vec3d spread, Vec3d offset, int frequency, int count, float speed, boolean visibleInFirstPerson, boolean visibleWhileInvisible, boolean force, Optional<EntityCondition> condition) {
+    public ParticlePowerType(Optional<BiEntityCondition> biEntityCondition, ParticleEffect particleEffect, Vec3d offset, Vec3d spread, int frequency, int count, float speed, boolean visibleInFirstPerson, boolean visibleWhileInvisible, boolean force, Optional<EntityCondition> condition) {
         super(condition);
         this.biEntityCondition = biEntityCondition;
         this.particleEffect = particleEffect;

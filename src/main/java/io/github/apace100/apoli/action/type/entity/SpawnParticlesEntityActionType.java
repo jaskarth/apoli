@@ -41,6 +41,7 @@ public class SpawnParticlesEntityActionType extends EntityActionType {
         ),
         (actionType, serializableData) -> serializableData.instance()
             .set("bientity_condition", actionType.biEntityCondition)
+            .set("particle", actionType.particle)
             .set("offset", actionType.offset)
             .set("spread", actionType.spread)
             .set("force", actionType.force)
