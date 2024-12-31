@@ -2,7 +2,6 @@ package io.github.apace100.apoli.data;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.*;
-import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.action.AbstractAction;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.type.AbstractActionType;
@@ -50,6 +49,7 @@ import org.joml.Vector3f;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -250,13 +250,9 @@ public class ApoliDataTypes {
 
     public static final SerializableDataType<ArmPoseReference> ARM_POSE_REFERENCE = SerializableDataType.enumValue(ArmPoseReference.class);
 
-	public static SerializableDataType<CraftingRecipe> DISALLOWING_INTERNAL_CRAFTING_RECIPE = SerializableDataTypes.RECIPE.comapFlatMap(RecipeUtil::validateCraftingRecipe, Function.identity());
+	public static final SerializableDataType<CraftingRecipe> DISALLOWING_INTERNAL_CRAFTING_RECIPE = SerializableDataTypes.RECIPE.comapFlatMap(RecipeUtil::validateCraftingRecipe, Function.identity());
 
 	public static final SerializableDataType<Float> NORMALIZED_FLOAT = SerializableDataType.boundNumber(SerializableDataTypes.FLOAT, 0F, 1F);
-
-	private static final SerializableDataType<ContainerType> CONTAINER_TYPE_FROM_REGISTRY = SerializableDataType.registry(ApoliRegistries.CONTAINER_TYPE, Apoli.MODID, true);
-
-	private static final SerializableDataType<DynamicContainerType> DYNAMIC_CONTAINER_TYPE = DynamicContainerType.DATA_FACTORY.getDataType();
 
 	public static final SerializableDataType<ContainerType> CONTAINER_TYPE = new SerializableDataType<>(
 		new Codec<>() {
@@ -264,37 +260,51 @@ public class ApoliDataTypes {
 			@Override
 			public <T> DataResult<com.mojang.datafixers.util.Pair<ContainerType, T>> decode(DynamicOps<T> ops, T input) {
 
-				DataResult<String> stringInput = ops.getStringValue(input);
-				var stringInputError = stringInput.error();
+				Optional<DataResult<com.mojang.datafixers.util.Pair<ContainerType, T>>> customResult = ContainerTypeCodecEvents.DECODING.invoker().decode(ops, input);
+				var customError = customResult.flatMap(DataResult::error);
 
-				if (stringInput.isSuccess()) {
-					return CONTAINER_TYPE_FROM_REGISTRY.codec().decode(ops, input);
+				if (customResult.isPresent()) {
+					return customResult.get();
 				}
 
-				DataResult<MapLike<T>> mapInput = ops.getMap(input);
-				var mapInputError = mapInput.error();
+				DataResult<String> presetResult = ops.getStringValue(input);
+				var presetError = presetResult.error();
 
-				if (mapInput.isSuccess()) {
-					return DYNAMIC_CONTAINER_TYPE.codec().decode(ops, input)
+				if (presetResult.isSuccess()) {
+					return ApoliContainerTypes.REGISTRY_DATA_TYPE.codec().decode(ops, input);
+				}
+
+				DataResult<MapLike<T>> dynamicResult = ops.getMap(input);
+				var dynamicError = dynamicResult.error();
+
+				if (dynamicResult.isSuccess()) {
+					return DynamicContainerType.DATA_TYPE.codec().decode(ops, input)
 						.map(containerTypeAndInput -> containerTypeAndInput
 							.mapFirst(Function.identity()));
 				}
 
-				return DataResult.error(() -> "Couldn't decode as a container type (" + stringInputError.orElseThrow() + ") or as a dynamic container type (" + mapInputError.orElseThrow() + ")!");
+				StringBuilder errorMsg = new StringBuilder("Couldn't decode as a ");
+				customError.ifPresent(err -> errorMsg.append("custom container type (").append(err).append("), "));
+
+				presetError.ifPresent(err -> errorMsg.append("preset container type (").append(err).append(")"));
+				dynamicError.ifPresent(err -> errorMsg.append(", or as a dynamic container type (").append(err).append(")"));
+
+				return DataResult.error(errorMsg::toString);
 
 			}
 
 			@Override
 			public <T> DataResult<T> encode(ContainerType input, DynamicOps<T> ops, T prefix) {
-
-				if (input instanceof DynamicContainerType dynamicContainerType) {
-					return DYNAMIC_CONTAINER_TYPE.write(ops, dynamicContainerType);
-				}
-
-				else {
-					return CONTAINER_TYPE_FROM_REGISTRY.write(ops, input);
-				}
-
+				return switch (input) {
+					case DynamicContainerType dynamicContainerType ->
+						DynamicContainerType.DATA_TYPE.write(ops, dynamicContainerType);
+					case PresetContainerType presetContainerType ->
+						ApoliContainerTypes.REGISTRY_DATA_TYPE.write(ops, input);
+					default ->
+						ContainerTypeCodecEvents.ENCODING.invoker()
+							.encode(input, ops, prefix)
+							.orElse(DataResult.error(() -> "Missing encoding handler for custom container type \"" + input + "\"!"));
+				};
 			}
 
 		},
@@ -304,11 +314,11 @@ public class ApoliDataTypes {
 			public ContainerType decode(RegistryByteBuf buf) {
 
 				if (buf.readBoolean()) {
-					return DYNAMIC_CONTAINER_TYPE.receive(buf);
+					return DynamicContainerType.DATA_TYPE.receive(buf);
 				}
 
 				else {
-					return CONTAINER_TYPE_FROM_REGISTRY.receive(buf);
+					return ApoliContainerTypes.REGISTRY_DATA_TYPE.receive(buf);
 				}
 
 			}
@@ -318,12 +328,12 @@ public class ApoliDataTypes {
 
 				if (value instanceof DynamicContainerType dynamicContainerType) {
 					buf.writeBoolean(true);
-					DYNAMIC_CONTAINER_TYPE.send(buf, dynamicContainerType);
+					DynamicContainerType.DATA_TYPE.send(buf, dynamicContainerType);
 				}
 
 				else {
 					buf.writeBoolean(false);
-					CONTAINER_TYPE_FROM_REGISTRY.send(buf, value);
+					ApoliContainerTypes.REGISTRY_DATA_TYPE.send(buf, value);
 				}
 
 			}

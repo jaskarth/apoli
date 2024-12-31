@@ -3,6 +3,7 @@ package io.github.apace100.apoli.data.container;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.TextAlignment;
+import io.github.apace100.calio.data.CompoundSerializableDataType;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.inventory.Inventory;
@@ -30,6 +31,8 @@ public record DynamicContainerType(TextAlignment titleAlignment, Identifier text
 			.set("columns", containerType.columns())
 			.set("rows", containerType.rows())
 	);
+
+	public static final CompoundSerializableDataType<DynamicContainerType> DATA_TYPE = DATA_FACTORY.getDataType();
 
 	public DynamicContainerType {
 		throw new UnsupportedOperationException("Dynamic container types are currently not supported!");

@@ -32,7 +32,7 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
     public static final TypedDataObjectFactory<InventoryPowerType> DATA_FACTORY = PowerType.createConditionedDataFactory(
         new SerializableData()
             .add("title", ApoliDataTypes.DEFAULT_TRANSLATABLE_TEXT, Text.translatable("container.inventory"))
-            .add("container_type", ApoliDataTypes.CONTAINER_TYPE, ApoliContainerTypes.DROPPER)
+            .add("container_type", ApoliDataTypes.CONTAINER_TYPE, ApoliContainerTypes.GENERIC_3X3)
             .add("drop_on_death_filter", ItemCondition.DATA_TYPE.optional(), Optional.empty())
             .add("key", ApoliDataTypes.BACKWARDS_COMPATIBLE_KEY, new Key())
             .add("drop_on_death", SerializableDataTypes.BOOLEAN, false)
@@ -64,8 +64,8 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
     private final boolean shouldDropOnDeath;
     private final boolean recoverable;
 
-    private final ScreenHandlerFactory containerHandlerFactory;
     private final DefaultedList<ItemStack> container;
+    private final ScreenHandlerFactory containerHandlerFactory;
 
     private boolean dirty;
 
@@ -77,8 +77,8 @@ public class InventoryPowerType extends PowerType implements Active, Inventory {
         this.key = key;
         this.shouldDropOnDeath = shouldDropOnDeath;
         this.recoverable = recoverable;
-        this.containerHandlerFactory = containerType.create(this);
         this.container = DefaultedList.ofSize(containerType.size(), ItemStack.EMPTY);
+        this.containerHandlerFactory = containerType.create(this);
         this.setTicking(true);
     }
 
