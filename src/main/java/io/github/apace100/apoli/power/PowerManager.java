@@ -446,14 +446,18 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
 
     private static Power update(Identifier id, Power power) {
 
-        if (remove(id) instanceof MultiplePower removedMultiplePower) {
+        Power oldPower = remove(id);
+        if (oldPower instanceof MultiplePower removedMultiplePower) {
             removedMultiplePower.getSubPowers()
                 .stream()
                 .map(Power::getId)
                 .forEach(PowerManager::remove);
         }
 
-        PowerOverrideCallback.EVENT.invoker().onPowerOverride(id);
+        if (oldPower != null) {
+            PowerOverrideCallback.EVENT.invoker().onPowerOverride(id);
+        }
+
         return register(id, power);
 
     }
@@ -545,18 +549,14 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
 
     }
 
-    public void send(ServerPlayerEntity player) {
-
-        if (player.server.isDedicated()) {
-            ServerPlayNetworking.send(player, new SyncPowersS2CPacket(POWERS_BY_ID));
-        }
-
+    public static void send(ServerPlayerEntity player) {
+        ServerPlayNetworking.send(player, new SyncPowersS2CPacket(POWERS_BY_ID));
     }
 
     @Environment(EnvType.CLIENT)
     public static void receive(SyncPowersS2CPacket packet, ClientPlayNetworking.Context context) {
         startBuilding();
-        packet.powersById().forEach(PowerManager::register);
+        packet.powersById().forEach(PowerManager::update);
         endBuilding();
     }
 
