@@ -51,12 +51,14 @@ public class StartingEquipmentPowerType extends PowerType {
 
     @Override
     public void onGained() {
-        giveStacks();
+        if (!getHolder().getWorld().isClient()) {
+            giveStacks();
+        }
     }
 
     @Override
     public void onRespawn() {
-        if (recurrent) {
+        if (!getHolder().getWorld().isClient() && recurrent) {
             giveStacks();
         }
     }
@@ -68,20 +70,23 @@ public class StartingEquipmentPowerType extends PowerType {
         for (IndexedStack indexedStack : indexedStacks) {
 
             ItemStack stack = indexedStack.stack();
-            int slotId = indexedStack.slotId();
+            Optional<Integer> slotId = indexedStack.slotId();
 
-            StackReference stackReference = holder.getStackReference(slotId);
+            StackReference stackReference = slotId.map(holder::getStackReference)
+                .filter(stackRef -> stackRef != StackReference.EMPTY)
+                .filter(stackRef -> stackRef.get().isEmpty())
+                .orElse(null);
 
-            if (stackReference.get().isEmpty()) {
-                stackReference.set(stack);
-            }
+            if (stackReference == null || !stackReference.set(stack)) {
 
-            else if (holder instanceof PlayerEntity player) {
-                player.getInventory().offerOrDrop(stack);
-            }
+                if (holder instanceof PlayerEntity player) {
+                    player.getInventory().offerOrDrop(stack);
+                }
 
-            else {
-                InventoryUtil.throwItem(holder, stack, true, true, 0);
+                else {
+                    InventoryUtil.throwItem(holder, stack, true, true, 0);
+                }
+
             }
 
         }
