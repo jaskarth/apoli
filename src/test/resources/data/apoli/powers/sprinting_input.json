@@ -1,4 +1,4 @@
 {
-  "type": "apoli:sprinting",
-  "requires_input": true
+	"type": "apoli:sprinting",
+	"requires_input": true
 }

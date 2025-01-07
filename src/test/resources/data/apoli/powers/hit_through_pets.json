@@ -1,10 +1,10 @@
 {
-    "type": "apoli:prevent_entity_selection",
-    "bientity_condition": {
-        "type": "apoli:owner"
-    },
-    "condition": {
-        "type": "apoli:sneaking",
-        "inverted": true
-    }
+	"type": "apoli:prevent_entity_selection",
+	"bientity_condition": {
+		"type": "apoli:owner"
+	},
+	"condition": {
+		"type": "apoli:sneaking",
+		"inverted": true
+	}
 }
