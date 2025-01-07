@@ -8,12 +8,10 @@ import io.github.apace100.apoli.util.AttributedEntityAttributeModifier;
 import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 public class AttributePowerType extends PowerType implements AttributeModifying {
 
@@ -51,13 +49,13 @@ public class AttributePowerType extends PowerType implements AttributeModifying 
     }
 
     @Override
-    public void onAdded() {
-        this.applyTempModifiers(getHolder());
+    public void onGained() {
+        addPersistentModifiers(getHolder());
     }
 
     @Override
-    public void onRemoved() {
-        this.removeTempModifiers(getHolder());
+    public void onLost() {
+        removeModifiers(getHolder());
     }
 
     @Override
@@ -68,23 +66,6 @@ public class AttributePowerType extends PowerType implements AttributeModifying 
     @Override
     public boolean shouldUpdateHealth() {
         return updateHealth;
-    }
-
-    public static <T extends AttributePowerType> TypedDataObjectFactory<T> createAttributeModifyingDataFactory(SerializableData serializableData, TriFunction<SerializableData.Instance, List<AttributedEntityAttributeModifier>, Boolean, T> fromData, BiFunction<T, SerializableData, SerializableData.Instance> toData) {
-        return TypedDataObjectFactory.simple(
-            serializableData
-                .add("modifier", ApoliDataTypes.ATTRIBUTED_ATTRIBUTE_MODIFIER, null)
-                .addFunctionedDefault("modifiers", ApoliDataTypes.ATTRIBUTED_ATTRIBUTE_MODIFIERS, data -> MiscUtil.singletonListOrNull(data.get("modifier")))
-                .add("update_health", SerializableDataTypes.BOOLEAN, true)
-                .validate(MiscUtil.validateAnyFieldsPresent("modifier", "modifiers")),
-            data -> fromData.apply(
-                data,
-                data.get("modifiers"),
-                data.get("update_health")
-            ),
-            (t, _serializableData) -> toData.apply(t, _serializableData)
-                .set("modifier", t.attributedModifiers())
-        );
     }
 
 }

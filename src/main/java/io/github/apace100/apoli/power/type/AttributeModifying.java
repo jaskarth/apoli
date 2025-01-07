@@ -3,8 +3,11 @@ package io.github.apace100.apoli.power.type;
 import com.mojang.datafixers.util.Pair;
 import io.github.apace100.apoli.util.AttributedEntityAttributeModifier;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 public interface AttributeModifying {
 
@@ -12,50 +15,39 @@ public interface AttributeModifying {
 
 	boolean shouldUpdateHealth();
 
-	default void applyTempModifiers(LivingEntity entity) {
+	default void processModifiers(LivingEntity entity, BiPredicate<AttributedEntityAttributeModifier, EntityAttributeInstance> filter, BiConsumer<AttributedEntityAttributeModifier, EntityAttributeInstance> processor) {
 
 		if (entity.getWorld().isClient()) {
 			return;
 		}
 
-		float previousMaxHealth = entity.getMaxHealth();
-		float previousMaxHealthPercent = entity.getHealth() / previousMaxHealth;
+		float prevMaxHealth = entity.getMaxHealth();
+		float prevMaxHealthPercent = entity.getHealth() / prevMaxHealth;
 
-		attributedModifiers().stream()
-			.filter(mod -> entity.getAttributes().hasAttribute(mod.attribute()))
+		attributedModifiers()
+			.stream()
 			.map(mod -> Pair.of(mod, entity.getAttributeInstance(mod.attribute())))
-			.filter(pair -> pair.getSecond() != null && !pair.getSecond().hasModifier(pair.getFirst().modifier().id()))
-			.forEach(pair -> pair.getSecond().addTemporaryModifier(pair.getFirst().modifier()));
+			.filter(pair -> pair.getSecond() != null)
+			.filter(pair -> filter.test(pair.getFirst(), pair.getSecond()))
+			.forEach(pair -> processor.accept(pair.getFirst(), pair.getSecond()));
 
-		float currentMaxHealth = entity.getMaxHealth();
-
-		if (shouldUpdateHealth() && currentMaxHealth != previousMaxHealth) {
-			entity.setHealth(currentMaxHealth * previousMaxHealthPercent);
+		float currMaxHealth = entity.getMaxHealth();
+		if (shouldUpdateHealth() && currMaxHealth != prevMaxHealth) {
+			entity.setHealth(currMaxHealth * prevMaxHealthPercent);
 		}
 
 	}
 
-	default void removeTempModifiers(LivingEntity entity) {
+	default void addTemporaryModifiers(LivingEntity entity) {
+		processModifiers(entity, (attributedModifier, attributeInstance) -> !attributeInstance.hasModifier(attributedModifier.modifier().id()),  (attributedModifier, attributeInstance) -> attributeInstance.addTemporaryModifier(attributedModifier.modifier()));
+	}
 
-		if (entity.getWorld().isClient()) {
-			return;
-		}
+	default void addPersistentModifiers(LivingEntity entity) {
+		processModifiers(entity, (attributedModifier, attributeInstance) -> !attributeInstance.hasModifier(attributedModifier.modifier().id()), (attributedModifier, attributeInstance) -> attributeInstance.addPersistentModifier(attributedModifier.modifier()));
+	}
 
-		float previousMaxHealth = entity.getMaxHealth();
-		float previousMaxHealthPercent = entity.getHealth() / previousMaxHealth;
-
-		attributedModifiers().stream()
-			.filter(mod -> entity.getAttributes().hasAttribute(mod.attribute()))
-			.map(mod -> Pair.of(mod, entity.getAttributeInstance(mod.attribute())))
-			.filter(pair -> pair.getSecond() != null && pair.getSecond().hasModifier(pair.getFirst().modifier().id()))
-			.forEach(pair -> pair.getSecond().removeModifier(pair.getFirst().modifier()));
-
-		float currentMaxHealth = entity.getMaxHealth();
-
-		if (shouldUpdateHealth() && currentMaxHealth != previousMaxHealth) {
-			entity.setHealth(currentMaxHealth * previousMaxHealthPercent);
-		}
-
+	default void removeModifiers(LivingEntity entity) {
+		processModifiers(entity, (attributedModifier, attributeInstance) -> attributeInstance.hasModifier(attributedModifier.modifier().id()), (attributedModifier, attributeInstance) -> attributeInstance.removeModifier(attributedModifier.modifier()));
 	}
 
 }

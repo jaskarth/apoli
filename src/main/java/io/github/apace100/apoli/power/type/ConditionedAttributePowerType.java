@@ -53,21 +53,6 @@ public class ConditionedAttributePowerType extends AttributePowerType {
     }
 
     @Override
-    public void onAdded() {
-
-    }
-
-    @Override
-    public void onRemoved() {
-
-    }
-
-    @Override
-    public void onLost() {
-        removeTempModifiers(getHolder());
-    }
-
-    @Override
     public void serverTick() {
 
         if (isActive()) {
@@ -78,7 +63,7 @@ public class ConditionedAttributePowerType extends AttributePowerType {
             }
 
             else if (!wasActive && getHolder().age % tickRate == startTicks) {
-                applyTempModifiers(getHolder());
+                addTemporaryModifiers(getHolder());
                 this.wasActive = true;
             }
 
@@ -92,7 +77,7 @@ public class ConditionedAttributePowerType extends AttributePowerType {
             }
 
             else if (getHolder().age % tickRate == endTicks) {
-                removeTempModifiers(getHolder());
+                removeModifiers(getHolder());
                 this.wasActive = false;
             }
 

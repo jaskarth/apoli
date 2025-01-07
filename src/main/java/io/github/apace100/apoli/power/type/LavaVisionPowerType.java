@@ -44,12 +44,12 @@ public class LavaVisionPowerType extends PowerType implements AttributeModifying
 
     @Override
     public void onAdded() {
-        applyTempModifiers(getHolder());
+        addTemporaryModifiers(getHolder());
     }
 
     @Override
     public void onRemoved() {
-        removeTempModifiers(getHolder());
+        removeModifiers(getHolder());
     }
 
     @Override
