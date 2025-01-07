@@ -43,7 +43,7 @@ public interface Active {
                 continue;
             }
 
-            if (currentKeybindingStates.computeIfAbsent(keyBindingReference.key(), k -> keyBinding.isPressed()) && (keyBindingReference.continuous() || !ApoliClient.lastKeyBindingStates.getOrDefault(keyBindingReference.key(), false))) {
+            if (currentKeybindingStates.computeIfAbsent(keyBindingReference.id(), k -> keyBinding.isPressed()) && (keyBindingReference.continuous() || !ApoliClient.lastKeyBindingStates.getOrDefault(keyBindingReference.id(), false))) {
 				//noinspection unchecked
 				triggeredPowerTypes.add((P) powerType);
             }

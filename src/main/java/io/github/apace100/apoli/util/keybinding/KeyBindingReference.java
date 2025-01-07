@@ -2,6 +2,7 @@ package io.github.apace100.apoli.util.keybinding;
 
 import io.github.apace100.apoli.ApoliClient;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.fabricmc.api.EnvType;
@@ -10,20 +11,22 @@ import net.minecraft.client.option.KeyBinding;
 
 import java.util.Objects;
 
-public record KeyBindingReference(String key, boolean continuous) {
+public record KeyBindingReference(String id, boolean continuous) {
 
 	public static final KeyBindingReference NONE = new KeyBindingReference("none");
 
 	public static final TypedDataObjectFactory<KeyBindingReference> DATA_FACTORY = TypedDataObjectFactory.simple(
 		new SerializableData()
-			.add("key", SerializableDataTypes.STRING)
-			.add("continuous", SerializableDataTypes.BOOLEAN, false),
+			.add("key", SerializableDataTypes.STRING, null)
+			.addFunctionedDefault("id", SerializableDataTypes.STRING, data -> data.get("key"))
+			.add("continuous", SerializableDataTypes.BOOLEAN, false)
+			.validate(MiscUtil.validateAllFieldsPresent("id")),
 		data -> new KeyBindingReference(
-			data.get("key"),
+			data.get("id"),
 			data.get("continuous")
 		),
 		(keyBindingReference, serializableData) -> serializableData.instance()
-			.set("key", keyBindingReference.key())
+			.set("id", keyBindingReference.id())
 			.set("continuous", keyBindingReference.continuous())
 	);
 
@@ -39,7 +42,7 @@ public record KeyBindingReference(String key, boolean continuous) {
 		}
 
 		else if (obj instanceof KeyBindingReference that) {
-			return this.key().equals(that.key())
+			return this.id().equals(that.id())
 				&& this.continuous() == that.continuous();
 		}
 
@@ -51,12 +54,12 @@ public record KeyBindingReference(String key, boolean continuous) {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.key(), this.continuous());
+		return Objects.hash(this.id(), this.continuous());
 	}
 
 	@Environment(EnvType.CLIENT)
 	public KeyBinding asKeyBinding() {
-		return ApoliClient.getKeyBinding(key());
+		return ApoliClient.getKeyBinding(id());
 	}
 
 }
