@@ -79,11 +79,10 @@
 		"TextCodecsMixin",
 		"TextCodecsMixin$FuzzyCodecMixin",
 		"TranslatableTextContentAccessor",
-		"VibrationsMixin",
-		"VibrationsMixin$CallbackMixin",
-		"VibrationsMixin$TickerMixin",
 		"WeightedListEntryAccessor",
 		"integration.appleskin.FoodHelperMixin",
+		"power.type.GameEventListenerPowerTypeMixin$CallbackMixin",
+		"power.type.GameEventListenerPowerTypeMixin$TickerMixin",
 		"power.type.ModifyHarvestPowerTypeMixin$BlockBreakingDeltaProxy",
 		"power.type.ModifyHarvestPowerTypeMixin$HarvestabilityProxy"
 	],

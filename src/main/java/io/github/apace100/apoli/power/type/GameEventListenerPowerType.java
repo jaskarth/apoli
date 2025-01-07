@@ -8,10 +8,10 @@ import io.github.apace100.apoli.condition.EntityCondition;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerConfiguration;
 import io.github.apace100.apoli.util.HudRender;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -38,8 +38,8 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
             .add("bientity_condition", BiEntityCondition.DATA_TYPE.optional(), Optional.empty())
             .add("block_action", BlockAction.DATA_TYPE.optional(), Optional.empty())
             .add("block_condition", BlockCondition.DATA_TYPE.optional(), Optional.empty())
-            .add("event", SerializableDataTypes.GAME_EVENT_ENTRY.optional(), Optional.empty())
-            .add("events", SerializableDataTypes.GAME_EVENT_ENTRIES.optional(), Optional.empty())
+            .add("event", SerializableDataTypes.GAME_EVENT_ENTRY, null)
+            .addFunctionedDefault("events", SerializableDataTypes.GAME_EVENT_ENTRIES, data -> MiscUtil.singletonListOrEmpty(data.get("event")))
             .add("event_tag", SerializableDataTypes.GAME_EVENT_TAG.optional(), Optional.empty())
             .add("trigger_order", SerializableDataType.enumValue(GameEventListener.TriggerOrder.class), GameEventListener.TriggerOrder.UNSPECIFIED)
             .add("hud_render", HudRender.DATA_TYPE, HudRender.DONT_RENDER)
@@ -51,7 +51,6 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
             data.get("bientity_condition"),
             data.get("block_action"),
             data.get("block_condition"),
-            data.get("event"),
             data.get("events"),
             data.get("event_tag"),
             data.get("trigger_order"),
@@ -66,7 +65,6 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
             .set("bientity_condition", powerType.biEntityCondition)
             .set("block_action", powerType.blockAction)
             .set("block_condition", powerType.blockCondition)
-            .set("event", powerType.gameEvent)
             .set("events", powerType.gameEvents)
             .set("event_tag", powerType.gameEventTag)
             .set("trigger_order", powerType.triggerOrder)
@@ -82,10 +80,7 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
     private final Optional<BiEntityCondition> biEntityCondition;
     private final Optional<BlockCondition> blockCondition;
 
-    private final Optional<RegistryEntry<GameEvent>> gameEvent;
-    private final Optional<List<RegistryEntry<GameEvent>>> gameEvents;
-
-    private final ObjectOpenHashSet<RegistryEntry<GameEvent>> allGameEvents;
+    private final List<RegistryEntry<GameEvent>> gameEvents;
     private final Optional<TagKey<GameEvent>> gameEventTag;
 
     private final GameEventListener.TriggerOrder triggerOrder;
@@ -98,7 +93,7 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
 
     private EntityGameEventHandler<VibrationListener> gameEventHandler;
 
-    public GameEventListenerPowerType(Optional<BiEntityAction> biEntityAction, Optional<BlockAction> blockAction, Optional<BiEntityCondition> biEntityCondition, Optional<BlockCondition> blockCondition, Optional<RegistryEntry<GameEvent>> gameEvent, Optional<List<RegistryEntry<GameEvent>>> gameEvents, Optional<TagKey<GameEvent>> gameEventTag, GameEventListener.TriggerOrder triggerOrder, HudRender hudRender, int cooldownDuration, boolean showParticle, int range, Optional<EntityCondition> condition) {
+    public GameEventListenerPowerType(Optional<BiEntityAction> biEntityAction, Optional<BiEntityCondition> biEntityCondition, Optional<BlockAction> blockAction, Optional<BlockCondition> blockCondition, List<RegistryEntry<GameEvent>> gameEvents, Optional<TagKey<GameEvent>> gameEventTag, GameEventListener.TriggerOrder triggerOrder, HudRender hudRender, int cooldownDuration, boolean showParticle, int range, Optional<EntityCondition> condition) {
         super(cooldownDuration, hudRender, condition);
 
         this.biEntityAction = biEntityAction;
@@ -107,16 +102,9 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
         this.biEntityCondition = biEntityCondition;
         this.blockCondition = blockCondition;
 
-        this.gameEvent = gameEvent;
         this.gameEvents = gameEvents;
-
-        this.allGameEvents = new ObjectOpenHashSet<>();
         this.gameEventTag = gameEventTag;
 
-        this.gameEvent.ifPresent(this.allGameEvents::add);
-        this.gameEvents.ifPresent(this.allGameEvents::addAll);
-
-        this.allGameEvents.trim();
         this.triggerOrder = triggerOrder;
 
         this.vibrationListenerData = new ListenerData();
@@ -242,7 +230,7 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
 
         public boolean isAccepted(RegistryEntry<GameEvent> gameEvent) {
             return gameEventTag.map(gameEvent::isIn).orElse(true)
-                && (allGameEvents.isEmpty() || allGameEvents.contains(gameEvent));
+                && (gameEvents.isEmpty() || gameEvents.contains(gameEvent));
         }
 
     }
