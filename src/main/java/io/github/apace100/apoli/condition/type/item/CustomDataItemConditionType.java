@@ -9,9 +9,7 @@ import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomDataItemConditionType extends ItemConditionType {

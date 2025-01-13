@@ -7,7 +7,6 @@ import io.github.apace100.apoli.condition.type.ItemConditionTypes;
 import io.github.apace100.apoli.power.type.EdibleItemPowerType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class FoodItemConditionType extends ItemConditionType {

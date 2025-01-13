@@ -4,7 +4,6 @@ import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class CollidedHorizontallyEntityConditionType extends EntityConditionType {

@@ -1,7 +1,6 @@
 package io.github.apace100.apoli;
 
 import io.github.apace100.apoli.integration.PowerIntegrationClient;
-import io.github.apace100.apoli.mixin.KeyBindingAccessor;
 import io.github.apace100.apoli.networking.ModPacketsS2C;
 import io.github.apace100.apoli.networking.packet.c2s.UseActivePowerTypesC2SPacket;
 import io.github.apace100.apoli.power.Power;

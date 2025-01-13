@@ -6,7 +6,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class ModifierUtil {
 

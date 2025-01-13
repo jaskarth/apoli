@@ -9,7 +9,6 @@ import io.github.apace100.apoli.mixin.ClientPlayerInteractionManagerAccessor;
 import io.github.apace100.apoli.mixin.ServerPlayerInteractionManagerAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;

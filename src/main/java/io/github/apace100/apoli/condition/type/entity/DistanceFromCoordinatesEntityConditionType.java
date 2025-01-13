@@ -8,7 +8,6 @@ import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.DistanceFromCoordinatesMetaConditionType;
 import io.github.apace100.apoli.util.Comparison;
 import io.github.apace100.apoli.util.Shape;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 

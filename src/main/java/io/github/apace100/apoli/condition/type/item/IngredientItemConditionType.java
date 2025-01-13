@@ -7,9 +7,7 @@ import io.github.apace100.apoli.condition.type.ItemConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class IngredientItemConditionType extends ItemConditionType {

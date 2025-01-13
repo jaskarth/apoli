@@ -11,7 +11,6 @@ import io.github.apace100.apoli.util.Comparison;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
@@ -19,10 +18,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommandBlockConditionType extends BlockConditionType {

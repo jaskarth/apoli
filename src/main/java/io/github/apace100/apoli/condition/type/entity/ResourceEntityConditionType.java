@@ -11,7 +11,6 @@ import io.github.apace100.apoli.util.Comparison;
 import io.github.apace100.apoli.util.PowerUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class ResourceEntityConditionType extends EntityConditionType {

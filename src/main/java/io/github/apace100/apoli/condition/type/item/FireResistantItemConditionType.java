@@ -5,8 +5,6 @@ import io.github.apace100.apoli.condition.context.ItemConditionContext;
 import io.github.apace100.apoli.condition.type.ItemConditionType;
 import io.github.apace100.apoli.condition.type.ItemConditionTypes;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class FireResistantItemConditionType extends ItemConditionType {

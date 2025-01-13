@@ -9,8 +9,6 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.Comparison;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class AmountItemConditionType extends ItemConditionType {

@@ -11,7 +11,6 @@ import io.github.apace100.apoli.mixin.ClientPlayerInteractionManagerAccessor;
 import io.github.apace100.apoli.mixin.ServerPlayerInteractionManagerAccessor;
 import io.github.apace100.calio.data.SerializableData;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;

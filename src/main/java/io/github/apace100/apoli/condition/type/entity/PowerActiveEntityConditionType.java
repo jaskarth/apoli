@@ -8,7 +8,6 @@ import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.calio.data.SerializableData;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class PowerActiveEntityConditionType extends EntityConditionType {

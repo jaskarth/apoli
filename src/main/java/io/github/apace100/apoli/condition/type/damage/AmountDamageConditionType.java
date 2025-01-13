@@ -9,7 +9,6 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.Comparison;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.entity.damage.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 public class AmountDamageConditionType extends DamageConditionType {

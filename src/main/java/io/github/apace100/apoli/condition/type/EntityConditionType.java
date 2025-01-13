@@ -2,7 +2,6 @@ package io.github.apace100.apoli.condition.type;
 
 import io.github.apace100.apoli.condition.EntityCondition;
 import io.github.apace100.apoli.condition.context.EntityConditionContext;
-import net.minecraft.entity.Entity;
 
 public abstract class EntityConditionType extends AbstractConditionType<EntityConditionContext, EntityCondition> {
 

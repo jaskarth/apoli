@@ -1,6 +1,5 @@
 package io.github.apace100.apoli.util.keybinding;
 
-import io.github.apace100.apoli.ApoliClient;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;

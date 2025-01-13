@@ -10,15 +10,11 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
-import javax.crypto.spec.PSource;
 import java.util.Optional;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class PowerEntityConditionType extends EntityConditionType {
 

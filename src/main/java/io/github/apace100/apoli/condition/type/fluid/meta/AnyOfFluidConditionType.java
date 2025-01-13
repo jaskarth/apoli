@@ -6,7 +6,6 @@ import io.github.apace100.apoli.condition.context.FluidConditionContext;
 import io.github.apace100.apoli.condition.type.FluidConditionType;
 import io.github.apace100.apoli.condition.type.FluidConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.AnyOfMetaConditionType;
-import net.minecraft.fluid.FluidState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
