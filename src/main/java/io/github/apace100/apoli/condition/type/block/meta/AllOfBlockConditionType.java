@@ -24,8 +24,8 @@ public class AllOfBlockConditionType extends BlockConditionType implements AllOf
 	}
 
 	@Override
-	public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
-		return testConditions(new BlockConditionContext(world, pos, blockState, blockEntity));
+	public boolean test(BlockConditionContext context) {
+		return testConditions(context);
 	}
 
 	@Override

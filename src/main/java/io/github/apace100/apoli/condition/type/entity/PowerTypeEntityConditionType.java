@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -33,8 +34,8 @@ public class PowerTypeEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
-        return PowerHolderComponent.getOptional(entity)
+    public boolean test(EntityConditionContext context) {
+        return PowerHolderComponent.getOptional(context.entity())
             .stream()
             .map(PowerHolderComponent::getPowerTypes)
             .flatMap(Collection::stream)

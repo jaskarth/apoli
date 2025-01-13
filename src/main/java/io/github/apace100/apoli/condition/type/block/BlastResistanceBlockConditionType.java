@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.block;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.apoli.condition.type.BlockConditionType;
 import io.github.apace100.apoli.condition.type.BlockConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -40,8 +41,8 @@ public class BlastResistanceBlockConditionType extends BlockConditionType {
     }
 
     @Override
-    public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
-        return comparison.compare(blockState.getBlock().getBlastResistance(), compareTo);
+    public boolean test(BlockConditionContext context) {
+        return comparison.compare(context.blockState().getBlock().getBlastResistance(), compareTo);
     }
 
     @Override

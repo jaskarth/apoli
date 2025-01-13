@@ -1,9 +1,10 @@
 package io.github.apace100.apoli.condition.type.bientity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
-import net.minecraft.entity.Entity;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -11,19 +12,18 @@ import java.util.Objects;
 public class RidingBiEntityConditionType extends BiEntityConditionType {
 
     @Override
-    public @NotNull ConditionConfiguration<?> getConfig() {
-        return BiEntityConditionTypes.RIDING;
+    public boolean test(BiEntityConditionContext context) {
+        return Objects.equals(context.actor().getVehicle(), context.target());
     }
 
     @Override
-    public boolean test(Entity actor, Entity target) {
-        return condition(actor, target);
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
     }
 
-    public static boolean condition(Entity actor, Entity target) {
-        return actor != null
-            && target != null
-            && Objects.equals(actor.getVehicle(), target);
+    @Override
+    public @NotNull ConditionConfiguration<?> getConfig() {
+        return BiEntityConditionTypes.RIDING;
     }
 
 }

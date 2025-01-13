@@ -8,7 +8,6 @@ import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.action.type.meta.IfElseListMetaActionType;
 import io.github.apace100.apoli.condition.BiEntityCondition;
 import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -22,8 +21,8 @@ public class IfElseListBiEntityActionType extends BiEntityActionType implements 
 	}
 
 	@Override
-	protected void execute(Entity actor, Entity target) {
-		executeActions(new BiEntityActionContext(actor, target));
+	public void accept(BiEntityActionContext context) {
+		this.executeActions(context);
 	}
 
 	@Override

@@ -1,12 +1,15 @@
 package io.github.apace100.apoli.action.type.bientity;
 
+import com.mojang.serialization.DataResult;
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.apoli.util.modifier.Modifier;
 import io.github.apace100.apoli.util.modifier.ModifierUtil;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
@@ -26,7 +29,20 @@ public class DamageBiEntityActionType extends BiEntityActionType {
             .add("amount", SerializableDataTypes.FLOAT.optional(), Optional.empty())
             .add("modifier", Modifier.DATA_TYPE, null)
             .addFunctionedDefault("modifiers", Modifier.LIST_TYPE, data -> MiscUtil.singletonListOrNull(data.get("modifier")))
-            .validate(MiscUtil.validateAnyFieldsPresent("amount", "modifier", "modifiers")),
+            .validate(data -> {
+
+                if (MiscUtil.anyPresent(data, "modifier", "modifiers")) {
+                    return DataResult.success(data);
+                }
+
+                else {
+                    Optional<Float> amount = data.get("amount");
+                    return amount
+                        .map(value -> DataResult.success(data))
+                        .orElseGet(() -> DataResult.error(() -> "Any of 'amount', 'modifier', or 'modifier' fields must be defined!"));
+                }
+
+            }),
         data -> new DamageBiEntityActionType(
             data.get("damage_type"),
             data.get("amount"),
@@ -50,19 +66,25 @@ public class DamageBiEntityActionType extends BiEntityActionType {
     }
 
     @Override
-	protected void execute(Entity actor, Entity target) {
+    public void accept(BiEntityActionContext context) {
 
-        if (actor != null && target != null) {
-            this.amount
-                .or(() -> getModifiedAmount(actor, target))
-                .ifPresent(amount -> target.damage(actor.getDamageSources().create(damageType, actor), amount));
-        }
+        Entity actor = context.actor();
+        Entity target = context.target();
+
+        this.amount
+            .or(() -> getModifiedAmount(actor, target))
+            .ifPresent(amount -> target.damage(actor.getDamageSources().create(damageType, actor), amount));
 
     }
 
     @Override
     public @NotNull ActionConfiguration<?> getConfig() {
         return BiEntityActionTypes.DAMAGE;
+    }
+
+    @Override
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
     }
 
     private Optional<Float> getModifiedAmount(Entity actor, Entity target) {

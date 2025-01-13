@@ -7,6 +7,7 @@ import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.Space;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
@@ -57,15 +58,6 @@ public class AddVelocityBiEntityActionType extends BiEntityActionType {
         Entity actor = context.actor();
         Entity target = context.target();
 
-        if (actor != null && target != null) {
-            execute(actor, target);
-        }
-
-    }
-
-    @Override
-	protected void execute(Entity actor, Entity target) {
-
         Vector3f velocityCopy = new Vector3f(velocity);
         TriConsumer<Float, Float, Float> method = set
             ? target::setVelocity
@@ -82,6 +74,11 @@ public class AddVelocityBiEntityActionType extends BiEntityActionType {
     @Override
     public @NotNull ActionConfiguration<?> getConfig() {
         return BiEntityActionTypes.ADD_VELOCITY;
+    }
+
+    @Override
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
     }
 
     public enum Reference implements BiFunction<Entity, Entity, Vec3d> {

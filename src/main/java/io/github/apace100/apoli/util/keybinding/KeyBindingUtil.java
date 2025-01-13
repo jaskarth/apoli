@@ -8,6 +8,9 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
+import java.util.Optional;
+import java.util.function.Predicate;
+
 @Environment(EnvType.CLIENT)
 public class KeyBindingUtil {
 
@@ -22,13 +25,20 @@ public class KeyBindingUtil {
      *                              that contains the specified translation key.
      */
     public static MutableText getLocalizedName(String translationKey) {
+        return getKeyBinding(translationKey)
+            .filter(Predicate.not(KeyBinding::isUnbound))
+            .map(KeyBinding::getBoundKeyLocalizedText)
+            .map(Text::copy)
+            .orElseGet(() -> Text.translatable(translationKey));
+    }
 
-        KeyBinding keyBinding = KeyBindingAccessor.getKeysById().get(translationKey);
-        if (keyBinding == null || keyBinding.isUnbound()) {
-            return Text.translatable(translationKey);
-        }
+    public static Optional<KeyBinding> getKeyBinding(String keyBindingId) {
 
-        return keyBinding.getBoundKeyLocalizedText().copy();
+        keyBindingId = ALIASES.hasAlias(keyBindingId)
+            ? ALIASES.resolveAlias(keyBindingId)
+            : keyBindingId;
+
+        return Optional.ofNullable(KeyBindingAccessor.getKeysById().get(keyBindingId));
 
     }
 

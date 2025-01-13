@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.item;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -17,7 +18,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.world.World;
+import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -68,7 +69,10 @@ public class RemoveEnchantmentItemActionType extends ItemActionType {
     }
 
     @Override
-	protected void execute(World world, StackReference stackReference) {
+    public void accept(ItemActionContext context) {
+
+        ServerWorld world = context.world();
+        StackReference stackReference = context.stackReference();
 
         ItemStack stack = stackReference.get();
         DynamicRegistryManager dynamicRegistries = world.getRegistryManager();

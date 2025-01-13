@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.ItemCondition;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -33,15 +34,15 @@ public class UsingItemEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
 
-        if (entity instanceof LivingEntity livingEntity && livingEntity.isUsingItem()) {
+        if (context.entity() instanceof LivingEntity livingEntity && livingEntity.isUsingItem()) {
 
             Hand activeHand = livingEntity.getActiveHand();
             ItemStack stackInHand = livingEntity.getStackInHand(activeHand);
 
             return itemCondition
-                .map(condition -> condition.test(entity.getWorld(), stackInHand))
+                .map(condition -> condition.test(livingEntity.getWorld(), stackInHand))
                 .orElse(true);
 
         }

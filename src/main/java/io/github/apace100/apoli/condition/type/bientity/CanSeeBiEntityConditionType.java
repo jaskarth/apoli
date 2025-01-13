@@ -1,9 +1,11 @@
 package io.github.apace100.apoli.condition.type.bientity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
@@ -36,27 +38,31 @@ public class CanSeeBiEntityConditionType extends BiEntityConditionType {
     }
 
     @Override
-    public @NotNull ConditionConfiguration<?> getConfig() {
-        return BiEntityConditionTypes.CAN_SEE;
-    }
+    public boolean test(BiEntityConditionContext context) {
 
-    @Override
-    public boolean test(Entity actor, Entity target) {
+        Entity actor = context.actor();
+        Entity target = context.target();
 
-        if ((actor == null || target == null) || actor.getWorld() != target.getWorld()) {
+        if (actor.getWorld() != target.getWorld()) {
             return false;
         }
 
         Vec3d actorEyePos = actor.getEyePos();
         Vec3d targetEyePos = target.getEyePos();
 
-        if (actorEyePos.distanceTo(targetEyePos) > 128.0d) {
-            return false;
-        }
+        RaycastContext raycastContext = new RaycastContext(actorEyePos, targetEyePos, shapeType, fluidHandling, actor);
+        return actor.getWorld().raycast(raycastContext).getType() == HitResult.Type.MISS;
 
-        RaycastContext context = new RaycastContext(actorEyePos, targetEyePos, shapeType, fluidHandling, actor);
-        return actor.getWorld().raycast(context).getType() == HitResult.Type.MISS;
+    }
 
+    @Override
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
+    }
+
+    @Override
+    public @NotNull ConditionConfiguration<?> getConfig() {
+        return BiEntityConditionTypes.CAN_SEE;
     }
 
 }

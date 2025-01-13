@@ -45,14 +45,8 @@ public class OffsetBlockConditionType extends BlockConditionType {
     }
 
     @Override
-    public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
-
-        BlockConditionContext context = offset.equals(Vec3i.ZERO)
-            ? new BlockConditionContext(world, pos, blockState, blockEntity)
-            : new BlockConditionContext(world, pos.add(offset));
-
-        return blockCondition.test(context);
-
+    public boolean test(BlockConditionContext context) {
+        return blockCondition.test(new BlockConditionContext(context.world(), context.pos().add(offset), context.blockState(), context.blockEntity()));
     }
 
     @Override

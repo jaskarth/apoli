@@ -6,9 +6,11 @@ import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.action.type.block.meta.SequenceBlockActionType;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.calio.data.SerializableDataType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -20,8 +22,20 @@ public final class BlockAction extends AbstractAction<BlockActionContext, BlockA
 		super(actionType);
 	}
 
+	public void execute(World world, BlockPos pos) {
+		execute(world, pos, Optional.empty());
+	}
+
+	public void execute(World world, BlockPos pos, @Nullable Direction direction) {
+		execute(world, pos, Optional.ofNullable(direction));
+	}
+
 	public void execute(World world, BlockPos pos, Optional<Direction> direction) {
-		accept(new BlockActionContext(world, pos, direction));
+
+		if (world instanceof ServerWorld serverWorld) {
+			accept(new BlockActionContext(serverWorld, pos, direction));
+		}
+
 	}
 
 }

@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.block;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.apoli.condition.type.BlockConditionType;
 import io.github.apace100.apoli.condition.type.BlockConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -57,16 +58,17 @@ public class BlockStateBlockConditionType extends BlockConditionType {
     }
 
     @Override
-    public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
+    public boolean test(BlockConditionContext context) {
 
-        var propertyValue = blockState.getProperties()
+        BlockState blockState = context.blockState();
+        var propValue = blockState.getProperties()
             .stream()
             .filter(prop -> prop.getName().equals(property))
             .map(blockState::get)
             .findFirst()
             .orElse(null);
 
-        return switch (propertyValue) {
+        return switch (propValue) {
             case Enum<?> enumProp when enumValue != null ->
                 enumProp.name().equalsIgnoreCase(enumValue);
             case Boolean boolProp when boolValue != null ->
@@ -74,7 +76,7 @@ public class BlockStateBlockConditionType extends BlockConditionType {
             case Integer intProp when comparison != null && compareTo != null ->
                 comparison.compare(intProp, compareTo);
             case null, default ->
-                propertyValue != null;
+                propValue != null;
         };
 
     }

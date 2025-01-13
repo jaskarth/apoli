@@ -1,13 +1,13 @@
 package io.github.apace100.apoli.action.type.entity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.modifier.Modifier;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
@@ -37,15 +37,15 @@ public class ModifyStatEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
 
-        if (entity instanceof ServerPlayerEntity serverPlayer) {
+        if (context.entity() instanceof ServerPlayerEntity serverPlayer) {
 
             ServerStatHandler statHandler = serverPlayer.getStatHandler();
             int originalValue = statHandler.getStat(stat);
 
             serverPlayer.resetStat(stat);
-            serverPlayer.increaseStat(stat, (int) modifier.apply(entity, originalValue));
+            serverPlayer.increaseStat(stat, (int) modifier.apply(serverPlayer, originalValue));
 
         }
 

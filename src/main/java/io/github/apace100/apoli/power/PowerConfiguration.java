@@ -15,14 +15,22 @@ import java.util.function.Supplier;
 public record PowerConfiguration<T extends PowerType>(Identifier id, TypedDataObjectFactory<T> dataFactory) implements TypeConfiguration<T> {
 
 	public static <T extends PowerType> PowerConfiguration<T> of(Identifier id, SerializableData serializableData, Function<SerializableData.Instance, T> fromData, BiFunction<T, SerializableData, SerializableData.Instance> toData) {
-		return dataFactory(id, TypedDataObjectFactory.simple(serializableData, fromData, toData));
+		return of(id, TypedDataObjectFactory.simple(serializableData, fromData, toData));
 	}
 
 	public static <T extends PowerType> PowerConfiguration<T> conditionedOf(Identifier id, SerializableData serializableData, BiFunction<SerializableData.Instance, Optional<EntityCondition>,  T> fromData, BiFunction<T, SerializableData, SerializableData.Instance> toData) {
-		return dataFactory(id, PowerType.createConditionedDataFactory(serializableData, fromData, toData));
+		return of(id, PowerType.createConditionedDataFactory(serializableData, fromData, toData));
 	}
 
+	/**
+	 * 	<b>Use {@link #of(Identifier, TypedDataObjectFactory)} instead.</b>
+	 */
+	@Deprecated(forRemoval = true)
 	public static <T extends PowerType> PowerConfiguration<T> dataFactory(Identifier id, TypedDataObjectFactory<T> dataFactory) {
+		return of(id, dataFactory);
+	}
+
+	public static <T extends PowerType> PowerConfiguration<T> of(Identifier id, TypedDataObjectFactory<T> dataFactory) {
 		return new PowerConfiguration<>(id, dataFactory);
 	}
 

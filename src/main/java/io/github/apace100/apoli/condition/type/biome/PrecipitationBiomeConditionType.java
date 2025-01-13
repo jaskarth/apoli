@@ -1,13 +1,12 @@
 package io.github.apace100.apoli.condition.type.biome;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiomeConditionContext;
 import io.github.apace100.apoli.condition.type.BiomeConditionType;
 import io.github.apace100.apoli.condition.type.BiomeConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,8 +29,8 @@ public class PrecipitationBiomeConditionType extends BiomeConditionType {
     }
 
     @Override
-    public boolean test(BlockPos pos, RegistryEntry<Biome> biomeEntry) {
-        return biomeEntry.value().getPrecipitation(pos) == precipitation;
+    public boolean test(BiomeConditionContext context) {
+        return context.biomeEntry().value().getPrecipitation(context.pos()) == precipitation;
     }
 
     @Override

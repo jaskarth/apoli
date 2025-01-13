@@ -5,7 +5,8 @@ import io.github.apace100.apoli.action.AbstractAction;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.type.AbstractActionType;
 import io.github.apace100.apoli.data.ApoliDataTypes;
-import io.github.apace100.apoli.util.context.TypeActionContext;
+import io.github.apace100.apoli.util.MiscUtil;
+import io.github.apace100.apoli.util.context.ActionContext;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import net.minecraft.util.math.random.Random;
@@ -13,7 +14,7 @@ import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.Optional;
 
-public interface RandomChanceMetaActionType<T extends TypeActionContext<?>, A extends AbstractAction<T, ? extends AbstractActionType<T, A>>> {
+public interface RandomChanceMetaActionType<T extends ActionContext<?>, A extends AbstractAction<T, ? extends AbstractActionType<T, A>>> {
 
     A successAction();
 
@@ -33,13 +34,15 @@ public interface RandomChanceMetaActionType<T extends TypeActionContext<?>, A ex
 
     }
 
-    static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & RandomChanceMetaActionType<T, A>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, TriFunction<A, Optional<A>, Float, M> constructor) {
+    static <T extends ActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & RandomChanceMetaActionType<T, A>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, TriFunction<A, Optional<A>, Float, M> constructor) {
         return ActionConfiguration.of(
             Apoli.identifier("random_chance"),
             new SerializableData()
-                .add("success_action", actionDataType)
+                .add("action", actionDataType, null)
+                .addFunctionedDefault("success_action", actionDataType, data -> data.get("action"))
                 .add("fail_action", actionDataType.optional(), Optional.empty())
-                .add("chance", ApoliDataTypes.NORMALIZED_FLOAT),
+                .add("chance", ApoliDataTypes.NORMALIZED_FLOAT)
+                .validate(MiscUtil.validateAnyFieldsPresent("action", "success_action")),
             data -> constructor.apply(
                 data.get("success_action"),
                 data.get("fail_action"),

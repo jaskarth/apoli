@@ -2,11 +2,11 @@ package io.github.apace100.apoli.action.type.bientity.meta;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.EntityAction;
+import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class TargetActionBiEntityActionType extends BiEntityActionType {
@@ -28,12 +28,8 @@ public class TargetActionBiEntityActionType extends BiEntityActionType {
     }
 
     @Override
-	protected void execute(Entity actor, Entity target) {
-
-        if (target != null) {
-            action.execute(target);
-        }
-
+    public void accept(BiEntityActionContext context) {
+        action.execute(context.target());
     }
 
     @Override

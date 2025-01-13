@@ -2,6 +2,7 @@ package io.github.apace100.apoli.action.type.item;
 
 import io.github.apace100.apoli.access.EntityLinkedItemStack;
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -17,7 +18,6 @@ import net.minecraft.loot.function.LootFunction;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -41,20 +41,19 @@ public class ModifyItemActionType extends ItemActionType {
     }
 
     @Override
-	protected void execute(World world, StackReference stackReference) {
+    public void accept(ItemActionContext context) {
 
-        if (!(world instanceof ServerWorld serverWorld)) {
-            return;
-        }
+        ServerWorld world = context.world();
+        StackReference stackReference = context.stackReference();
 
         ItemStack oldStack = stackReference.get();
-        LootFunction itemModifier = serverWorld.getServer().getReloadableRegistries()
+        LootFunction itemModifier = world.getServer().getReloadableRegistries()
             .getRegistryManager()
             .get(RegistryKeys.ITEM_MODIFIER)
             .getOrThrow(modifier);
 
-        LootContextParameterSet lootContextParameterSet = new LootContextParameterSet.Builder(serverWorld)
-            .add(LootContextParameters.ORIGIN, serverWorld.getSpawnPos().toCenterPos())
+        LootContextParameterSet lootContextParameterSet = new LootContextParameterSet.Builder(world)
+            .add(LootContextParameters.ORIGIN, world.getSpawnPos().toCenterPos())
             .add(LootContextParameters.TOOL, oldStack)
             .addOptional(LootContextParameters.THIS_ENTITY, ((EntityLinkedItemStack) oldStack).apoli$getEntity())
             .build(ApoliLootContextTypes.ANY);

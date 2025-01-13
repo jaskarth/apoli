@@ -6,9 +6,7 @@ import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
 import io.github.apace100.apoli.action.type.meta.ChoiceMetaActionType;
-import net.minecraft.inventory.StackReference;
 import net.minecraft.util.collection.WeightedList;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class ChoiceItemActionType extends ItemActionType implements ChoiceMetaActionType<ItemActionContext, ItemAction> {
@@ -20,8 +18,8 @@ public class ChoiceItemActionType extends ItemActionType implements ChoiceMetaAc
 	}
 
 	@Override
-	protected void execute(World world, StackReference stackReference) {
-		executeActions(new ItemActionContext(world, stackReference));
+	public void accept(ItemActionContext context) {
+		this.executeActions(context);
 	}
 
 	@Override

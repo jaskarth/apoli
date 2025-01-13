@@ -1,11 +1,13 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.Comparison;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
@@ -37,10 +39,14 @@ public class BrightnessEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
+
+        Entity entity = context.entity();
         World world = entity.getWorld();
-        return comparison.compare(world.getBrightness(BlockPos.ofFloored(entity.getEyePos())), compareTo)
+
+        return comparison.compare(world.getBrightness(BlockPos.ofFloored(MiscUtil.getPoseDependentEyePos(entity))), compareTo)
             || comparison.compare(world.getBrightness(entity.getBlockPos()), compareTo);
+
     }
 
     @Override

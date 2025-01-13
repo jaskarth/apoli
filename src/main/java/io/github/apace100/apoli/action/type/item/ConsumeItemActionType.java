@@ -1,13 +1,12 @@
 package io.github.apace100.apoli.action.type.item;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class ConsumeItemActionType extends ItemActionType {
@@ -29,8 +28,8 @@ public class ConsumeItemActionType extends ItemActionType {
     }
 
     @Override
-	protected void execute(World world, StackReference stackReference) {
-        stackReference.get().decrement(amount);
+    public void accept(ItemActionContext context) {
+        context.stackReference().get().decrement(amount);
     }
 
     @Override

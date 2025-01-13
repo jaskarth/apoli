@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -13,7 +14,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
+import javax.crypto.spec.PSource;
 import java.util.Optional;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class PowerEntityConditionType extends EntityConditionType {
 
@@ -33,17 +38,20 @@ public class PowerEntityConditionType extends EntityConditionType {
     private final PowerReference power;
     private final Optional<Identifier> source;
 
+    private final Function<PowerHolderComponent, Boolean> powerChecker;
+
     public PowerEntityConditionType(PowerReference power, Optional<Identifier> source) {
         this.power = power;
         this.source = source;
+        this.powerChecker = component -> source
+            .map(id -> component.hasPower(power, id))
+            .orElseGet(() -> component.hasPower(power));
     }
 
     @Override
-    public boolean test(Entity entity) {
-        return PowerHolderComponent.getOptional(entity)
-            .map(component -> source
-                .map(id -> component.hasPower(power, id))
-                .orElseGet(() -> component.hasPower(power)))
+    public boolean test(EntityConditionContext context) {
+        return PowerHolderComponent.getOptional(context.entity())
+            .map(powerChecker)
             .orElse(false);
     }
 

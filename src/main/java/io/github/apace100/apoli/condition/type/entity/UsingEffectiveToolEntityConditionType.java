@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.mixin.ClientPlayerEntityAccessor;
@@ -16,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
 public class UsingEffectiveToolEntityConditionType extends EntityConditionType {
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
 
-        if (!(entity instanceof PlayerEntity playerEntity)) {
+        if (!(context.entity() instanceof PlayerEntity playerEntity)) {
             return false;
         }
 
@@ -30,7 +31,7 @@ public class UsingEffectiveToolEntityConditionType extends EntityConditionType {
                 return false;
             }
 
-            miningBlockState = entity.getWorld().getBlockState(interactionManager.getMiningPos());
+            miningBlockState = playerEntity.getWorld().getBlockState(interactionManager.getMiningPos());
 
         }
 
@@ -41,7 +42,7 @@ public class UsingEffectiveToolEntityConditionType extends EntityConditionType {
                 return false;
             }
 
-            miningBlockState = entity.getWorld().getBlockState(interactionManager.getCurrentBreakingPos());
+            miningBlockState = playerEntity.getWorld().getBlockState(interactionManager.getCurrentBreakingPos());
 
         }
 

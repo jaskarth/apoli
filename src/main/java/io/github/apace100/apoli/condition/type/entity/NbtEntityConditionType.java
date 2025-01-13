@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -33,8 +34,8 @@ public class NbtEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
-        return NbtHelper.matches(nbt, entity.writeNbt(new NbtCompound()), true);
+    public boolean test(EntityConditionContext context) {
+        return NbtHelper.matches(nbt, context.entity().writeNbt(new NbtCompound()), true);
     }
 
     @Override

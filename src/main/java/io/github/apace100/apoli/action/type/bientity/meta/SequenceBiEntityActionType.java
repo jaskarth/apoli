@@ -6,7 +6,6 @@ import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.action.type.meta.SequenceMetaActionType;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,8 +19,8 @@ public class SequenceBiEntityActionType extends BiEntityActionType implements Se
 	}
 
 	@Override
-	protected void execute(Entity actor, Entity target) {
-		executeActions(new BiEntityActionContext(actor, target));
+	public void accept(BiEntityActionContext context) {
+		this.executeActions(context);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.ItemCondition;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -36,10 +37,11 @@ public class EquippedItemEntityConditionType extends EntityConditionType {
         this.equipmentSlot = equipmentSlot;
     }
 
-    @Override
-    public boolean test(Entity entity) {
 
-        if (!(entity instanceof LivingEntity livingEntity)) {
+    @Override
+    public boolean test(EntityConditionContext context) {
+
+        if (!(context.entity() instanceof LivingEntity livingEntity)) {
             return false;
         }
 

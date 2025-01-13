@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.entity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -11,6 +12,7 @@ import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 public class SpawnEffectCloudEntityActionType extends EntityActionType {
@@ -59,13 +61,17 @@ public class SpawnEffectCloudEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
+
+        Entity entity = context.entity();
+        Vec3d pos = entity.getPos().add(context.offset());
 
         if (!(entity.getWorld() instanceof ServerWorld serverWorld)) {
             return;
         }
 
-        AreaEffectCloudEntity aec = new AreaEffectCloudEntity(entity.getWorld(), entity.getX(), entity.getY(), entity.getZ());
+        AreaEffectCloudEntity aec = new AreaEffectCloudEntity(entity.getWorld(), pos.getX(), pos.getY(), pos.getZ());
+
         if (entity instanceof LivingEntity living) {
             aec.setOwner(living);
         }

@@ -8,6 +8,7 @@ import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.EntitySetPowerType;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import io.github.apace100.calio.data.SerializableData;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -31,26 +32,24 @@ public class InEntitySetBiEntityConditionType extends BiEntityConditionType {
     }
 
     @Override
-    public @NotNull ConditionConfiguration<?> getConfig() {
-        return BiEntityConditionTypes.IN_ENTITY_SET;
-    }
-
-    @Override
     public boolean test(BiEntityConditionContext context) {
 
         Entity actor = context.actor();
         Entity target = context.target();
 
-        return actor != null
-            && target != null
-            && this.test(actor, target);
+        return set.getNullablePowerType(actor) instanceof EntitySetPowerType entitySet
+            && entitySet.contains(target);
 
     }
 
     @Override
-    public boolean test(Entity actor, Entity target) {
-        return set.getNullablePowerType(actor) instanceof EntitySetPowerType entitySet
-            && entitySet.contains(target);
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
+    }
+
+    @Override
+    public @NotNull ConditionConfiguration<?> getConfig() {
+        return BiEntityConditionTypes.IN_ENTITY_SET;
     }
 
 }

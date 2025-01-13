@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.damage.meta;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.DamageConditionContext;
 import io.github.apace100.apoli.condition.type.DamageConditionType;
 import io.github.apace100.apoli.condition.type.DamageConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.RandomChanceMetaConditionType;
@@ -16,7 +17,7 @@ public class RandomChanceDamageConditionType extends DamageConditionType impleme
 	}
 
 	@Override
-	public boolean test(DamageSource source, float amount) {
+	public boolean test(DamageConditionContext context) {
 		return testCondition();
 	}
 

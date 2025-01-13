@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.item;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.ItemConditionContext;
 import io.github.apace100.apoli.condition.type.ItemConditionType;
 import io.github.apace100.apoli.condition.type.ItemConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -37,16 +38,10 @@ public class RelativeDurabilityItemConditionType extends ItemConditionType {
     }
 
     @Override
-    public boolean test(World world, ItemStack stack) {
-
-        if (stack.isDamageable()) {
-            return comparison.compare(Math.abs((float) (stack.getMaxDamage() - stack.getDamage())) / (float) stack.getMaxDamage(), compareTo);
-        }
-
-        else {
-            return false;
-        }
-
+    public boolean test(ItemConditionContext context) {
+        ItemStack stack = context.stack();
+        return stack.isDamageable()
+            && comparison.compare(Math.abs((float) (stack.getMaxDamage() - stack.getDamage())) / (float) stack.getMaxDamage(), compareTo);
     }
 
     @Override

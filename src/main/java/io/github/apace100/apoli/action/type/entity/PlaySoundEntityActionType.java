@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.entity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -10,6 +11,8 @@ import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -49,8 +52,14 @@ public class PlaySoundEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
-        entity.getWorld().playSound(null, entity.getBlockPos(), sound, category.orElseGet(entity::getSoundCategory), volume, pitch);
+    public void accept(EntityActionContext context) {
+
+        Entity entity = context.entity();
+        World world = entity.getWorld();
+
+        BlockPos blockPos = BlockPos.ofFloored(entity.getPos().add(context.offset()));
+        world.playSound(null, blockPos, sound, category.orElseGet(entity::getSoundCategory), volume, pitch);
+
     }
 
     @Override

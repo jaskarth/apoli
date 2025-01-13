@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.biome;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiomeConditionContext;
 import io.github.apace100.apoli.condition.type.BiomeConditionType;
 import io.github.apace100.apoli.condition.type.BiomeConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -8,9 +9,6 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.Comparison;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
 public class TemperatureBiomeConditionType extends BiomeConditionType {
@@ -37,8 +35,8 @@ public class TemperatureBiomeConditionType extends BiomeConditionType {
     }
 
     @Override
-    public boolean test(BlockPos pos, RegistryEntry<Biome> biomeEntry) {
-        return comparison.compare(biomeEntry.value().getTemperature(), compareTo);
+    public boolean test(BiomeConditionContext context) {
+        return comparison.compare(context.biomeEntry().value().getTemperature(), compareTo);
     }
 
     @Override

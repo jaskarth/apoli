@@ -4,10 +4,12 @@ import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.condition.EntityCondition;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
+import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerConfiguration;
 import io.github.apace100.apoli.util.keybinding.KeyBindingReference;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtByte;
 import net.minecraft.nbt.NbtElement;
 import org.jetbrains.annotations.NotNull;
@@ -75,8 +77,15 @@ public class TogglePowerType extends PowerType implements Active {
 
     @Override
     public void onUse() {
-        this.toggled = !this.toggled;
-        PowerHolderComponent.syncPower(getHolder(), getPower());
+
+        Entity holder = getHolder();
+        Power power = getPower();
+
+        if (!holder.getWorld().isClient()) {
+            this.toggled = !this.toggled;
+            PowerHolderComponent.syncPower(holder, power);
+        }
+
     }
 
     public boolean isActive() {

@@ -6,8 +6,6 @@ import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
 import io.github.apace100.apoli.action.type.meta.DelayMetaActionType;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class DelayItemActionType extends ItemActionType implements DelayMetaActionType<ItemActionContext, ItemAction> {
@@ -21,8 +19,8 @@ public class DelayItemActionType extends ItemActionType implements DelayMetaActi
 	}
 
 	@Override
-	protected void execute(World world, StackReference stackReference) {
-		executeAction(new ItemActionContext(world, stackReference));
+	public void accept(ItemActionContext context) {
+		this.executeAction(context);
 	}
 
 	@Override

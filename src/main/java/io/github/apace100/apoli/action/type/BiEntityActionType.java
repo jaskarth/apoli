@@ -2,20 +2,29 @@ package io.github.apace100.apoli.action.type;
 
 import io.github.apace100.apoli.action.BiEntityAction;
 import io.github.apace100.apoli.action.context.BiEntityActionContext;
-import net.minecraft.entity.Entity;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 
 public abstract class BiEntityActionType extends AbstractActionType<BiEntityActionContext, BiEntityAction> {
-
-	@Override
-	public void accept(BiEntityActionContext context) {
-		execute(context.actor(), context.target());
-	}
 
 	@Override
 	public BiEntityAction createAction() {
 		return new BiEntityAction(this);
 	}
 
-	protected abstract void execute(Entity actor, Entity target);
+	@Override
+	public boolean shouldExecute(BiEntityActionContext context) {
+		return switch (getRequirement()) {
+			case BOTH ->
+				context.actor() != null && context.target() != null;
+			case EITHER ->
+				context.actor() != null || context.target() != null;
+			case DEFAULT ->
+				super.shouldExecute(context);
+		};
+	}
+
+	public BiEntityRequirement getRequirement() {
+		return BiEntityRequirement.DEFAULT;
+	}
 
 }

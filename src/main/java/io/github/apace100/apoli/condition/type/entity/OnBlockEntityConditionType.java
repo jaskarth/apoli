@@ -2,12 +2,16 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.BlockCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
+import io.github.apace100.apoli.condition.type.block.meta.ConstantBlockConditionType;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -31,10 +35,10 @@ public class OnBlockEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
-        BlockPos pos = BlockPos.ofFloored(entity.getX(), entity.getBoundingBox().minY - 0.5000001D, entity.getZ());
+    public boolean test(EntityConditionContext context) {
+        Entity entity = context.entity();;
         return entity.isOnGround()
-            && blockCondition.map(condition -> condition.test(entity.getWorld(), pos)).orElse(true);
+            && blockCondition.map(condition -> condition.test(entity.getWorld(), entity.getSteppingPos())).orElse(true);
     }
 
     @Override

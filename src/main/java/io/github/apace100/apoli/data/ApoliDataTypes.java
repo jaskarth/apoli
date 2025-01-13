@@ -15,8 +15,8 @@ import io.github.apace100.apoli.data.container.PresetContainerType;
 import io.github.apace100.apoli.integration.ContainerTypeCodecEvents;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.util.*;
-import io.github.apace100.apoli.util.context.TypeActionContext;
-import io.github.apace100.apoli.util.context.TypeConditionContext;
+import io.github.apace100.apoli.util.context.ActionContext;
+import io.github.apace100.apoli.util.context.ConditionContext;
 import io.github.apace100.apoli.util.keybinding.KeyBindingReference;
 import io.github.apace100.calio.SerializationHelper;
 import io.github.apace100.calio.data.CompoundSerializableDataType;
@@ -353,7 +353,7 @@ public class ApoliDataTypes {
 	);
 
 	@SuppressWarnings("unchecked")
-	public static <T extends TypeConditionContext, C extends AbstractCondition<T, CT>, CT extends AbstractConditionType<T, C>> CompoundSerializableDataType<C> condition(String typeField, SerializableDataType<ConditionConfiguration<CT>> registryDataType, BiFunction<CT, Boolean, C> constructor) {
+	public static <T extends ConditionContext, C extends AbstractCondition<T, CT>, CT extends AbstractConditionType<T, C>> CompoundSerializableDataType<C> condition(String typeField, SerializableDataType<ConditionConfiguration<CT>> registryDataType, BiFunction<CT, Boolean, C> constructor) {
 		return new CompoundSerializableDataType<>(
 			new SerializableData()
 				.add(typeField, registryDataType)
@@ -431,7 +431,7 @@ public class ApoliDataTypes {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>> CompoundSerializableDataType<A> action(String typeField, SerializableDataType<ActionConfiguration<AT>> registryDataType, Function<AT, A> constructor) {
+	public static <T extends ActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>> CompoundSerializableDataType<A> action(String typeField, SerializableDataType<ActionConfiguration<AT>> registryDataType, Function<AT, A> constructor) {
 		return new CompoundSerializableDataType<>(
 			new SerializableData()
 				.add(typeField, registryDataType),
@@ -498,7 +498,7 @@ public class ApoliDataTypes {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & SequenceMetaActionType<T, A>> SerializableDataType<A> actions(String typeField, SerializableDataType<ActionConfiguration<AT>> registryDataType, Function<List<A>, M> multiActionsConstructor, Function<AT, A> constructor) {
+	public static <T extends ActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & SequenceMetaActionType<T, A>> SerializableDataType<A> actions(String typeField, SerializableDataType<ActionConfiguration<AT>> registryDataType, Function<List<A>, M> multiActionsConstructor, Function<AT, A> constructor) {
 
 		CompoundSerializableDataType<A> dataType = action(typeField, registryDataType, constructor);
 		SerializableDataType<List<A>> listDataType = dataType.list();

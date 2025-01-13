@@ -2,6 +2,7 @@ package io.github.apace100.apoli.action.type.block;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.EntityAction;
+import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -12,8 +13,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -48,16 +47,16 @@ public class SpawnEntityBlockActionType extends BlockActionType {
     }
 
     @Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-        MiscUtil.getEntityWithPassengers(world, entityType, tag, pos.toCenterPos(), Optional.empty(), Optional.empty()).ifPresent(entity -> {
+    public void accept(BlockActionContext context) {
 
-            if (world instanceof ServerWorld serverWorld) {
-                serverWorld.spawnNewEntityAndPassengers(entity);
-            }
+        ServerWorld world = context.world();
+        BlockPos pos = context.pos();
 
+        MiscUtil.getEntityWithPassengers(world, entityType, tag, pos.toBottomCenterPos(), Optional.empty(), Optional.empty()).ifPresent(entity -> {
+            world.spawnNewEntityAndPassengers(entity);
             entityAction.ifPresent(action -> action.execute(entity));
-
         });
+
     }
 
     @Override

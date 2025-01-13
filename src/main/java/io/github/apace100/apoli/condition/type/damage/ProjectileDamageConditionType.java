@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.damage;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.EntityCondition;
+import io.github.apace100.apoli.condition.context.DamageConditionContext;
 import io.github.apace100.apoli.condition.type.DamageConditionType;
 import io.github.apace100.apoli.condition.type.DamageConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -39,12 +40,16 @@ public class ProjectileDamageConditionType extends DamageConditionType {
     }
 
     @Override
-    public boolean test(DamageSource source, float amount) {
-        Entity entitySource = source.getSource();
-        return source.isIn(DamageTypeTags.IS_PROJECTILE)
+    public boolean test(DamageConditionContext context) {
+
+        DamageSource damageSource = context.source();
+        Entity entitySource = damageSource.getSource();
+
+        return damageSource.isIn(DamageTypeTags.IS_PROJECTILE)
             && entitySource != null
             && projectile.map(entitySource.getType()::equals).orElse(true)
-            && projectileCondition.map(entityCondition -> entityCondition.test(entitySource)).orElse(true);
+            && projectileCondition.map(condition -> condition.test(entitySource)).orElse(true);
+
     }
 
     @Override

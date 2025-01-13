@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.fluid.meta;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.FluidConditionContext;
 import io.github.apace100.apoli.condition.type.FluidConditionType;
 import io.github.apace100.apoli.condition.type.FluidConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.RandomChanceMetaConditionType;
@@ -16,7 +17,7 @@ public class RandomChanceFluidConditionType extends FluidConditionType implement
 	}
 
 	@Override
-	public boolean test(FluidState fluidState) {
+	public boolean test(FluidConditionContext context) {
 		return testCondition();
 	}
 

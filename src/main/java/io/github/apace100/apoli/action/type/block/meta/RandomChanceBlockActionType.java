@@ -6,9 +6,6 @@ import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.action.type.meta.RandomChanceMetaActionType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -27,8 +24,8 @@ public class RandomChanceBlockActionType extends BlockActionType implements Rand
 	}
 
 	@Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-		executeAction(new BlockActionContext(world, pos, direction));
+	public void accept(BlockActionContext context) {
+		this.executeAction(context);
 	}
 
 	@Override

@@ -5,13 +5,11 @@ import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.util.keybinding.KeyBindingReference;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public interface Active {
 
@@ -37,13 +35,16 @@ public interface Active {
             }
 
             KeyBindingReference keyBindingReference = activePowerType.getKey();
-            KeyBinding keyBinding = keyBindingReference.asKeyBinding();
+            TriState keyPressed = keyBindingReference.asKeyBinding()
+                .map(KeyBinding::isPressed)
+                .map(TriState::of)
+                .orElse(TriState.DEFAULT);
 
-            if (keyBinding == null) {
+            if (keyPressed == TriState.DEFAULT) {
                 continue;
             }
 
-            if (currentKeybindingStates.computeIfAbsent(keyBindingReference.id(), k -> keyBinding.isPressed()) && (keyBindingReference.continuous() || !ApoliClient.lastKeyBindingStates.getOrDefault(keyBindingReference.id(), false))) {
+            if (currentKeybindingStates.computeIfAbsent(keyBindingReference.id(), k -> keyPressed.get()) && (keyBindingReference.continuous() || !ApoliClient.lastKeyBindingStates.getOrDefault(keyBindingReference.id(), false))) {
 				//noinspection unchecked
 				triggeredPowerTypes.add((P) powerType);
             }

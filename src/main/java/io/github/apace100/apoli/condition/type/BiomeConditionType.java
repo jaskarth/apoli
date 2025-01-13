@@ -9,15 +9,8 @@ import net.minecraft.world.biome.Biome;
 public abstract class BiomeConditionType extends AbstractConditionType<BiomeConditionContext, BiomeCondition> {
 
 	@Override
-	public boolean test(BiomeConditionContext context) {
-		return test(context.pos(), context.biomeEntry());
-	}
-
-	@Override
 	public BiomeCondition createCondition(boolean inverted) {
 		return new BiomeCondition(this, inverted);
 	}
-
-	public abstract boolean test(BlockPos pos, RegistryEntry<Biome> biomeEntry);
 
 }

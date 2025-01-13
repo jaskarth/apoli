@@ -8,13 +8,9 @@ import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.action.type.meta.IfElseListMetaActionType;
 import io.github.apace100.apoli.condition.BlockCondition;
 import io.github.apace100.apoli.condition.context.BlockConditionContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 public class IfElseListBlockActionType extends BlockActionType implements IfElseListMetaActionType<BlockActionContext, BlockConditionContext, BlockAction, BlockCondition> {
 
@@ -25,8 +21,8 @@ public class IfElseListBlockActionType extends BlockActionType implements IfElse
 	}
 
 	@Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-		executeActions(new BlockActionContext(world, pos, direction));
+	public void accept(BlockActionContext context) {
+		this.executeActions(context);
 	}
 
 	@Override

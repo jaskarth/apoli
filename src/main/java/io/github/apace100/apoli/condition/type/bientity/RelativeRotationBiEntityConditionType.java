@@ -1,11 +1,13 @@
 package io.github.apace100.apoli.condition.type.bientity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.Comparison;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
@@ -60,25 +62,26 @@ public class RelativeRotationBiEntityConditionType extends BiEntityConditionType
     }
 
     @Override
-    public @NotNull ConditionConfiguration<?> getConfig() {
-        return BiEntityConditionTypes.RELATIVE_ROTATION;
-    }
+    public boolean test(BiEntityConditionContext context) {
 
-    @Override
-    public boolean test(Entity actor, Entity target) {
-
-        if (actor == null || target == null) {
-            return false;
-        }
-
-        Vec3d actorRotation = actorRotationType.getRotation(actor);
-        Vec3d targetRotation = targetRotationType.getRotation(target);
+        Vec3d actorRotation = actorRotationType.getRotation(context.actor());
+        Vec3d targetRotation = targetRotationType.getRotation(context.target());
 
         actorRotation = reduceAxes(actorRotation, axes);
         targetRotation = reduceAxes(targetRotation, axes);
 
         return comparison.compare(getAngleBetween(actorRotation, targetRotation), compareTo);
 
+    }
+
+    @Override
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
+    }
+
+    @Override
+    public @NotNull ConditionConfiguration<?> getConfig() {
+        return BiEntityConditionTypes.RELATIVE_ROTATION;
     }
 
     private static double getAngleBetween(Vec3d a, Vec3d b) {

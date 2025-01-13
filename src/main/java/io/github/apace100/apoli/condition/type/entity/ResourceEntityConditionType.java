@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -43,8 +44,8 @@ public class ResourceEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
-        return comparison.compare(PowerUtil.getResourceValue(resource.getNullablePowerType(entity)), compareTo);
+    public boolean test(EntityConditionContext context) {
+        return comparison.compare(PowerUtil.getResourceValue(resource.getNullablePowerType(context.entity())), compareTo);
     }
 
     @Override

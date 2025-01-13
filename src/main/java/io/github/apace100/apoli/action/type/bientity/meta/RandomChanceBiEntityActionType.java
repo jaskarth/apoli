@@ -6,7 +6,6 @@ import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.action.type.meta.RandomChanceMetaActionType;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -25,8 +24,8 @@ public class RandomChanceBiEntityActionType extends BiEntityActionType implement
 	}
 
 	@Override
-	protected void execute(Entity actor, Entity target) {
-		executeAction(new BiEntityActionContext(actor, target));
+	public void accept(BiEntityActionContext context) {
+		this.executeAction(context);
 	}
 
 	@Override

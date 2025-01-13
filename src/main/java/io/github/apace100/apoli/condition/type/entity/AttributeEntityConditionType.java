@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -47,9 +48,9 @@ public class AttributeEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
 
-        if (entity instanceof LivingEntity livingEntity) {
+        if (context.entity() instanceof LivingEntity livingEntity) {
             return Optional.ofNullable(livingEntity.getAttributeInstance(attribute))
                 .map(EntityAttributeInstance::getValue)
                 .map(value -> comparison.compare(value, compareTo))

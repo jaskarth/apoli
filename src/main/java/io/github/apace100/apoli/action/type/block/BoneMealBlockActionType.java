@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.block;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -21,12 +22,13 @@ public class BoneMealBlockActionType extends BlockActionType {
 
     public static final TypedDataObjectFactory<BoneMealBlockActionType> DATA_FACTORY = TypedDataObjectFactory.simple(
         new SerializableData()
-            .add("effects", SerializableDataTypes.BOOLEAN, true),
+            .add("effects", SerializableDataTypes.BOOLEAN, true)
+            .addFunctionedDefault("show_effects", SerializableDataTypes.BOOLEAN, data -> data.getBoolean("effects")),
         data -> new BoneMealBlockActionType(
-            data.get("effects")
+            data.get("show_effects")
         ),
         (actionType, serializableData) -> serializableData.instance()
-            .set("effects", actionType.showEffects)
+            .set("show_effects", actionType.showEffects)
     );
 
     private final boolean showEffects;
@@ -35,31 +37,29 @@ public class BoneMealBlockActionType extends BlockActionType {
         this.showEffects = showEffects;
     }
 
+
     @Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
+    public void accept(BlockActionContext context) {
 
-        if (BoneMealItem.useOnFertilizable(ItemStack.EMPTY, world, pos)) {
+        World world = context.world();
+        BlockPos pos = context.pos();
 
-            if (showEffects && !world.isClient()) {
-                world.syncWorldEvent(WorldEvents.BONE_MEAL_USED, pos, 0);
-            }
+        Optional<Direction> optDirection = context.direction();
+        ItemStack stack = ItemStack.EMPTY;
 
+        if (BoneMealItem.useOnFertilizable(stack, world, pos)) {
+            boneMealEvent(world, pos);
         }
 
-        else if (direction.isPresent()) {
+        else if (optDirection.isPresent()) {
 
-            Direction dir = direction.get();
+            Direction direction = optDirection.get();
 
             BlockState blockState = world.getBlockState(pos);
-            BlockPos offsetPos = pos.offset(dir);
+            BlockPos offsetPos = pos.offset(direction);
 
-            boolean solidSide = blockState.isSideSolidFullSquare(world, pos, dir);
-            if (solidSide && BoneMealItem.useOnGround(ItemStack.EMPTY, world, offsetPos, dir)) {
-
-                if (showEffects && !world.isClient()) {
-                    world.syncWorldEvent(WorldEvents.BONE_MEAL_USED, offsetPos, 0);
-                }
-
+            if (blockState.isSideSolidFullSquare(world, pos, direction) && BoneMealItem.useOnGround(stack, world, offsetPos, direction)) {
+                boneMealEvent(world, offsetPos);
             }
 
         }
@@ -69,6 +69,14 @@ public class BoneMealBlockActionType extends BlockActionType {
     @Override
     public @NotNull ActionConfiguration<?> getConfig() {
         return BlockActionTypes.BONE_MEAL;
+    }
+
+    private void boneMealEvent(World world, BlockPos pos) {
+
+        if (showEffects && !world.isClient()) {
+            world.syncWorldEvent(WorldEvents.BONE_MEAL_USED, pos, 0);
+        }
+
     }
 
 }

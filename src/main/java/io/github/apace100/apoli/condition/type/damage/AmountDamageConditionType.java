@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.damage;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.DamageConditionContext;
 import io.github.apace100.apoli.condition.type.DamageConditionType;
 import io.github.apace100.apoli.condition.type.DamageConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -35,8 +36,8 @@ public class AmountDamageConditionType extends DamageConditionType {
     }
 
     @Override
-    public boolean test(DamageSource source, float amount) {
-        return comparison.compare(amount, compareTo);
+    public boolean test(DamageConditionContext context) {
+        return comparison.compare(context.amount(), compareTo);
     }
 
     @Override

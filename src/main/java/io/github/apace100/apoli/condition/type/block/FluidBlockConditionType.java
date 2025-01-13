@@ -2,12 +2,14 @@ package io.github.apace100.apoli.condition.type.block;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.FluidCondition;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.apoli.condition.type.BlockConditionType;
 import io.github.apace100.apoli.condition.type.BlockConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +35,13 @@ public class FluidBlockConditionType extends BlockConditionType {
     }
 
     @Override
-    public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
-        return fluidCondition.test(world.getFluidState(pos));
+    public boolean test(BlockConditionContext context) {
+
+        World world = context.world();
+        FluidState fluidState = world.getFluidState(context.pos());
+
+        return fluidCondition.test(fluidState);
+
     }
 
     @Override

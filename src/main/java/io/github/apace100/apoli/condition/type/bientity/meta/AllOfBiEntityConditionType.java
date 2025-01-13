@@ -6,7 +6,6 @@ import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.AllOfMetaConditionType;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,8 +24,8 @@ public class AllOfBiEntityConditionType extends BiEntityConditionType implements
 	}
 
 	@Override
-	public boolean test(Entity actor, Entity target) {
-		return testConditions(new BiEntityConditionContext(actor, target));
+	public boolean test(BiEntityConditionContext context) {
+		return this.testConditions(context);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.bientity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.component.PowerHolderComponent;
@@ -8,6 +9,7 @@ import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.power.type.EntitySetPowerType;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
@@ -39,9 +41,11 @@ public class AddToEntitySetBiEntityActionType extends BiEntityActionType {
     }
 
     @Override
-	protected void execute(Entity actor, Entity target) {
+    public void accept(BiEntityActionContext context) {
 
-        if (set.getNullablePowerType(actor) instanceof EntitySetPowerType entitySet && entitySet.add(target, timeLimit)) {
+        Entity actor = context.actor();
+
+        if (set.getNullablePowerType(actor) instanceof EntitySetPowerType entitySet && entitySet.add(context.target(), timeLimit)) {
             PowerHolderComponent.syncPower(actor, set);
         }
 
@@ -50,6 +54,11 @@ public class AddToEntitySetBiEntityActionType extends BiEntityActionType {
     @Override
     public @NotNull ActionConfiguration<?> getConfig() {
         return BiEntityActionTypes.ADD_TO_ENTITY_SET;
+    }
+
+    @Override
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
     }
 
 }

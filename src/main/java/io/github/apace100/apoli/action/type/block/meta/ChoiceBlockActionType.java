@@ -7,12 +7,7 @@ import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.action.type.meta.ChoiceMetaActionType;
 import net.minecraft.util.collection.WeightedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class ChoiceBlockActionType extends BlockActionType implements ChoiceMetaActionType<BlockActionContext, BlockAction> {
 
@@ -23,8 +18,8 @@ public class ChoiceBlockActionType extends BlockActionType implements ChoiceMeta
 	}
 
 	@Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-		executeActions(new BlockActionContext(world, pos, direction));
+	public void accept(BlockActionContext context) {
+		this.executeActions(context);
 	}
 
 	@Override

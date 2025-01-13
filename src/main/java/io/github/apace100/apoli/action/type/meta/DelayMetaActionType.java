@@ -5,14 +5,14 @@ import io.github.apace100.apoli.action.AbstractAction;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.type.AbstractActionType;
 import io.github.apace100.apoli.util.Scheduler;
-import io.github.apace100.apoli.util.context.TypeActionContext;
+import io.github.apace100.apoli.util.context.ActionContext;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
 
 import java.util.function.BiFunction;
 
-public interface DelayMetaActionType<T extends TypeActionContext<?>, A extends AbstractAction<T, ? extends AbstractActionType<T, A>>> {
+public interface DelayMetaActionType<T extends ActionContext<?>, A extends AbstractAction<T, ? extends AbstractActionType<T, A>>> {
 
     Scheduler SCHEDULER = new Scheduler();
 
@@ -24,7 +24,7 @@ public interface DelayMetaActionType<T extends TypeActionContext<?>, A extends A
         SCHEDULER.queue(server -> action().accept(context), ticks());
     }
 
-    static <T extends TypeActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & DelayMetaActionType<T, A>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, BiFunction<A, Integer, M> constructor) {
+    static <T extends ActionContext<?>, A extends AbstractAction<T, AT>, AT extends AbstractActionType<T, A>, M extends AbstractActionType<T, A> & DelayMetaActionType<T, A>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, BiFunction<A, Integer, M> constructor) {
         return ActionConfiguration.of(
             Apoli.identifier("delay"),
             new SerializableData()

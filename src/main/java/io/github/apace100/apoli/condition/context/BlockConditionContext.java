@@ -1,7 +1,7 @@
 package io.github.apace100.apoli.condition.context;
 
 import io.github.apace100.apoli.util.SavedBlockPosition;
-import io.github.apace100.apoli.util.context.TypeConditionContext;
+import io.github.apace100.apoli.util.context.ConditionContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public record BlockConditionContext(SavedBlockPosition savedBlockPosition) implements TypeConditionContext {
+public record BlockConditionContext(SavedBlockPosition savedBlockPosition) implements ConditionContext {
 
 	public BlockConditionContext(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
 		this(world, pos, blockState, blockEntity.orElse(null));

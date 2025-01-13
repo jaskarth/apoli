@@ -1,12 +1,12 @@
 package io.github.apace100.apoli.condition;
 
 import io.github.apace100.apoli.condition.type.AbstractConditionType;
-import io.github.apace100.apoli.util.context.TypeConditionContext;
+import io.github.apace100.apoli.util.context.ConditionContext;
 import io.github.apace100.calio.util.Validatable;
 
 import java.util.function.Predicate;
 
-public abstract class AbstractCondition<T extends TypeConditionContext, CT extends AbstractConditionType<T, ?>> implements Predicate<T>, Validatable {
+public abstract class AbstractCondition<T extends ConditionContext, CT extends AbstractConditionType<T, ?>> implements Predicate<T>, Validatable {
 
 	private final CT conditionType;
 	private final boolean inverted;
@@ -23,7 +23,8 @@ public abstract class AbstractCondition<T extends TypeConditionContext, CT exten
 
 	@Override
 	public boolean test(T context) {
-		return isInverted() != getConditionType().test(context);
+		return getConditionType().shouldTest(context)
+			&& isInverted() != getConditionType().test(context);
 	}
 
 	@Override

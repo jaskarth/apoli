@@ -2,6 +2,7 @@ package io.github.apace100.apoli.action.type.block;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.BlockAction;
+import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.condition.BlockCondition;
@@ -10,12 +11,9 @@ import io.github.apace100.apoli.util.Shape;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Optional;
 
 public class AreaOfEffectBlockActionType extends BlockActionType {
@@ -25,7 +23,7 @@ public class AreaOfEffectBlockActionType extends BlockActionType {
             .add("block_action", BlockAction.DATA_TYPE)
             .add("block_condition", BlockCondition.DATA_TYPE.optional(), Optional.empty())
             .add("shape", SerializableDataType.enumValue(Shape.class), Shape.CUBE)
-            .add("radius", SerializableDataTypes.NON_NEGATIVE_INT, 16),
+            .add("radius", SerializableDataTypes.POSITIVE_INT, 16),
         data -> new AreaOfEffectBlockActionType(
             data.get("block_action"),
             data.get("block_condition"),
@@ -53,17 +51,14 @@ public class AreaOfEffectBlockActionType extends BlockActionType {
     }
 
     @Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
+    public void accept(BlockActionContext context) {
 
-        Collection<BlockPos> affectedPositions = Shape.getPositions(pos, shape, radius);
+        World world = context.world();
 
-        for (BlockPos affectedPosition : affectedPositions) {
-
-            if (blockCondition.map(condition -> condition.test(world, affectedPosition)).orElse(true)) {
-                blockAction.execute(world, affectedPosition, direction);
-            }
-
-        }
+        shape.getBlockPositions(context.pos(), radius)
+            .stream()
+            .filter(pos -> blockCondition.map(condition -> condition.test(world, pos)).orElse(true))
+            .forEach(pos -> blockAction.execute(world, pos, context.direction()));
 
     }
 

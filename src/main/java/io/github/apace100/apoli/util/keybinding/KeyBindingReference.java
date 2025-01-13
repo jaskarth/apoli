@@ -10,6 +10,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.option.KeyBinding;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public record KeyBindingReference(String id, boolean continuous) {
 
@@ -58,8 +59,8 @@ public record KeyBindingReference(String id, boolean continuous) {
 	}
 
 	@Environment(EnvType.CLIENT)
-	public KeyBinding asKeyBinding() {
-		return ApoliClient.getKeyBinding(id());
+	public Optional<KeyBinding> asKeyBinding() {
+		return KeyBindingUtil.getKeyBinding(id());
 	}
 
 }

@@ -3,7 +3,7 @@ package io.github.apace100.apoli.condition.type;
 import io.github.apace100.apoli.condition.AbstractCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
-import io.github.apace100.apoli.util.context.TypeConditionContext;
+import io.github.apace100.apoli.util.context.ConditionContext;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.util.Validatable;
 import org.jetbrains.annotations.ApiStatus;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public abstract class AbstractConditionType<T extends TypeConditionContext, C extends AbstractCondition<T, ?>> implements Predicate<T>, Validatable {
+public abstract class AbstractConditionType<T extends ConditionContext, C extends AbstractCondition<T, ?>> implements Predicate<T>, Validatable {
 
 	private C condition = null;
 	private boolean initialized = false;
@@ -31,6 +31,10 @@ public abstract class AbstractConditionType<T extends TypeConditionContext, C ex
 
 	@Override
 	public abstract boolean test(T context);
+
+	public boolean shouldTest(T context) {
+		return true;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

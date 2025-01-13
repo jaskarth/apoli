@@ -2,6 +2,7 @@ package io.github.apace100.apoli.action.type.block;
 
 import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -14,12 +15,8 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class ExecuteCommandBlockActionType extends BlockActionType {
 
@@ -40,21 +37,20 @@ public class ExecuteCommandBlockActionType extends BlockActionType {
     }
 
     @Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
+    public void accept(BlockActionContext context) {
 
-        if (!(world instanceof ServerWorld serverWorld)) {
-            return;
-        }
+        ServerWorld world = context.world();
+        BlockPos pos = context.pos();
 
         BlockState blockState = world.getBlockState(pos);
         String blockTranslationKey = blockState.getBlock().getTranslationKey();
 
-        MinecraftServer server = serverWorld.getServer();
+        MinecraftServer server = world.getServer();
         ServerCommandSource commandSource = new ServerCommandSource(
             Apoli.config.executeCommand.showOutput ? server : CommandOutput.DUMMY,
             pos.toCenterPos(),
             Vec2f.ZERO,
-            serverWorld,
+            world,
             Apoli.config.executeCommand.permissionLevel,
             blockTranslationKey,
             Text.translatable(blockTranslationKey),

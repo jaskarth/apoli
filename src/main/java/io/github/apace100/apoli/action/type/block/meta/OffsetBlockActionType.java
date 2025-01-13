@@ -2,40 +2,35 @@ package io.github.apace100.apoli.action.type.block.meta;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.BlockAction;
+import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
+import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class OffsetBlockActionType extends BlockActionType {
 
     public static final TypedDataObjectFactory<OffsetBlockActionType> DATA_FACTORY = TypedDataObjectFactory.simple(
         new SerializableData()
-            .add("action", BlockAction.DATA_TYPE)
+            .add("action", BlockAction.DATA_TYPE, null)
+            .addFunctionedDefault("block_action", BlockAction.DATA_TYPE, data -> data.get("action"))
             .add("x", SerializableDataTypes.INT, 0)
             .add("y", SerializableDataTypes.INT, 0)
-            .add("z", SerializableDataTypes.INT, 0),
+            .add("z", SerializableDataTypes.INT, 0)
+            .addFunctionedDefault("offset", ApoliDataTypes.VECTOR_3_INT, data -> new Vec3i(data.get("x"), data.get("y"), data.get("z")))
+            .validate(MiscUtil.validateAnyFieldsPresent("action", "block_action")),
         data -> new OffsetBlockActionType(
-            data.get("action"),
-            new Vec3i(
-                data.get("x"),
-                data.get("y"),
-                data.get("z")
-            )
+            data.get("block_action"),
+            data.get("offset")
         ),
         (actionType, serializableData) -> serializableData.instance()
-            .set("action", actionType.blockAction)
-            .set("x", actionType.offset.getX())
-            .set("y", actionType.offset.getY())
-            .set("z", actionType.offset.getZ())
+            .set("block_action", actionType.blockAction)
+            .set("offset", actionType.offset)
     );
 
     private final BlockAction blockAction;
@@ -47,8 +42,8 @@ public class OffsetBlockActionType extends BlockActionType {
     }
 
     @Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-        blockAction.execute(world, pos.add(offset), direction);
+    public void accept(BlockActionContext context) {
+        blockAction.execute(context.world(), context.pos().add(offset), context.direction());
     }
 
     @Override

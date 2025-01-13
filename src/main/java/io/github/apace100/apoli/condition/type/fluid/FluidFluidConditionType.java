@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.fluid;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.FluidConditionContext;
 import io.github.apace100.apoli.condition.type.FluidConditionType;
 import io.github.apace100.apoli.condition.type.FluidConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -29,8 +30,8 @@ public class FluidFluidConditionType extends FluidConditionType {
     }
 
     @Override
-    public boolean test(FluidState fluidState) {
-        return fluidState.isOf(fluid);
+    public boolean test(FluidConditionContext context) {
+        return context.fluidState().isOf(fluid);
     }
 
     @Override

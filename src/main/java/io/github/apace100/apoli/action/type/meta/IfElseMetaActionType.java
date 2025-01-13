@@ -6,14 +6,14 @@ import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.type.AbstractActionType;
 import io.github.apace100.apoli.condition.AbstractCondition;
 import io.github.apace100.apoli.condition.type.AbstractConditionType;
-import io.github.apace100.apoli.util.context.TypeActionContext;
-import io.github.apace100.apoli.util.context.TypeConditionContext;
+import io.github.apace100.apoli.util.context.ActionContext;
+import io.github.apace100.apoli.util.context.ConditionContext;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 
 import java.util.Optional;
 
-public interface IfElseMetaActionType<AX extends TypeActionContext<CX>, CX extends TypeConditionContext, A extends AbstractAction<AX, ?>, C extends AbstractCondition<CX, ?>> {
+public interface IfElseMetaActionType<AX extends ActionContext<CX>, CX extends ConditionContext, A extends AbstractAction<AX, ?>, C extends AbstractCondition<CX, ?>> {
 
     C condition();
 
@@ -33,7 +33,7 @@ public interface IfElseMetaActionType<AX extends TypeActionContext<CX>, CX exten
 
     }
 
-    static <AX extends TypeActionContext<CX>, CX extends TypeConditionContext, A extends AbstractAction<AX, AT>, AT extends AbstractActionType<AX, A>, C extends AbstractCondition<CX, CT>, CT extends AbstractConditionType<CX, C>, M extends AbstractActionType<AX, A> & IfElseMetaActionType<AX, CX, A, C>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, SerializableDataType<C> conditionDataType, Constructor<AX, CX, A, C, M> constructor) {
+    static <AX extends ActionContext<CX>, CX extends ConditionContext, A extends AbstractAction<AX, AT>, AT extends AbstractActionType<AX, A>, C extends AbstractCondition<CX, CT>, CT extends AbstractConditionType<CX, C>, M extends AbstractActionType<AX, A> & IfElseMetaActionType<AX, CX, A, C>> ActionConfiguration<M> createConfiguration(SerializableDataType<A> actionDataType, SerializableDataType<C> conditionDataType, Constructor<AX, CX, A, C, M> constructor) {
         return ActionConfiguration.of(
             Apoli.identifier("if_else"),
             new SerializableData()
@@ -52,7 +52,7 @@ public interface IfElseMetaActionType<AX extends TypeActionContext<CX>, CX exten
         );
     }
 
-    interface Constructor<AX extends TypeActionContext<CX>, CX extends TypeConditionContext, A extends AbstractAction<AX, ?>, C extends AbstractCondition<CX, ?>, M extends AbstractActionType<AX, ?> & IfElseMetaActionType<AX, CX, A, C>> {
+    interface Constructor<AX extends ActionContext<CX>, CX extends ConditionContext, A extends AbstractAction<AX, ?>, C extends AbstractCondition<CX, ?>, M extends AbstractActionType<AX, ?> & IfElseMetaActionType<AX, CX, A, C>> {
         M create(C condition, A ifAction, Optional<A> elseAction);
     }
 

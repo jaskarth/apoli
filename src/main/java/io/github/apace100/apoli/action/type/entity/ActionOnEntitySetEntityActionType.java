@@ -3,6 +3,7 @@ package io.github.apace100.apoli.action.type.entity;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.BiEntityAction;
 import io.github.apace100.apoli.action.context.BiEntityActionContext;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.condition.BiEntityCondition;
@@ -63,8 +64,9 @@ public class ActionOnEntitySetEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
 
+        Entity entity = context.entity();
         if (!(set.getNullablePowerType(entity) instanceof EntitySetPowerType entitySet)) {
             return;
         }
@@ -79,10 +81,10 @@ public class ActionOnEntitySetEntityActionType extends EntityActionType {
         for (UUID uuid : uuids) {
 
             Entity entityFromSet = entitySet.getEntity(uuid);
-            BiEntityActionContext context = new BiEntityActionContext(entity, entityFromSet);
+            BiEntityActionContext actionContext = new BiEntityActionContext(entity, entityFromSet);
 
-            if (biEntityCondition.map(condition -> condition.test(context.forCondition())).orElse(true)) {
-                biEntityAction.accept(context);
+            if (biEntityCondition.map(condition -> condition.test(actionContext.forCondition())).orElse(true)) {
+                biEntityAction.accept(actionContext);
             }
 
             if (limit.map(val -> processedUuids.incrementAndGet() >= val).orElse(false)) {

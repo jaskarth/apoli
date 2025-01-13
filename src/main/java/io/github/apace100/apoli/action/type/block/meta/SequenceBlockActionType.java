@@ -6,13 +6,9 @@ import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.action.type.meta.SequenceMetaActionType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 public class SequenceBlockActionType extends BlockActionType implements SequenceMetaActionType<BlockActionContext, BlockAction> {
 
@@ -23,8 +19,8 @@ public class SequenceBlockActionType extends BlockActionType implements Sequence
 	}
 
 	@Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-		executeActions(new BlockActionContext(world, pos, direction));
+	public void accept(BlockActionContext context) {
+		this.executeActions(context);
 	}
 
 	@Override

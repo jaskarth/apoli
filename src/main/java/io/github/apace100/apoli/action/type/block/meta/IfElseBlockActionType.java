@@ -8,9 +8,6 @@ import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.action.type.meta.IfElseMetaActionType;
 import io.github.apace100.apoli.condition.BlockCondition;
 import io.github.apace100.apoli.condition.context.BlockConditionContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -29,8 +26,8 @@ public class IfElseBlockActionType extends BlockActionType implements IfElseMeta
 	}
 
 	@Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-		executeAction(new BlockActionContext(world, pos, direction));
+	public void accept(BlockActionContext context) {
+		this.executeAction(context);
 	}
 
 	@Override

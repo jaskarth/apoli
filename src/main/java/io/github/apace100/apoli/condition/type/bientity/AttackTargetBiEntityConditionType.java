@@ -1,8 +1,10 @@
 package io.github.apace100.apoli.condition.type.bientity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Targeter;
 import net.minecraft.entity.mob.Angerable;
@@ -13,18 +15,24 @@ import java.util.Objects;
 public class AttackTargetBiEntityConditionType extends BiEntityConditionType {
 
     @Override
-    public @NotNull ConditionConfiguration<?> getConfig() {
-        return BiEntityConditionTypes.ATTACK_TARGET;
+    public boolean test(BiEntityConditionContext context) {
+
+        Entity actor = context.actor();
+        Entity target = context.target();
+
+        return (actor instanceof Targeter targeterActor && Objects.equals(target, targeterActor.getTarget()))
+            || (actor instanceof Angerable angerableActor && Objects.equals(target, angerableActor.getTarget()));
+
     }
 
     @Override
-    public boolean test(Entity actor, Entity target) {
-        return condition(actor, target);
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
     }
 
-    public static boolean condition(Entity actor, Entity target) {
-        return (actor instanceof Targeter targeter && Objects.equals(target, targeter.getTarget()))
-            || (actor instanceof Angerable angerable && Objects.equals(target, angerable.getTarget()));
+    @Override
+    public @NotNull ConditionConfiguration<?> getConfig() {
+        return BiEntityConditionTypes.ATTACK_TARGET;
     }
 
 }

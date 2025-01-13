@@ -7,15 +7,13 @@ import net.minecraft.entity.Entity;
 public abstract class EntityConditionType extends AbstractConditionType<EntityConditionContext, EntityCondition> {
 
 	@Override
-	public boolean test(EntityConditionContext context) {
-		return test(context.entity());
-	}
-
-	@Override
 	public EntityCondition createCondition(boolean inverted) {
 		return new EntityCondition(this, inverted);
 	}
 
-	public abstract boolean test(Entity entity);
+	@Override
+	public boolean shouldTest(EntityConditionContext context) {
+		return context.entity() != null;
+	}
 
 }

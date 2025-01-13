@@ -1,15 +1,14 @@
 package io.github.apace100.apoli.action.type.item;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class DamageItemActionType extends ItemActionType {
@@ -36,27 +35,25 @@ public class DamageItemActionType extends ItemActionType {
     }
 
     @Override
-	protected void execute(World world, StackReference stackReference) {
+    public void accept(ItemActionContext context) {
 
-        ItemStack stack = stackReference.get();
-        if (world instanceof ServerWorld serverWorld) {
+        ServerWorld world = context.world();
+        ItemStack stack = context.stackReference().get();
 
-            if (ignoreUnbreaking) {
+        if (ignoreUnbreaking) {
 
-                if (amount >= stack.getMaxDamage()) {
-                    stack.decrement(1);
-                }
-
-                else {
-                    stack.setDamage(stack.getDamage() + amount);
-                }
-
+            if (amount >= stack.getMaxDamage()) {
+                stack.decrement(1);
             }
 
             else {
-                stack.damage(amount, serverWorld, null, item -> {});
+                stack.setDamage(stack.getDamage() + amount);
             }
 
+        }
+
+        else {
+            stack.damage(amount, world, null, item -> {});
         }
 
     }

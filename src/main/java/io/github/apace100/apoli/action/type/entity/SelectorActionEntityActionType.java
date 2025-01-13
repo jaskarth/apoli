@@ -4,6 +4,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.BiEntityAction;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.condition.BiEntityCondition;
@@ -54,9 +55,11 @@ public class SelectorActionEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
 
+        Entity entity = context.entity();
         MinecraftServer server = entity.getServer();
+
         if (server == null) {
             return;
         }
@@ -80,7 +83,7 @@ public class SelectorActionEntityActionType extends EntityActionType {
 
         catch (CommandSyntaxException cse) {
             commandSource.sendError(Text.of(cse.getRawMessage()));
-		}
+        }
 
     }
 

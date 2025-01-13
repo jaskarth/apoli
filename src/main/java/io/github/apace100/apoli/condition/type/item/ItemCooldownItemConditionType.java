@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.item;
 
 import io.github.apace100.apoli.access.EntityLinkedItemStack;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.ItemConditionContext;
 import io.github.apace100.apoli.condition.type.ItemConditionType;
 import io.github.apace100.apoli.condition.type.ItemConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -39,7 +40,9 @@ public class ItemCooldownItemConditionType extends ItemConditionType {
     }
 
     @Override
-    public boolean test(World world, ItemStack stack) {
+    public boolean test(ItemConditionContext context) {
+
+        ItemStack stack = context.stack();
 
         if (!stack.isEmpty() && ((EntityLinkedItemStack) stack).apoli$getEntity(true) instanceof PlayerEntity player) {
 

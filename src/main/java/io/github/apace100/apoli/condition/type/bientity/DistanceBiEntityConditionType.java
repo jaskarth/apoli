@@ -1,14 +1,15 @@
 package io.github.apace100.apoli.condition.type.bientity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.Comparison;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class DistanceBiEntityConditionType extends BiEntityConditionType {
@@ -35,15 +36,18 @@ public class DistanceBiEntityConditionType extends BiEntityConditionType {
     }
 
     @Override
-    public @NotNull ConditionConfiguration<?> getConfig() {
-        return BiEntityConditionTypes.DISTANCE;
+    public boolean test(BiEntityConditionContext context) {
+        return comparison.compare(context.actor().getPos().squaredDistanceTo(context.target().getPos()), compareTo * compareTo);
     }
 
     @Override
-    public boolean test(Entity actor, Entity target) {
-        return actor != null
-            && target != null
-            && comparison.compare(actor.getPos().squaredDistanceTo(target.getPos()), compareTo * compareTo);
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
+    }
+
+    @Override
+    public @NotNull ConditionConfiguration<?> getConfig() {
+        return BiEntityConditionTypes.DISTANCE;
     }
 
 }

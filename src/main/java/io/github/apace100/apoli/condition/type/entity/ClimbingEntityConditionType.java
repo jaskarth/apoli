@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import net.minecraft.entity.Entity;
@@ -10,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 public class ClimbingEntityConditionType extends EntityConditionType {
 
 	@Override
-	public boolean test(Entity entity) {
-		return entity instanceof LivingEntity livingEntity
+	public boolean test(EntityConditionContext context) {
+		return context.entity() instanceof LivingEntity livingEntity
 			&& livingEntity.isClimbing();
 	}
 

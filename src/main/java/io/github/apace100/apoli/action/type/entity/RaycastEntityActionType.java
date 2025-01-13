@@ -5,11 +5,13 @@ import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.BiEntityAction;
 import io.github.apace100.apoli.action.BlockAction;
 import io.github.apace100.apoli.action.EntityAction;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.condition.BiEntityCondition;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.apoli.util.Space;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
@@ -159,11 +161,12 @@ public class RaycastEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
 
+        Entity entity = context.entity();
         beforeAction.ifPresent(action -> action.execute(entity));
 
-        Vec3d origin = entity.getEyePos();
+        Vec3d origin = MiscUtil.getPoseDependentEyePos(entity).add(context.offset());
         Vec3d direction = this.direction
             .map(dir -> transformDirection(entity, dir))
             .orElseGet(() -> entity.getRotationVec(1.0F));

@@ -5,6 +5,7 @@ import io.github.apace100.apoli.condition.type.DamageConditionTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public class UnblockableDamageConditionType extends InTagDamageConditionType {
 
 	public UnblockableDamageConditionType() {

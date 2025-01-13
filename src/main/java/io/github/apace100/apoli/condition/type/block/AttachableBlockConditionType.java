@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.block;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.apoli.condition.type.BlockConditionType;
 import io.github.apace100.apoli.condition.type.BlockConditionTypes;
 import net.minecraft.block.BlockState;
@@ -15,7 +16,10 @@ import java.util.Optional;
 public class AttachableBlockConditionType extends BlockConditionType {
 
     @Override
-    public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
+    public boolean test(BlockConditionContext context) {
+
+        World world = context.world();
+        BlockPos pos = context.pos();
 
         for (Direction direction : Direction.values()) {
 

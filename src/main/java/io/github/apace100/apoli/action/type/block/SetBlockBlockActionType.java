@@ -1,18 +1,14 @@
 package io.github.apace100.apoli.action.type.block;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class SetBlockBlockActionType extends BlockActionType {
 
@@ -33,8 +29,8 @@ public class SetBlockBlockActionType extends BlockActionType {
     }
 
     @Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
-        world.setBlockState(pos, blockState);
+    public void accept(BlockActionContext context) {
+        context.world().setBlockState(context.pos(), blockState);
     }
 
     @Override

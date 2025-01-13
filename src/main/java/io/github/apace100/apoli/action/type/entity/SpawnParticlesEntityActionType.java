@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.entity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.condition.BiEntityCondition;
@@ -9,7 +10,6 @@ import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
@@ -70,22 +70,20 @@ public class SpawnParticlesEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
+
+        Entity entity = context.entity();
+        Vec3d pos = entity.getPos().add(context.offset()).add(offset);
 
         if (!(entity.getWorld() instanceof ServerWorld serverWorld)) {
             return;
         }
 
         Vec3d delta = spread.multiply(entity.getWidth(), entity.getHeight(), entity.getWidth());
-        Vec3d pos = entity.getPos().add(offset);
-
-        for (ServerPlayerEntity player : serverWorld.getPlayers()) {
-
-            if (biEntityCondition.map(condition -> condition.test(entity, player)).orElse(true)) {
-                serverWorld.spawnParticles(player, particle, force, pos.getX(), pos.getY(), pos.getZ(), count, delta.getX(), delta.getY(), delta.getZ(), speed);
-            }
-
-        }
+        serverWorld.getPlayers()
+            .stream()
+            .filter(player -> biEntityCondition.map(condition -> condition.test(entity, player)).orElse(true))
+            .forEach(player -> serverWorld.spawnParticles(player, particle, force, pos.getX(), pos.getY(), pos.getZ(), count, delta.getX(), delta.getY(), delta.getZ(), speed));
 
     }
 

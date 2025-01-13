@@ -76,25 +76,13 @@ public class ApoliClient implements ClientModInitializer {
 		KeyBindingUtil.ALIASES.addAlias(keyId, keyBinding.getTranslationKey());
 	}
 
+	/**
+	 * 	Use {@link KeyBindingUtil#getKeyBinding(String)} instead.
+	 */
+	@Deprecated(forRemoval = true)
 	@Nullable
 	public static KeyBinding getKeyBinding(String keyBindingId) {
-
-		Map<String, KeyBinding> keyBindings = KeyBindingAccessor.getKeysById();
-		String aliasedKeyBindingId;
-
-		if (keyBindings.containsKey(keyBindingId)) {
-			return keyBindings.get(keyBindingId);
-		}
-
-		try {
-			aliasedKeyBindingId = KeyBindingUtil.ALIASES.resolveAlias(keyBindingId);
-			return keyBindings.get(aliasedKeyBindingId);
-		}
-
-		catch (Exception e) {
-			return null;
-		}
-
+		return KeyBindingUtil.getKeyBinding(keyBindingId).orElse(null);
 	}
 
 }

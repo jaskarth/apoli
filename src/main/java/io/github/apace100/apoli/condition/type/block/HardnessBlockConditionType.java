@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.block;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.apoli.condition.type.BlockConditionType;
 import io.github.apace100.apoli.condition.type.BlockConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -38,10 +39,14 @@ public class HardnessBlockConditionType extends BlockConditionType {
         this.comparison = comparison;
         this.compareTo = compareTo;
     }
-
     @Override
-    public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
-        return comparison.compare(blockState.getHardness(world, pos), compareTo);
+    public boolean test(BlockConditionContext context) {
+
+        World world = context.world();
+        BlockPos pos = context.pos();
+
+        return comparison.compare(context.blockState().getHardness(world, pos), compareTo);
+
     }
 
     @Override

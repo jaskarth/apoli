@@ -6,7 +6,6 @@ import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.action.type.meta.ChoiceMetaActionType;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.collection.WeightedList;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +18,8 @@ public class ChoiceBiEntityActionType extends BiEntityActionType implements Choi
 	}
 
 	@Override
-	protected void execute(Entity actor, Entity target) {
-		executeActions(new BiEntityActionContext(actor, target));
+	public void accept(BiEntityActionContext context) {
+		this.executeActions(context);
 	}
 
 	@Override

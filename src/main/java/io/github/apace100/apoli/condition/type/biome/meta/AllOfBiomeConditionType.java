@@ -6,9 +6,6 @@ import io.github.apace100.apoli.condition.context.BiomeConditionContext;
 import io.github.apace100.apoli.condition.type.BiomeConditionType;
 import io.github.apace100.apoli.condition.type.BiomeConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.AllOfMetaConditionType;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -22,8 +19,8 @@ public class AllOfBiomeConditionType extends BiomeConditionType implements AllOf
 	}
 
 	@Override
-	public boolean test(BlockPos pos, RegistryEntry<Biome> biomeEntry) {
-		return testConditions(new BiomeConditionContext(pos, biomeEntry));
+	public boolean test(BiomeConditionContext context) {
+		return testConditions(context);
 	}
 
 	@Override

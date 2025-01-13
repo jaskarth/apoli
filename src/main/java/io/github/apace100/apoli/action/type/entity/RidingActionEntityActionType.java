@@ -3,6 +3,7 @@ package io.github.apace100.apoli.action.type.entity;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.BiEntityAction;
 import io.github.apace100.apoli.action.EntityAction;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.condition.BiEntityCondition;
@@ -19,17 +20,18 @@ public class RidingActionEntityActionType extends EntityActionType {
     public static final TypedDataObjectFactory<RidingActionEntityActionType> DATA_FACTORY = TypedDataObjectFactory.simple(
         new SerializableData()
             .add("action", EntityAction.DATA_TYPE.optional(), Optional.empty())
+            .addFunctionedDefault("entity_action", EntityAction.DATA_TYPE.optional(), data -> data.get("action"))
             .add("bientity_action", BiEntityAction.DATA_TYPE.optional(), Optional.empty())
             .add("bientity_condition", BiEntityCondition.DATA_TYPE.optional(), Optional.empty())
             .add("recursive", SerializableDataTypes.BOOLEAN, false),
         data -> new RidingActionEntityActionType(
-            data.get("action"),
+            data.get("entity_action"),
             data.get("bientity_action"),
             data.get("bientity_condition"),
             data.get("recursive")
         ),
         (actionType, serializableData) -> serializableData.instance()
-            .set("action", actionType.entityAction)
+            .set("entity_action", actionType.entityAction)
             .set("bientity_action", actionType.biEntityAction)
             .set("bientity_condition", actionType.biEntityCondition)
             .set("recursive", actionType.recursive)
@@ -49,16 +51,13 @@ public class RidingActionEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
 
-        if (!entity.hasVehicle()) {
-            return;
-        }
+        Entity entity = context.entity();
+        Entity vehicle = entity.getVehicle();
 
-        Entity vehicle;
-        do {
+        while (vehicle != null) {
 
-            vehicle = entity.getVehicle();
             Entity finalVehicle = vehicle;
 
             if (biEntityCondition.map(condition -> condition.test(entity, finalVehicle)).orElse(true)) {
@@ -70,9 +69,9 @@ public class RidingActionEntityActionType extends EntityActionType {
                 break;
             }
 
-        }
+            vehicle = vehicle.getVehicle();
 
-        while (vehicle != null);
+        }
 
     }
 

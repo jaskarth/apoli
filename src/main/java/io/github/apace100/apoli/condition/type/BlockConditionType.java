@@ -17,11 +17,8 @@ public abstract class BlockConditionType extends AbstractConditionType<BlockCond
 	}
 
 	@Override
-	public boolean test(BlockConditionContext context) {
-		return context.blockState() != null
-			&& test(context.world(), context.pos(), context.blockState(), context.blockEntity());
+	public boolean shouldTest(BlockConditionContext context) {
+		return context.blockState() != null;
 	}
-
-	public abstract boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity);
 
 }

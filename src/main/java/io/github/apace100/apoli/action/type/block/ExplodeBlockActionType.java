@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.block;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.BlockActionContext;
 import io.github.apace100.apoli.action.type.BlockActionType;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.condition.BlockCondition;
@@ -9,13 +10,11 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
 import java.util.function.Predicate;
 
 public class ExplodeBlockActionType extends BlockActionType {
@@ -64,11 +63,10 @@ public class ExplodeBlockActionType extends BlockActionType {
     }
 
     @Override
-	protected void execute(World world, BlockPos pos, Optional<Direction> direction) {
+    public void accept(BlockActionContext context) {
 
-        if (world.isClient()) {
-            return;
-        }
+        ServerWorld world = context.world();
+        BlockPos pos = context.pos();
 
         Predicate<BlockConditionContext> behaviorCondition = indestructibleCondition;
         if (destructibleCondition != null) {

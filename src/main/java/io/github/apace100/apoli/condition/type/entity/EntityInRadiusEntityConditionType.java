@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.BiEntityCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -64,10 +65,12 @@ public class EntityInRadiusEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
 
+        Entity entity = context.entity();
         int matches = 0;
-        for (Entity target : Shape.getEntities(shape, entity.getWorld(), entity.getLerpedPos(1.0F), radius)) {
+
+        for (Entity target : shape.getEntities(entity.getWorld(), entity.getLerpedPos(1.0F), radius)) {
 
             if (biEntityCondition.test(entity, target)) {
                 ++matches;

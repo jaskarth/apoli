@@ -6,7 +6,6 @@ import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.action.type.meta.DelayMetaActionType;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class DelayBiEntityActionType extends BiEntityActionType implements DelayMetaActionType<BiEntityActionContext, BiEntityAction> {
@@ -20,8 +19,8 @@ public class DelayBiEntityActionType extends BiEntityActionType implements Delay
 	}
 
 	@Override
-	protected void execute(Entity actor, Entity target) {
-		executeAction(new BiEntityActionContext(actor, target));
+	public void accept(BiEntityActionContext context) {
+		this.executeAction(context);
 	}
 
 	@Override

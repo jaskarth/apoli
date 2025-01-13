@@ -1,11 +1,11 @@
 package io.github.apace100.apoli.action.context;
 
 import io.github.apace100.apoli.condition.context.ItemConditionContext;
-import io.github.apace100.apoli.util.context.TypeActionContext;
+import io.github.apace100.apoli.util.context.ActionContext;
 import net.minecraft.inventory.StackReference;
-import net.minecraft.world.World;
+import net.minecraft.server.world.ServerWorld;
 
-public record ItemActionContext(World world, StackReference stackReference) implements TypeActionContext<ItemConditionContext> {
+public record ItemActionContext(ServerWorld world, StackReference stackReference) implements ActionContext<ItemConditionContext> {
 
 	@Override
 	public ItemConditionContext forCondition() {

@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.damage;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
 import io.github.apace100.apoli.condition.EntityCondition;
+import io.github.apace100.apoli.condition.context.DamageConditionContext;
 import io.github.apace100.apoli.condition.type.DamageConditionType;
 import io.github.apace100.apoli.condition.type.DamageConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -31,10 +32,12 @@ public class AttackerDamageConditionType extends DamageConditionType {
     }
 
     @Override
-    public boolean test(DamageSource source, float amount) {
-        Entity attacker = source.getAttacker();
-        return attacker != null
-            && entityCondition.map(condition -> condition.test(attacker)).orElse(true);
+    public boolean test(DamageConditionContext context) {
+        Entity attacker = context.source().getAttacker();
+        return entityCondition
+            .filter(condition -> attacker != null)
+            .map(condition -> condition.test(attacker))
+            .orElse(true);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.block;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.apoli.condition.type.BlockConditionType;
 import io.github.apace100.apoli.condition.type.BlockConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
@@ -38,10 +39,10 @@ public class NbtBlockConditionType extends BlockConditionType {
     }
 
     @Override
-    public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
-        return blockEntity
-            .map(_blockEntity -> _blockEntity.createNbtWithIdentifyingData(world.getRegistryManager()))
-            .map(blockEntityNbt -> NbtHelper.matches(nbt, blockEntityNbt, true))
+    public boolean test(BlockConditionContext context) {
+        return context.blockEntity()
+            .map(be -> be.createNbtWithIdentifyingData(context.world().getRegistryManager()))
+            .map(beNbt -> NbtHelper.matches(nbt, beNbt, true))
             .orElse(false);
     }
 

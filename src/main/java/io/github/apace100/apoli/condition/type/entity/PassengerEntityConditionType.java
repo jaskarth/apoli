@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.BiEntityCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -44,8 +45,9 @@ public class PassengerEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
 
+        Entity entity = context.entity();
         long matches = entity.getPassengerList()
             .stream()
             .filter(passenger -> biEntityCondition.map(condition -> condition.test(passenger, entity)).orElse(true))

@@ -1,9 +1,10 @@
 package io.github.apace100.apoli.action.type.bientity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
-import net.minecraft.entity.Entity;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
@@ -11,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
 public class SetInLoveBiEntityActionType extends BiEntityActionType {
 
     @Override
-	protected void execute(Entity actor, Entity target) {
+    public void accept(BiEntityActionContext context) {
 
-        if (target instanceof AnimalEntity targetAnimal && actor instanceof PlayerEntity actorPlayer) {
-            targetAnimal.lovePlayer(actorPlayer);
+        if (context.target() instanceof AnimalEntity animalTarget && context.actor() instanceof PlayerEntity playerActor) {
+            animalTarget.lovePlayer(playerActor);
         }
 
     }
@@ -22,6 +23,11 @@ public class SetInLoveBiEntityActionType extends BiEntityActionType {
     @Override
     public @NotNull ActionConfiguration<?> getConfig() {
         return BiEntityActionTypes.SET_IN_LOVE;
+    }
+
+    @Override
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
     }
 
 }

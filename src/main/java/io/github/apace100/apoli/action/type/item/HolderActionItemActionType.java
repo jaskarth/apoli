@@ -3,13 +3,12 @@ package io.github.apace100.apoli.action.type.item;
 import io.github.apace100.apoli.access.EntityLinkedItemStack;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.EntityAction;
+import io.github.apace100.apoli.action.context.ItemActionContext;
 import io.github.apace100.apoli.action.type.ItemActionType;
 import io.github.apace100.apoli.action.type.ItemActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import net.minecraft.entity.Entity;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class HolderActionItemActionType extends ItemActionType {
@@ -31,12 +30,16 @@ public class HolderActionItemActionType extends ItemActionType {
     }
 
     @Override
-	protected void execute(World world, StackReference stackReference) {
+    public void accept(ItemActionContext context) {
 
-        Entity holder = ((EntityLinkedItemStack) stackReference.get()).apoli$getEntity(true);
+        if (context.stackReference().get() instanceof EntityLinkedItemStack linkedItemStack) {
 
-        if (holder != null) {
-            entityAction.execute(holder);
+            Entity holder = linkedItemStack.apoli$getEntity(true);
+
+            if (holder != null) {
+                entityAction.execute(holder);
+            }
+
         }
 
     }

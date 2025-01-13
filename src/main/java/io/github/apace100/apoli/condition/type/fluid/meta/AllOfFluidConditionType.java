@@ -20,8 +20,8 @@ public class AllOfFluidConditionType extends FluidConditionType implements AllOf
 	}
 
 	@Override
-	public boolean test(FluidState fluidState) {
-		return testConditions(new FluidConditionContext(fluidState));
+	public boolean test(FluidConditionContext context) {
+		return testConditions(context);
 	}
 
 	@Override

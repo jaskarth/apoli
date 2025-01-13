@@ -2,11 +2,13 @@ package io.github.apace100.apoli.action.type.entity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.action.BlockAction;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -30,8 +32,13 @@ public class BlockActionAtEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
-        blockAction.execute(entity.getWorld(), entity.getBlockPos(), Optional.empty());
+    public void accept(EntityActionContext context) {
+
+        Entity entity = context.entity();
+        BlockPos blockPos = BlockPos.ofFloored(entity.getPos().add(context.offset()));
+
+        blockAction.execute(entity.getWorld(), blockPos, Optional.empty());
+
     }
 
     @Override

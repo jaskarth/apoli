@@ -1,12 +1,12 @@
 package io.github.apace100.apoli.action.type.entity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import net.minecraft.entity.Entity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +30,8 @@ public class EmitGameEventEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
-        entity.emitGameEvent(event);
+    public void accept(EntityActionContext context) {
+        context.entity().emitGameEvent(event);
     }
 
     @Override

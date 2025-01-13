@@ -20,8 +20,8 @@ public class AnyOfEntityConditionType extends EntityConditionType implements Any
 	}
 
 	@Override
-	public boolean test(Entity entity) {
-		return testConditions(new EntityConditionContext(entity));
+	public boolean test(EntityConditionContext context) {
+		return testConditions(context);
 	}
 
 	@Override

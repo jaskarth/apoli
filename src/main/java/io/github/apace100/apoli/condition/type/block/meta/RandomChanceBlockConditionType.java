@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.block.meta;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BlockConditionContext;
 import io.github.apace100.apoli.condition.type.BlockConditionType;
 import io.github.apace100.apoli.condition.type.BlockConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.RandomChanceMetaConditionType;
@@ -21,7 +22,7 @@ public class RandomChanceBlockConditionType extends BlockConditionType implement
 	}
 
 	@Override
-	public boolean test(World world, BlockPos pos, BlockState blockState, Optional<BlockEntity> blockEntity) {
+	public boolean test(BlockConditionContext context) {
 		return testCondition();
 	}
 

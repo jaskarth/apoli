@@ -6,7 +6,6 @@ import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.action.type.meta.SequenceMetaActionType;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,8 +19,13 @@ public class SequenceEntityActionType extends EntityActionType implements Sequen
 	}
 
 	@Override
-	protected void execute(Entity entity) {
-		executeActions(new EntityActionContext(entity));
+	public void accept(EntityActionContext context) {
+		this.executeActions(context);
+	}
+
+	@Override
+	public boolean shouldExecute(EntityActionContext context) {
+		return true;
 	}
 
 	@Override

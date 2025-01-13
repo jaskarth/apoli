@@ -385,4 +385,8 @@ public final class MiscUtil {
             .collect(Collectors.toSet());
     }
 
+    public static Vec3d getPoseDependentEyePos(Entity entity) {
+        return new Vec3d(entity.getX(), entity.getEyeHeight(entity.getPose()), entity.getZ());
+    }
+
 }

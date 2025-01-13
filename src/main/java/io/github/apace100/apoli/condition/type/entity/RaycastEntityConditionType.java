@@ -3,10 +3,12 @@ package io.github.apace100.apoli.condition.type.entity;
 import io.github.apace100.apoli.condition.BiEntityCondition;
 import io.github.apace100.apoli.condition.BlockCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.apoli.util.Space;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
@@ -107,9 +109,11 @@ public class RaycastEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
 
-        Vec3d origin = entity.getEyePos();
+        Entity entity = context.entity();
+
+        Vec3d origin = MiscUtil.getPoseDependentEyePos(entity);
         Vec3d direction = this.direction
             .map(dir -> transformDirection(entity, dir))
             .orElseGet(() -> entity.getRotationVec(1.0F));

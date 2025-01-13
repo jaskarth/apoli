@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.action.type.entity;
 
 import io.github.apace100.apoli.action.ActionConfiguration;
+import io.github.apace100.apoli.action.context.EntityActionContext;
 import io.github.apace100.apoli.action.type.EntityActionType;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
 import io.github.apace100.apoli.condition.BlockCondition;
@@ -10,7 +11,7 @@ import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,15 +69,16 @@ public class ExplodeEntityActionType extends EntityActionType {
     }
 
     @Override
-    protected void execute(Entity entity) {
+    public void accept(EntityActionContext context) {
 
-        if (entity.getWorld().isClient()) {
+        Entity entity = context.entity();
+        World world = entity.getWorld();
+
+        if (world.isClient()) {
             return;
         }
 
-        Vec3d entityPos = entity.getPos();
         Predicate<BlockConditionContext> behaviorCondition = indestructibleCondition;
-
         if (destructibleCondition != null) {
             behaviorCondition = MiscUtil.combineOr(destructibleCondition.negate(), behaviorCondition);
         }
@@ -85,9 +87,9 @@ public class ExplodeEntityActionType extends EntityActionType {
             entity.getWorld(),
             damageSelf ? null : entity,
             Explosion.createDamageSource(entity.getWorld(), entity),
-            entityPos.getX(),
-            entityPos.getY(),
-            entityPos.getZ(),
+            entity.getPos().getX(),
+            entity.getPos().getY(),
+            entity.getPos().getZ(),
             power,
             createFire,
             destructionType,

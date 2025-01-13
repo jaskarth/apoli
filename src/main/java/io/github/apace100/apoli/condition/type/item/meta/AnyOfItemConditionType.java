@@ -21,8 +21,8 @@ public class AnyOfItemConditionType extends ItemConditionType implements AnyOfMe
 	}
 
 	@Override
-	public boolean test(World world, ItemStack stack) {
-		return testConditions(new ItemConditionContext(world, stack));
+	public boolean test(ItemConditionContext context) {
+		return testConditions(context);
 	}
 
 	@Override

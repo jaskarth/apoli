@@ -1,9 +1,11 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
+import io.github.apace100.apoli.util.MiscUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -19,40 +21,31 @@ public class HasCommandTagEntityConditionType extends EntityConditionType {
 
     public static final TypedDataObjectFactory<HasCommandTagEntityConditionType> DATA_FACTORY = TypedDataObjectFactory.simple(
         new SerializableData()
-            .add("command_tag", SerializableDataTypes.STRING.optional(), Optional.empty())
-            .add("command_tags", SerializableDataTypes.STRINGS.optional(), Optional.empty()),
+            .add("command_tag", SerializableDataTypes.STRING, null)
+            .addFunctionedDefault("command_tags", SerializableDataTypes.STRINGS, data -> MiscUtil.singletonListOrEmpty(data.get("command_tag"))),
         data -> new HasCommandTagEntityConditionType(
-            data.get("command_tag"),
             data.get("command_tags")
         ),
         (conditionType, serializableData) -> serializableData.instance()
-            .set("command_tag", conditionType.commandTag)
             .set("command_tags", conditionType.commandTags)
     );
 
-    private final Optional<String> commandTag;
-    private final Optional<List<String>> commandTags;
+    private final List<String> commandTags;
 
-    private final Set<String> specifiedCommandTags;
-
-    public HasCommandTagEntityConditionType(Optional<String> commandTag, Optional<List<String>> commandTags) {
-
-        this.commandTag = commandTag;
+    public HasCommandTagEntityConditionType(List<String> commandTags) {
         this.commandTags = commandTags;
-
-        this.specifiedCommandTags = new ObjectOpenHashSet<>();
-
-        this.commandTag.ifPresent(this.specifiedCommandTags::add);
-        this.commandTags.ifPresent(this.specifiedCommandTags::addAll);
-
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
+
+        Entity entity = context.entity();
         Set<String> commandTags = entity.getCommandTags();
-        return specifiedCommandTags.isEmpty()
+
+        return this.commandTags.isEmpty()
             ? !commandTags.isEmpty()
-            : !Collections.disjoint(commandTags, specifiedCommandTags);
+            : !Collections.disjoint(commandTags, this.commandTags);
+
     }
 
     @Override

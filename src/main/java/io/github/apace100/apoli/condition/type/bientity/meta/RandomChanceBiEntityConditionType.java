@@ -1,10 +1,10 @@
 package io.github.apace100.apoli.condition.type.bientity.meta;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
 import io.github.apace100.apoli.condition.type.meta.RandomChanceMetaConditionType;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class RandomChanceBiEntityConditionType extends BiEntityConditionType implements RandomChanceMetaConditionType {
@@ -16,13 +16,13 @@ public class RandomChanceBiEntityConditionType extends BiEntityConditionType imp
 	}
 
 	@Override
-	public @NotNull ConditionConfiguration<?> getConfig() {
-		return BiEntityConditionTypes.RANDOM_CHANCE;
+	public boolean test(BiEntityConditionContext context) {
+		return this.testCondition();
 	}
 
 	@Override
-	public boolean test(Entity actor, Entity target) {
-		return testCondition();
+	public @NotNull ConditionConfiguration<?> getConfig() {
+		return BiEntityConditionTypes.RANDOM_CHANCE;
 	}
 
 	@Override

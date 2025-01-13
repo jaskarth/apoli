@@ -1,10 +1,11 @@
 package io.github.apace100.apoli.condition.type.bientity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.BiEntityConditionContext;
 import io.github.apace100.apoli.condition.type.BiEntityConditionType;
 import io.github.apace100.apoli.condition.type.BiEntityConditionTypes;
+import io.github.apace100.apoli.util.requirement.BiEntityRequirement;
 import net.minecraft.entity.Attackable;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -12,18 +13,19 @@ import java.util.Objects;
 public class AttackerBiEntityConditionType extends BiEntityConditionType {
 
     @Override
-    public @NotNull ConditionConfiguration<?> getConfig() {
-        return BiEntityConditionTypes.ATTACKER;
+    public boolean test(BiEntityConditionContext context) {
+        return context.target() instanceof Attackable attackable
+            && Objects.equals(context.actor(), attackable.getLastAttacker());
     }
 
     @Override
-    public boolean test(Entity actor, Entity target) {
-        return condition(actor, target);
+    public BiEntityRequirement getRequirement() {
+        return BiEntityRequirement.BOTH;
     }
 
-    public static boolean condition(Entity actor, Entity target) {
-        return target instanceof Attackable attackable
-            && Objects.equals(actor, attackable.getLastAttacker());
+    @Override
+    public @NotNull ConditionConfiguration<?> getConfig() {
+        return BiEntityConditionTypes.ATTACKER;
     }
 
 }

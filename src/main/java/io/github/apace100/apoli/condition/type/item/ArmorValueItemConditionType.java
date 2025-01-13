@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.item;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.ItemConditionContext;
 import io.github.apace100.apoli.condition.type.ItemConditionType;
 import io.github.apace100.apoli.condition.type.ItemConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -37,8 +38,8 @@ public class ArmorValueItemConditionType extends ItemConditionType {
     }
 
     @Override
-    public boolean test(World world, ItemStack stack) {
-        return stack.getItem() instanceof ArmorItem armorItem
+    public boolean test(ItemConditionContext context) {
+        return context.stack().getItem() instanceof ArmorItem armorItem
             && comparison.compare(armorItem.getProtection(), compareTo);
     }
 

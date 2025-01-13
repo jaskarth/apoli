@@ -20,8 +20,8 @@ public class AllOfDamageConditionType extends DamageConditionType implements All
 	}
 
 	@Override
-	public boolean test(DamageSource source, float amount) {
-		return testConditions(new DamageConditionContext(source, amount));
+	public boolean test(DamageConditionContext context) {
+		return testConditions(context);
 	}
 
 	@Override

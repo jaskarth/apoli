@@ -112,7 +112,7 @@ public abstract class ValueModifyingPowerType extends PowerType {
     }
 
     public static <T extends ValueModifyingPowerType> PowerConfiguration<T> createModifyingConfiguration(Identifier id, BiFunction<List<Modifier>, Optional<EntityCondition>, T> constructor) {
-        return PowerConfiguration.dataFactory(id, createConditionedModifyingRequiredDataFactory(new SerializableData(), (data, modifiers, condition) -> constructor.apply(modifiers, condition), (t, serializableData) -> serializableData.instance()));
+        return PowerConfiguration.of(id, createConditionedModifyingRequiredDataFactory(new SerializableData(), (data, modifiers, condition) -> constructor.apply(modifiers, condition), (t, serializableData) -> serializableData.instance()));
     }
 
 }

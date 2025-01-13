@@ -2,6 +2,7 @@ package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.BiEntityCondition;
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -44,31 +45,25 @@ public class RidingRecursiveEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
+    public boolean test(EntityConditionContext context) {
 
+        Entity entity = context.entity();
         Entity vehicle = entity.getVehicle();
+
         int matches = 0;
 
-        if (vehicle == null) {
-            return false;
-        }
+        while (vehicle != null) {
 
-        else {
-
-            while (vehicle != null) {
-
-                final Entity finalVehicle = vehicle;
-                if (biEntityCondition.map(condition -> condition.test(entity, finalVehicle)).orElse(true)) {
-                    ++matches;
-                }
-
-                vehicle = vehicle.getVehicle();
-
+            final Entity finalVehicle = vehicle;
+            if (biEntityCondition.map(condition -> condition.test(entity, finalVehicle)).orElse(true)) {
+                ++matches;
             }
 
-            return comparison.compare(matches, compareTo);
+            vehicle = vehicle.getVehicle();
 
         }
+
+        return comparison.compare(matches, compareTo);
 
     }
 

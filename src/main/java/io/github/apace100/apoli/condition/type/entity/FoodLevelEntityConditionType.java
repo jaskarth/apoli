@@ -1,6 +1,7 @@
 package io.github.apace100.apoli.condition.type.entity;
 
 import io.github.apace100.apoli.condition.ConditionConfiguration;
+import io.github.apace100.apoli.condition.context.EntityConditionContext;
 import io.github.apace100.apoli.condition.type.EntityConditionType;
 import io.github.apace100.apoli.condition.type.EntityConditionTypes;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -36,8 +37,8 @@ public class FoodLevelEntityConditionType extends EntityConditionType {
     }
 
     @Override
-    public boolean test(Entity entity) {
-        return entity instanceof PlayerEntity player
+    public boolean test(EntityConditionContext context) {
+        return context.entity() instanceof PlayerEntity player
             && comparison.compare(player.getHungerManager().getFoodLevel(), compareTo);
     }
 

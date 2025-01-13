@@ -3,7 +3,7 @@ package io.github.apace100.apoli.action.type;
 import io.github.apace100.apoli.action.AbstractAction;
 import io.github.apace100.apoli.action.ActionConfiguration;
 import io.github.apace100.apoli.data.TypedDataObjectFactory;
-import io.github.apace100.apoli.util.context.TypeActionContext;
+import io.github.apace100.apoli.util.context.ActionContext;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.util.Validatable;
 import org.jetbrains.annotations.ApiStatus;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class AbstractActionType<T extends TypeActionContext<?>, A extends AbstractAction<T, ?>> implements Consumer<T>, Validatable {
+public abstract class AbstractActionType<T extends ActionContext<?>, A extends AbstractAction<T, ?>> implements Consumer<T>, Validatable {
 
 	private A action = null;
 	private boolean initialized = false;
@@ -59,5 +59,9 @@ public abstract class AbstractActionType<T extends TypeActionContext<?>, A exten
 	}
 
 	public abstract A createAction();
+
+	public boolean shouldExecute(T context) {
+		return true;
+	}
 
 }

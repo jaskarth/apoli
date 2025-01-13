@@ -83,7 +83,7 @@ public class ModifyGrindstonePowerType extends PowerType {
     private final Optional<Modifier> experienceModifier;
     private final ResultType resultType;
 
-    public ModifyGrindstonePowerType(Optional<EntityAction> entityAction, Optional<BlockAction> blockAction, Optional<ItemAction> itemActionAfterGrinding, Optional<ItemCondition> topItemCondition, Optional<ItemCondition> bottomItemCondition, Optional<ItemCondition> outputItemCondition, Optional<BlockCondition> blockCondition, Optional<ItemStack> resultStack, Optional<ItemAction> itemAction, Optional<Modifier> experienceModifier, ResultType resultType, Optional<EntityCondition> condition) {
+    public ModifyGrindstonePowerType(Optional<EntityAction> entityAction, Optional<BlockAction> blockAction, Optional<ItemAction> itemAction, Optional<ItemAction> itemActionAfterGrinding, Optional<ItemCondition> topItemCondition, Optional<ItemCondition> bottomItemCondition, Optional<ItemCondition> outputItemCondition, Optional<BlockCondition> blockCondition, Optional<ItemStack> resultStack, Optional<Modifier> experienceModifier, ResultType resultType, Optional<EntityCondition> condition) {
         super(condition);
         this.entityAction = entityAction;
         this.blockAction = blockAction;

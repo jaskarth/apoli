@@ -6,7 +6,6 @@ import io.github.apace100.apoli.action.context.BiEntityActionContext;
 import io.github.apace100.apoli.action.type.BiEntityActionType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.action.type.meta.SideMetaActionType;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class SideBiEntityActionType extends BiEntityActionType implements SideMetaActionType<BiEntityActionContext, BiEntityAction> {
@@ -20,8 +19,8 @@ public class SideBiEntityActionType extends BiEntityActionType implements SideMe
 	}
 
 	@Override
-	protected void execute(Entity actor, Entity target) {
-		executeAction(new BiEntityActionContext(actor, target));
+	public void accept(BiEntityActionContext context) {
+		this.executeAction(context);
 	}
 
 	@Override
