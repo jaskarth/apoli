@@ -102,7 +102,7 @@ public class StackingStatusEffectPowerType extends StatusEffectPowerType {
 
             else if (holder.age % tickRate == endTicks) {
                 this.currentStack = Math.clamp(--currentStack, minStacks, maxStacks);
-                this.wasActive = currentStack <= minStacks;
+                this.wasActive = currentStack > minStacks;
             }
 
         }
