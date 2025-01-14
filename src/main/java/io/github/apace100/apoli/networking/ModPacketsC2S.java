@@ -89,16 +89,22 @@ public class ModPacketsC2S {
 
             PowerType powerType = PowerManager.getOptional(powerId)
                 .map(component::getPowerType)
-                .filter(PowerType::isActive)
                 .orElse(null);
 
-            switch (powerType) {
-                case Active activePowerType ->
+            if (powerType instanceof Active activePowerType) {
+
+                if (activePowerType.canTrigger()) {
                     activePowerType.onUse();
-                case null ->
-                    Apoli.LOGGER.warn("Found unknown power \"{}\" while receiving packet for triggering active power types of player {}!", powerId, player.getName().getString());
-                default ->
-                    Apoli.LOGGER.warn("Unexpectedly found power \"{}\" (which doesn't have an active power type) while receiving packet for triggering active power types of player {}!", powerId, player.getName().getString());
+                }
+
+            }
+
+            else if (powerType != null) {
+                Apoli.LOGGER.warn("Unexpectedly found power \"{}\" (which doesn't have an active power type) while receiving packet for triggering active power types of player {}!", powerId, player.getName().getString());
+            }
+
+            else {
+                Apoli.LOGGER.warn("Found unknown power \"{}\" while receiving packet for triggering active power types of player {}!", powerId, player.getName().getString());
             }
 
         }

@@ -18,6 +18,10 @@ public interface Active {
 
     KeyBindingReference getKey();
 
+    default boolean canTrigger() {
+        return true;
+    }
+
     void onUse();
 
     @Environment(EnvType.CLIENT)

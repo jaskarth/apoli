@@ -88,6 +88,11 @@ public class TogglePowerType extends PowerType implements Active {
 
     }
 
+    @Override
+    public boolean canTrigger() {
+        return super.isActive();
+    }
+
     public boolean isActive() {
         return this.toggled && super.isActive();
     }
