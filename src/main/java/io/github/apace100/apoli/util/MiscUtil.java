@@ -386,7 +386,7 @@ public final class MiscUtil {
     }
 
     public static Vec3d getPoseDependentEyePos(Entity entity) {
-        return new Vec3d(entity.getX(), entity.getEyeHeight(entity.getPose()), entity.getZ());
+        return new Vec3d(entity.getX(), entity.getY() + entity.getEyeHeight(entity.getPose()), entity.getZ());
     }
 
 }
