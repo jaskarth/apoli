@@ -69,7 +69,7 @@ public class StartingEquipmentPowerType extends PowerType {
 
         for (IndexedStack indexedStack : indexedStacks) {
 
-            ItemStack stack = indexedStack.stack();
+            ItemStack stack = indexedStack.stack().copy();
             Optional<Integer> slotId = indexedStack.slotId();
 
             StackReference stackReference = slotId.map(holder::getStackReference)
