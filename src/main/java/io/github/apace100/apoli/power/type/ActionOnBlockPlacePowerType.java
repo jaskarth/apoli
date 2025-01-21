@@ -10,12 +10,14 @@ import io.github.apace100.apoli.data.TypedDataObjectFactory;
 import io.github.apace100.apoli.power.PowerConfiguration;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -52,6 +54,7 @@ public class ActionOnBlockPlacePowerType extends ActiveInteractionPowerType {
             .set("place_on_action", powerType.placeOnAction)
             .set("place_to_condition", powerType.placeToCondition)
             .set("place_on_condition", powerType.placeOnCondition)
+            .set("directions", powerType.directions)
     );
 
     private final Optional<EntityAction> entityAction;
@@ -87,10 +90,15 @@ public class ActionOnBlockPlacePowerType extends ActiveInteractionPowerType {
 
     public void executeOtherActions(BlockPos toPos, BlockPos onPos, Direction direction) {
 
-        placeOnAction.ifPresent(action -> action.execute(getHolder().getWorld(), onPos, Optional.of(direction)));
-        placeToAction.ifPresent(action -> action.execute(getHolder().getWorld(), toPos, Optional.of(direction)));
+        Entity holder = getHolder();
+        World world = holder.getWorld();
 
-        entityAction.ifPresent(action -> action.execute(getHolder()));
+        Optional<Direction> optDirection = Optional.of(direction);
+
+        placeOnAction.ifPresent(action -> action.execute(world, onPos, optDirection));
+        placeToAction.ifPresent(action -> action.execute(world, toPos, optDirection));
+
+        entityAction.ifPresent(action -> action.execute(holder));
 
     }
 
