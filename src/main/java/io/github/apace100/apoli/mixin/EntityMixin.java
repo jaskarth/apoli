@@ -31,7 +31,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -40,7 +39,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.event.listener.EntityGameEventHandler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,7 +54,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements MovingEntity, SubmergableEntity, ModifiedPoseHolder, CustomLeashable {
@@ -281,13 +278,6 @@ public abstract class EntityMixin implements MovingEntity, SubmergableEntity, Mo
             ? MathHelper.packRgb(red / colorAmount, green / colorAmount, blue / colorAmount)
             : original;
 
-    }
-
-    @Inject(method = "updateEventHandler", at = @At("HEAD"))
-    private void apoli$updateCustomEventHandlers(BiConsumer<EntityGameEventHandler<?>, ServerWorld> callback, CallbackInfo ci) {
-        if (world instanceof ServerWorld serverWorld) {
-            PowerHolderComponent.getPowerTypes((Entity) (Object) this, GameEventListenerPowerType.class).forEach(gelp -> callback.accept(gelp.getGameEventHandler(), serverWorld));
-        }
     }
 
     @ModifyExpressionValue(method = "pushAwayFrom", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;isConnectedThroughVehicle(Lnet/minecraft/entity/Entity;)Z"))

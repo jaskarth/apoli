@@ -113,6 +113,8 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
         this.showParticle = showParticle;
         this.range = range;
 
+        this.setTicking();
+
     }
 
     @Override
@@ -140,11 +142,7 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
 
     @Override
     public void serverTick() {
-
-        if (canUse()) {
-            Ticker.tick(getHolder().getWorld(), getVibrationListenerData(), getVibrationCallback());
-        }
-
+        Ticker.tick(getHolder().getWorld(), getVibrationListenerData(), getVibrationCallback());
     }
 
     @Override
@@ -204,7 +202,8 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
 
         @Override
         public boolean accepts(ServerWorld world, BlockPos pos, RegistryEntry<GameEvent> event, GameEvent.Emitter emitter) {
-            return blockCondition.map(condition -> condition.test(world, pos)).orElse(true)
+            return GameEventListenerPowerType.this.canUse()
+                && blockCondition.map(condition -> condition.test(world, pos)).orElse(true)
                 && biEntityCondition.map(condition -> condition.test(emitter.sourceEntity(), getHolder())).orElse(true);
         }
 
@@ -223,12 +222,7 @@ public class GameEventListenerPowerType extends CooldownPowerType implements Vib
             return gameEventTag.orElse(Vibrations.Callback.super.getTag());
         }
 
-        public boolean shouldAccept(RegistryEntry<GameEvent> gameEvent) {
-            return GameEventListenerPowerType.this.canUse()
-                && this.isAccepted(gameEvent);
-        }
-
-        public boolean isAccepted(RegistryEntry<GameEvent> gameEvent) {
+        public boolean containsEvent(RegistryEntry<GameEvent> gameEvent) {
             return gameEventTag.map(gameEvent::isIn).orElse(true)
                 && (gameEvents.isEmpty() || gameEvents.contains(gameEvent));
         }

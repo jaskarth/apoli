@@ -81,8 +81,9 @@
 		"TranslatableTextContentAccessor",
 		"WeightedListEntryAccessor",
 		"integration.appleskin.FoodHelperMixin",
-		"power.type.GameEventListenerPowerTypeMixin$CallbackMixin",
-		"power.type.GameEventListenerPowerTypeMixin$TickerMixin",
+		"power.type.GameEventListenerPowerTypeMixin$CustomCallbackHandler",
+		"power.type.GameEventListenerPowerTypeMixin$EventHandlerUpdater",
+		"power.type.GameEventListenerPowerTypeMixin$ParticleAppearanceHandler",
 		"power.type.ModifyHarvestPowerTypeMixin$BlockBreakingDeltaProxy",
 		"power.type.ModifyHarvestPowerTypeMixin$HarvestabilityProxy"
 	],
