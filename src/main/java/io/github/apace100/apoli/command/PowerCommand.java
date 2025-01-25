@@ -540,7 +540,7 @@ public class PowerCommand {
 						.executes(context -> execute(context, IntegerArgumentType.getInteger(context, "indent"))))).build();
 		}
 
-		public static int execute(CommandContext<ServerCommandSource> context, int indent) {
+		public static int execute(CommandContext<ServerCommandSource> context, int indent) throws CommandSyntaxException {
 
 			Power power = PowerArgumentType.getPower(context, "power");
 			ServerCommandSource commandSource = context.getSource();

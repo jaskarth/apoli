@@ -9,7 +9,6 @@ import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import com.mojang.serialization.DataResult;
 import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerManager;
 import io.github.apace100.apoli.power.type.PowerType;
@@ -26,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-public record PowerArgumentType(PowerTarget powerTarget) implements ArgumentType<Power> {
+public record PowerArgumentType(PowerTarget powerTarget) implements ArgumentType<Identifier> {
 
     public static final DynamicCommandExceptionType POWER_NOT_RESOURCE = new DynamicCommandExceptionType(
         o -> Text.stringifiedTranslatable("commands.apoli.power_not_resource", o)
@@ -44,8 +43,9 @@ public record PowerArgumentType(PowerTarget powerTarget) implements ArgumentType
         return new PowerArgumentType(PowerTarget.GENERAL);
     }
 
-    public static Power getPower(CommandContext<ServerCommandSource> context, String argumentName) {
-        return context.getArgument(argumentName, Power.class);
+    public static Power getPower(CommandContext<ServerCommandSource> context, String argumentName) throws CommandSyntaxException {
+        Identifier powerId = context.getArgument(argumentName, Identifier.class);
+        return PowerManager.getOptional(powerId).orElseThrow(() -> POWER_NOT_FOUND.create(powerId));
     }
 
     public static PowerArgumentType resource() {
@@ -60,25 +60,8 @@ public record PowerArgumentType(PowerTarget powerTarget) implements ArgumentType
     }
 
     @Override
-    public Power parse(StringReader reader) throws CommandSyntaxException {
-
-        Identifier id = Identifier.fromCommandInputNonEmpty(reader);
-        DataResult<Power> powerResult = PowerManager.getResult(id);
-
-        if (powerResult.isError()) {
-            throw POWER_NOT_FOUND.createWithContext(reader, id);
-        }
-
-        else {
-
-            powerResult = powerResult.flatMap(power -> powerTarget() == PowerTarget.RESOURCE
-                ? PowerUtil.validateResource(power.getPowerType()).map(PowerType::getPower)
-                : DataResult.success(power));
-
-            return powerResult.getOrThrow(err -> POWER_NOT_RESOURCE.createWithContext(reader, id));
-
-        }
-
+    public Identifier parse(StringReader reader) throws CommandSyntaxException {
+        return Identifier.fromCommandInputNonEmpty(reader);
     }
 
     @Override
