@@ -54,6 +54,12 @@ public class AttributePowerType extends PowerType implements AttributeModifying 
     }
 
     @Override
+    public void onRespawn() {
+        //  Re-add the attribute modifiers as apparently, persistent attribute modifiers do not persist on respawn
+        addPersistentModifiers(getHolder());
+    }
+
+    @Override
     public void onLost() {
         removeModifiers(getHolder());
     }

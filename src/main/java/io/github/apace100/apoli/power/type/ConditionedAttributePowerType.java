@@ -53,6 +53,16 @@ public class ConditionedAttributePowerType extends AttributePowerType {
     }
 
     @Override
+    public void onGained() {
+
+    }
+
+    @Override
+    public void onRespawn() {
+
+    }
+
+    @Override
     public void serverTick() {
 
         if (isActive()) {
