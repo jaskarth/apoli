@@ -340,7 +340,7 @@ public class InventoryUtil {
      */
     public static boolean slotWithinBounds(Entity entity, Optional<InventoryPowerType> inventoryPowerType, int slot) {
         return inventoryPowerType
-            .map(powerType -> slot >= 0 || slot < powerType.size())
+            .map(powerType -> slot >= 0 && slot < powerType.size())
             .orElseGet(() -> entity.getStackReference(slot) != StackReference.EMPTY);
     }
 
