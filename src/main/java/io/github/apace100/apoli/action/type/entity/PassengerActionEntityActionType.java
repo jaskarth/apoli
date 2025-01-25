@@ -71,7 +71,7 @@ public class PassengerActionEntityActionType extends EntityActionType {
             BiEntityConditionContext conditionContext = actionContext.forCondition();
 
             if (biEntityCondition.map(condition -> condition.test(conditionContext)).orElse(true)) {
-                entityAction.ifPresent(action -> action.execute(entity));
+                entityAction.ifPresent(action -> action.execute(passenger));
                 biEntityAction.ifPresent(action -> action.accept(actionContext));
             }
 
