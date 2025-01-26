@@ -33,8 +33,7 @@ public class AttackerDamageConditionType extends DamageConditionType {
     @Override
     public boolean test(DamageConditionContext context) {
         Entity attacker = context.source().getAttacker();
-        return entityCondition
-            .filter(condition -> attacker != null)
+        return attacker != null && entityCondition
             .map(condition -> condition.test(attacker))
             .orElse(true);
     }
