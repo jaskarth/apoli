@@ -11,7 +11,6 @@ import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerManager;
 import io.github.apace100.apoli.power.PowerReference;
 import io.github.apace100.apoli.util.PrioritizedEntry;
-import io.github.apace100.calio.CalioServer;
 import io.github.apace100.calio.data.IdentifiableMultiJsonDataLoader;
 import io.github.apace100.calio.data.MultiJsonDataContainer;
 import io.github.apace100.calio.data.SerializableData;
@@ -23,9 +22,10 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.entity.EntityType;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -51,8 +51,14 @@ public class GlobalPowerSetManager extends IdentifiableMultiJsonDataLoader imple
         .setPrettyPrinting()
         .create();
 
-    public GlobalPowerSetManager() {
+    private final RegistryWrapper.WrapperLookup wrapperLookup;
+
+    GlobalPowerSetManager(RegistryWrapper.WrapperLookup wrapperLookup) {
         super(GSON, "global_powers", ResourceType.SERVER_DATA);
+        this.wrapperLookup = wrapperLookup;
+    }
+
+    public static void init() {
 
         ServerEntityEvents.ENTITY_LOAD.addPhaseOrdering(PowerManager.ID, ID);
         ServerEntityEvents.ENTITY_LOAD.register(ID, (entity, world) -> GlobalPowerSetUtil.applyGlobalPowers(entity));
@@ -64,24 +70,15 @@ public class GlobalPowerSetManager extends IdentifiableMultiJsonDataLoader imple
             }
         });
 
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(ID, GlobalPowerSetManager::new);
+
     }
 
     @Override
     protected void apply(MultiJsonDataContainer prepared, ResourceManager manager, Profiler profiler) {
 
         Apoli.LOGGER.info("Reading global power sets from data packs...");
-
-        DynamicRegistryManager dynamicRegistries = CalioServer.getDynamicRegistries().orElse(null);
         startBuilding();
-
-        if (dynamicRegistries == null) {
-
-            Apoli.LOGGER.error("Can't read global power sets from data packs without access to dynamic registries!");
-            endBuilding();
-
-            return;
-
-        }
 
         Map<Identifier, List<PrioritizedEntry<GlobalPowerSet>>> loadedGlobalPowerSets = new Object2ObjectLinkedOpenHashMap<>();
         prepared.forEach((packName, id, jsonElement) -> {
@@ -95,7 +92,7 @@ public class GlobalPowerSetManager extends IdentifiableMultiJsonDataLoader imple
                     throw new JsonSyntaxException("Not a JSON object: " + jsonElement);
                 }
 
-                GlobalPowerSet globalPowerSet = GlobalPowerSet.DATA_TYPE.read(dynamicRegistries.getOps(JsonOps.INSTANCE), jsonObject).getOrThrow();
+                GlobalPowerSet globalPowerSet = GlobalPowerSet.DATA_TYPE.read(wrapperLookup.getOps(JsonOps.INSTANCE), jsonObject).getOrThrow();
                 int currLoadingPriority = JsonHelper.getInt(jsonObject, "loading_priority", 0);
 
                 PrioritizedEntry<GlobalPowerSet> entry = new PrioritizedEntry<>(globalPowerSet, currLoadingPriority);
@@ -153,7 +150,7 @@ public class GlobalPowerSetManager extends IdentifiableMultiJsonDataLoader imple
                 }
 
                 else {
-                    currentSet.accumulateAndGet(entry.value(), (oldSet, newSet) -> merge(dynamicRegistries, oldSet, newSet));
+                    currentSet.accumulateAndGet(entry.value(), this::merge);
                 }
 
             }
@@ -186,7 +183,7 @@ public class GlobalPowerSetManager extends IdentifiableMultiJsonDataLoader imple
         return DEPENDENCIES;
     }
 
-    private static GlobalPowerSet merge(DynamicRegistryManager dynamicRegistries, GlobalPowerSet oldSet, GlobalPowerSet newSet) {
+    private GlobalPowerSet merge(GlobalPowerSet oldSet, GlobalPowerSet newSet) {
 
         TagLike.Builder<EntityType<?>> oldBuilder = new TagLike.Builder<>(RegistryKeys.ENTITY_TYPE);
         TagLike.Builder<EntityType<?>> newBuilder = new TagLike.Builder<>(RegistryKeys.ENTITY_TYPE);
@@ -210,7 +207,7 @@ public class GlobalPowerSetManager extends IdentifiableMultiJsonDataLoader imple
         powerReferences.addAll(newSet.getPowerReferences());
 
         Optional<TagLike<EntityType<?>>> entityTypes = oldSet.getEntityTypes().isPresent() || newSet.getEntityTypes().isPresent()
-            ? Optional.of(oldBuilder.build(dynamicRegistries.getWrapperOrThrow(RegistryKeys.ENTITY_TYPE)))
+            ? Optional.of(oldBuilder.build(wrapperLookup.getWrapperOrThrow(RegistryKeys.ENTITY_TYPE)))
             : Optional.empty();
 
         return new GlobalPowerSet(

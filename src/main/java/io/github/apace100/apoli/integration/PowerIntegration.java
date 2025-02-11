@@ -20,8 +20,6 @@ public class PowerIntegration {
         ServerLifecycleEvents.START_DATA_PACK_RELOAD.register(ModifyTypeTagPowerType::resetTagCache);
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(ModifyTypeTagPowerType::sendTagCache);
 
-        PostPowerReloadCallback.EVENT.register(RecipePowerType::registerPowerRecipes);
-
         EntityElytraEvents.CUSTOM.register(ElytraFlightPowerType::integrateCustomCallback);
         EntityElytraEvents.ALLOW.register(PreventElytraFlightPowerType::integrateAllowCallback);
 

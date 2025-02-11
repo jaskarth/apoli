@@ -22,6 +22,7 @@
 		"CraftingScreenHandlerAccessor",
 		"CraftingScreenHandlerMixin",
 		"DamageSourceMixin",
+		"DataPackContentsMixin",
 		"DefaultAttributeContainerMixin",
 		"EnchantmentHelperMixin",
 		"EntityAccessor",

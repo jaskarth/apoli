@@ -10,7 +10,6 @@ import io.github.apace100.apoli.networking.packet.s2c.SyncPowersS2CPacket;
 import io.github.apace100.apoli.power.type.PowerType;
 import io.github.apace100.apoli.power.type.PowerTypes;
 import io.github.apace100.apoli.registry.ApoliRegistries;
-import io.github.apace100.calio.CalioServer;
 import io.github.apace100.calio.data.IdentifiableMultiJsonDataLoader;
 import io.github.apace100.calio.data.MultiJsonDataContainer;
 import io.github.apace100.calio.data.SerializableData;
@@ -20,16 +19,15 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.fabricmc.fabric.impl.resource.conditions.ResourceConditionsImpl;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.resource.ResourceManager;
@@ -40,6 +38,7 @@ import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -68,21 +67,27 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
     private static final Object2ObjectOpenHashMap<Identifier, Power> POWERS_BY_ID = new Object2ObjectOpenHashMap<>();
     private static final ObjectOpenHashSet<Identifier> DISABLED_POWERS = new ObjectOpenHashSet<>();
 
-    public PowerManager() {
-        super(GSON, "powers", ResourceType.SERVER_DATA);
+    private final RegistryWrapper.WrapperLookup wrapperLookup;
 
-        ServerEntityEvents.ENTITY_LOAD.addPhaseOrdering(Event.DEFAULT_PHASE, ID);
+    PowerManager(RegistryWrapper.WrapperLookup wrapperLookup) {
+        super(GSON, "powers", ResourceType.SERVER_DATA);
+        this.wrapperLookup = wrapperLookup;
+    }
+
+    public static void init() {
+
         ServerEntityEvents.ENTITY_LOAD.register(ID, (entity, world) -> {
             if (!(entity instanceof PlayerEntity)) {
                 updateData(entity, false);
             }
         });
 
-        ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.addPhaseOrdering(Event.DEFAULT_PHASE, ID);
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(ID, (player, joined) -> {
             send(player);
             updateData(player, joined);
         });
+
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(ID, PowerManager::new);
 
     }
 
@@ -94,17 +99,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
         PowerReloadCallback.EVENT.invoker().onPowerReload();
         PrePowerReloadCallback.EVENT.invoker().onPrePowerReload();
 
-        DynamicRegistryManager dynamicRegistries = CalioServer.getDynamicRegistries().orElse(null);
         startBuilding();
-
-        if (dynamicRegistries == null) {
-
-            Apoli.LOGGER.error("Can't read powers from data packs without access to dynamic registries!");
-            endBuilding();
-
-            return;
-
-        }
 
         prepared.forEach((packName, id, jsonElement) -> {
 
@@ -114,7 +109,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
                 SerializableData.CURRENT_PATH = id.getPath();
 
                 if (jsonElement instanceof JsonObject jsonObject) {
-                    this.readMultipleOrNormalPower(dynamicRegistries, packName, id, jsonObject);
+                    this.readMultipleOrNormalPower(packName, id, jsonObject);
                 }
 
                 else {
@@ -133,8 +128,6 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
         SerializableData.CURRENT_PATH = null;
 
         Apoli.LOGGER.info("Finished reading powers from data packs. Registry contains {} powers.", size());
-
-        validate();
         endBuilding();
 
     }
@@ -158,7 +151,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
         return DEPENDENCIES;
     }
 
-    private void updateData(Entity entity, boolean initialize) {
+    private static void updateData(Entity entity, boolean initialize) {
 
         RegistryOps<JsonElement> jsonOps = entity.getRegistryManager().getOps(JsonOps.INSTANCE);
         PowerHolderComponent component = PowerHolderComponent.KEY.getNullable(entity);
@@ -201,8 +194,14 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
                 Power newPower = get(oldPower.getId());
                 PowerType oldPowerType = component.getPowerType(oldPower);
 
-                JsonElement oldPowerJson = Power.DATA_TYPE.write(jsonOps, oldPower).getOrThrow(JsonParseException::new);
-                JsonElement newPowerJson = Power.DATA_TYPE.write(jsonOps, newPower).getOrThrow(JsonParseException::new);
+                JsonElement oldPowerJson = Power.DATA_TYPE.write(jsonOps, oldPower)
+                    .mapError(error -> "Couldn't encode old instance of power \"" + oldPower.getId() + "\" on reload (skipping): " + error)
+                    .resultOrPartial(Apoli.LOGGER::warn)
+                    .orElse(JsonNull.INSTANCE);
+                JsonElement newPowerJson = Power.DATA_TYPE.write(jsonOps, newPower)
+                    .mapError(error -> "Couldn't encode new instance of power \"" + newPower.getId() + "\" on reload (skipping): " + error)
+                    .resultOrPartial(Apoli.LOGGER::warn)
+                    .orElse(JsonNull.INSTANCE);
 
                 if (oldPowerJson.equals(newPowerJson)) {
                     continue;
@@ -241,7 +240,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
 
     }
 
-    private void readMultipleOrNormalPower(RegistryWrapper.WrapperLookup wrapperLookup, String packName, Identifier powerId, JsonObject powerJson) {
+    private void readMultipleOrNormalPower(String packName, Identifier powerId, JsonObject powerJson) {
 
         powerJson.addProperty("id", powerId.toString());
 
@@ -269,7 +268,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
 
                         Identifier subPowerId = powerId.withSuffixedPath("_" + key);
 
-                        if (this.readSubPower(wrapperLookup, packName, powerId, subPowerId, key, subPowerJson)) {
+                        if (this.readSubPower(packName, powerId, subPowerId, key, subPowerJson)) {
                             subPowerIds.add(subPowerId);
                         }
 
@@ -303,7 +302,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
 
     }
 
-    private boolean readSubPower(RegistryWrapper.WrapperLookup wrapperLookup, String packName, Identifier superPowerId, Identifier subPowerId, String name, JsonObject subPowerJson) {
+    private boolean readSubPower(String packName, Identifier superPowerId, Identifier subPowerId, String name, JsonObject subPowerJson) {
 
         if (!ResourceConditionsImpl.applyResourceConditions(subPowerJson, directoryName, subPowerId, wrapperLookup)) {
             this.onReject(packName, subPowerId);
@@ -471,9 +470,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
         DISABLED_POWERS.add(id);
     }
 
-    /**
-     *  Validates all registered powers.
-     */
+    @ApiStatus.Internal
     public static void validate() {
 
         if (POWERS_BY_ID.isEmpty()) {
@@ -524,6 +521,7 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
         }
 
         Apoli.LOGGER.info("Finished validating powers from data packs. Registry contains {} powers.", size());
+        POWERS_BY_ID.trim();
 
     }
 
