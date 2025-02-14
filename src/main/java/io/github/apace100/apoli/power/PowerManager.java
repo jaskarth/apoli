@@ -548,7 +548,11 @@ public class PowerManager extends IdentifiableMultiJsonDataLoader implements Ide
     }
 
     public static void send(ServerPlayerEntity player) {
-        ServerPlayNetworking.send(player, new SyncPowersS2CPacket(POWERS_BY_ID));
+
+        if (player.server.isRemote()) {
+            ServerPlayNetworking.send(player, new SyncPowersS2CPacket(POWERS_BY_ID));
+        }
+
     }
 
     @Environment(EnvType.CLIENT)
