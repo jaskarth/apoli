@@ -15,16 +15,16 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class EntityTypeMixin implements EntityLinkedType {
 
     @Unique
-    private Entity apoli$currentEntity;
+    private final ThreadLocal<Entity> apoli$currentEntity = new ThreadLocal<>();
 
     @Override
     public Entity apoli$getEntity() {
-        return apoli$currentEntity;
+        return apoli$currentEntity.get();
     }
 
     @Override
     public void apoli$setEntity(Entity entity) {
-        this.apoli$currentEntity = entity;
+        this.apoli$currentEntity.set(entity);
     }
 
     @ModifyReturnValue(method = "isIn(Lnet/minecraft/registry/tag/TagKey;)Z", at = @At("RETURN"))
