@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class DefaultAttributeContainerMixin implements OwnableAttributeContainer {
 
     @Unique
-    private ThreadLocal<Entity> apoli$owner;
+    private final ThreadLocal<Entity> apoli$owner = new ThreadLocal<>();
 
     @Override
     @Nullable
