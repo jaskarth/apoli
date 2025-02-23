@@ -1,5 +1,6 @@
 package io.github.apace100.apoli;
 
+import io.github.apace100.apoli.access.EntityLinkedType;
 import io.github.apace100.apoli.action.type.BiEntityActionTypes;
 import io.github.apace100.apoli.action.type.BlockActionTypes;
 import io.github.apace100.apoli.action.type.EntityActionTypes;
@@ -36,11 +37,14 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
 import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
@@ -145,4 +149,17 @@ public class Apoli implements ModInitializer, EntityComponentInitializer {
 			.end(PowerHolderComponentImpl::new);
 	}
 
+	/**
+	 * Not intended for public use.
+	 * <p>
+	 * Clears the global state set during the lifetime of the world.
+	 */
+	@ApiStatus.Internal
+	public static void clearGlobalState() {
+		for (final EntityType<?> entityType : Registries.ENTITY_TYPE) {
+			if (entityType instanceof EntityLinkedType entityLinkedType) {
+				entityLinkedType.apoli$setEntity(null);
+			}
+		}
+	}
 }
