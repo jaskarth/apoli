@@ -21,7 +21,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -83,16 +82,6 @@ public class ApoliClient implements ClientModInitializer {
 	@Nullable
 	public static KeyBinding getKeyBinding(String keyBindingId) {
 		return KeyBindingUtil.getKeyBinding(keyBindingId).orElse(null);
-	}
-
-	/**
-	 * Not intended for public use.
-	 * <p>
-	 * Clears the global state set during the lifetime of the world.
-	 */
-	@ApiStatus.Internal
-	public static void clearGlobalState() {
-		Apoli.clearGlobalState();
 	}
 
 }
