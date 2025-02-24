@@ -82,6 +82,7 @@
 		"TranslatableTextContentAccessor",
 		"WeightedListEntryAccessor",
 		"integration.appleskin.FoodHelperMixin",
+		"internal.DefaultAttributeContainerAccessor",
 		"internal.DefaultAttributeRegistryAccessor",
 		"power.type.GameEventListenerPowerTypeMixin$CustomCallbackHandler",
 		"power.type.GameEventListenerPowerTypeMixin$EventHandlerUpdater",
