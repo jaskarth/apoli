@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -45,6 +46,7 @@ public class ModPacketsS2C {
             ClientPlayNetworking.registerReceiver(SyncStatusEffectS2CPacket.PACKET_ID, ModPacketsS2C::onStatusEffectSync);
             ClientPlayNetworking.registerReceiver(ShowToastS2CPacket.PACKET_ID, ModPacketsS2C::onShowToast);
             ClientPlayNetworking.registerReceiver(SyncEntityTypeTagCacheS2CPacket.PACKET_ID, ModifyTypeTagPowerType::receiveTagCache);
+            ClientPlayNetworking.registerReceiver(UpdateCommandTagS2CPacket.PACKET_ID, ModPacketsS2C::onUpdateCommandTag);
         }));
 
     }
@@ -220,6 +222,21 @@ public class ModPacketsS2C {
     public static void onShowToast(ShowToastS2CPacket packet, ClientPlayNetworking.Context context) {
         if (context.player() instanceof CustomToastViewer viewer) {
             viewer.apoli$showToast(packet.toastData());
+        }
+    }
+
+    public static void onUpdateCommandTag(UpdateCommandTagS2CPacket packet, ClientPlayNetworking.Context context) {
+        ClientWorld world = context.player().clientWorld;
+        Entity entity = world.getEntityById(packet.entityId());
+        if (entity == null) {
+            Apoli.LOGGER.warn("Received packet for updating command tag {} on an unknown entity!", packet.tag());
+            return;
+        }
+
+        if (packet.added()) {
+            entity.addCommandTag(packet.tag());
+        } else {
+            entity.removeCommandTag(packet.tag());
         }
     }
 
