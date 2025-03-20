@@ -13,6 +13,7 @@ jobs:
     uses: Modflower/workflows/.github/workflows/mod-publish.yml@main
     with:
       artifacts: |
+        build/libs/*
         */build/libs/*
         !buildSrc/*
         !xplat/*
