@@ -120,9 +120,7 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
 
         if (entity != null && entity.asComponentProvider().getComponentContainer() != null) {
             return KEY.maybeGet(entity);
-        }
-
-        else {
+        } else {
             return Optional.empty();
         }
 
@@ -138,7 +136,11 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
      */
     @Nullable
     static PowerHolderComponent getNullable(@Nullable Entity entity) {
-        return getOptional(entity).orElse(null);
+        if (entity != null && entity.asComponentProvider().getComponentContainer() != null) {
+            return KEY.getNullable(entity);
+        } else {
+            return null;
+        }
     }
 
     static void sync(Entity entity) {
@@ -349,14 +351,30 @@ public interface PowerHolderComponent extends AutoSyncedComponent, CommonTicking
     }
 
 	static <T extends PowerType> boolean hasPowerType(Entity entity, Class<T> typeClass, @NotNull Predicate<T> typeFilter) {
-        return getOptional(entity)
-            .stream()
-            .map(PowerHolderComponent::getPowerTypes)
-            .flatMap(Collection::stream)
-            .filter(typeClass::isInstance)
-            .map(typeClass::cast)
-            .filter(PowerType::isActive)
-            .anyMatch(typeFilter);
+        PowerHolderComponent comp = getNullable(entity);
+        if (comp == null) {
+            return false;
+        }
+
+        for (PowerType powerType : comp.getPowerTypes()) {
+            if (typeClass.isInstance(powerType)) {
+                T t = (T) powerType;
+                if (t.isActive() && typeFilter.test(t)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+//        return getOptional(entity)
+//            .stream()
+//            .map(PowerHolderComponent::getPowerTypes)
+//            .flatMap(Collection::stream)
+//            .filter(typeClass::isInstance)
+//            .map(typeClass::cast)
+//            .filter(PowerType::isActive)
+//            .anyMatch(typeFilter);
     }
 
     static <T extends ValueModifyingPowerType> float modify(Entity entity, Class<T> powerClass, float baseValue) {

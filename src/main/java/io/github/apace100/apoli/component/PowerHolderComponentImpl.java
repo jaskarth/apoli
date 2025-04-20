@@ -56,7 +56,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     @Override
     public List<PowerType> getPowerTypes() {
-        return new LinkedList<>(powers.values());
+        return new ArrayList<>(powers.values());
     }
 
     @Override
@@ -74,12 +74,24 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     @Override
     public <T extends PowerType> List<T> getPowerTypes(Class<T> typeClass, boolean includeInactive) {
-        return powers.values()
-            .stream()
-            .filter(typeClass::isInstance)
-            .map(typeClass::cast)
-            .filter(type -> includeInactive || type.isActive())
-            .collect(Collectors.toCollection(LinkedList::new));
+        List<T> list = new ArrayList<>();
+        for (PowerType v : powers.values()) {
+            if (typeClass.isInstance(v)) {
+                T t = (T) v;
+                if (includeInactive || t.isActive()) {
+                    list.add(t);
+                }
+            }
+        }
+
+        return list;
+
+//        return powers.values()
+//            .stream()
+//            .filter(typeClass::isInstance)
+//            .map(typeClass::cast)
+//            .filter(type -> includeInactive || type.isActive())
+//            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

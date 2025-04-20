@@ -6,6 +6,8 @@ import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.condition.ItemCondition;
 import io.github.apace100.apoli.mixin.SlotRangesAccessor;
 import io.github.apace100.apoli.power.type.InventoryPowerType;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
@@ -22,10 +24,7 @@ import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -34,6 +33,122 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class InventoryUtil {
+    private static final IntSet ALL_SLOTS = new IntOpenHashSet(113);
+    static {
+        ALL_SLOTS.add(0);
+        ALL_SLOTS.add(512);
+        ALL_SLOTS.add(1);
+        ALL_SLOTS.add(513);
+        ALL_SLOTS.add(2);
+        ALL_SLOTS.add(514);
+        ALL_SLOTS.add(3);
+        ALL_SLOTS.add(4);
+        ALL_SLOTS.add(5);
+        ALL_SLOTS.add(6);
+        ALL_SLOTS.add(7);
+        ALL_SLOTS.add(8);
+        ALL_SLOTS.add(9);
+        ALL_SLOTS.add(10);
+        ALL_SLOTS.add(11);
+        ALL_SLOTS.add(12);
+        ALL_SLOTS.add(13);
+        ALL_SLOTS.add(14);
+        ALL_SLOTS.add(15);
+        ALL_SLOTS.add(16);
+        ALL_SLOTS.add(17);
+        ALL_SLOTS.add(18);
+        ALL_SLOTS.add(19);
+        ALL_SLOTS.add(20);
+        ALL_SLOTS.add(21);
+        ALL_SLOTS.add(22);
+        ALL_SLOTS.add(23);
+        ALL_SLOTS.add(24);
+        ALL_SLOTS.add(25);
+        ALL_SLOTS.add(26);
+        ALL_SLOTS.add(27);
+        ALL_SLOTS.add(28);
+        ALL_SLOTS.add(29);
+        ALL_SLOTS.add(30);
+        ALL_SLOTS.add(31);
+        ALL_SLOTS.add(32);
+        ALL_SLOTS.add(33);
+        ALL_SLOTS.add(34);
+        ALL_SLOTS.add(35);
+        ALL_SLOTS.add(36);
+        ALL_SLOTS.add(37);
+        ALL_SLOTS.add(38);
+        ALL_SLOTS.add(39);
+        ALL_SLOTS.add(40);
+        ALL_SLOTS.add(41);
+        ALL_SLOTS.add(42);
+        ALL_SLOTS.add(43);
+        ALL_SLOTS.add(44);
+        ALL_SLOTS.add(300);
+        ALL_SLOTS.add(45);
+        ALL_SLOTS.add(301);
+        ALL_SLOTS.add(46);
+        ALL_SLOTS.add(302);
+        ALL_SLOTS.add(47);
+        ALL_SLOTS.add(303);
+        ALL_SLOTS.add(48);
+        ALL_SLOTS.add(304);
+        ALL_SLOTS.add(49);
+        ALL_SLOTS.add(305);
+        ALL_SLOTS.add(50);
+        ALL_SLOTS.add(306);
+        ALL_SLOTS.add(51);
+        ALL_SLOTS.add(307);
+        ALL_SLOTS.add(52);
+        ALL_SLOTS.add(53);
+        ALL_SLOTS.add(98);
+        ALL_SLOTS.add(99);
+        ALL_SLOTS.add(100);
+        ALL_SLOTS.add(101);
+        ALL_SLOTS.add(102);
+        ALL_SLOTS.add(103);
+        ALL_SLOTS.add(105);
+        ALL_SLOTS.add(400);
+        ALL_SLOTS.add(200);
+        ALL_SLOTS.add(201);
+        ALL_SLOTS.add(202);
+        ALL_SLOTS.add(203);
+        ALL_SLOTS.add(204);
+        ALL_SLOTS.add(205);
+        ALL_SLOTS.add(206);
+        ALL_SLOTS.add(207);
+        ALL_SLOTS.add(208);
+        ALL_SLOTS.add(209);
+        ALL_SLOTS.add(210);
+        ALL_SLOTS.add(211);
+        ALL_SLOTS.add(212);
+        ALL_SLOTS.add(213);
+        ALL_SLOTS.add(214);
+        ALL_SLOTS.add(215);
+        ALL_SLOTS.add(216);
+        ALL_SLOTS.add(217);
+        ALL_SLOTS.add(218);
+        ALL_SLOTS.add(219);
+        ALL_SLOTS.add(220);
+        ALL_SLOTS.add(221);
+        ALL_SLOTS.add(222);
+        ALL_SLOTS.add(223);
+        ALL_SLOTS.add(224);
+        ALL_SLOTS.add(225);
+        ALL_SLOTS.add(226);
+        ALL_SLOTS.add(499);
+        ALL_SLOTS.add(500);
+        ALL_SLOTS.add(501);
+        ALL_SLOTS.add(502);
+        ALL_SLOTS.add(503);
+        ALL_SLOTS.add(504);
+        ALL_SLOTS.add(505);
+        ALL_SLOTS.add(506);
+        ALL_SLOTS.add(507);
+        ALL_SLOTS.add(508);
+        ALL_SLOTS.add(509);
+        ALL_SLOTS.add(510);
+        ALL_SLOTS.add(511);
+    }
 
     public enum InventoryType {
         INVENTORY,
@@ -232,7 +347,7 @@ public class InventoryUtil {
     public static void forEachStack(Entity entity, Consumer<ItemStack> stackConsumer) {
 
         int slotToSkip = getDuplicatedSlotIndex(entity);
-        for (int slot : getAllSlots()) {
+        for (int slot : ALL_SLOTS) {
 
             if (slot == slotToSkip) {
                 slotToSkip = Integer.MIN_VALUE;
@@ -248,25 +363,26 @@ public class InventoryUtil {
 
         }
 
-        List<InventoryPowerType> inventoryPowerTypes = PowerHolderComponent.getOptional(entity)
-            .stream()
-            .map(component -> component.getPowerTypes(InventoryPowerType.class))
-            .flatMap(Collection::stream)
-            .toList();
-
-        for (InventoryPowerType inventoryPowerType : inventoryPowerTypes) {
-
-            for (int i = 0; i < inventoryPowerTypes.size(); i++) {
-
-                ItemStack stack = inventoryPowerType.getStack(i);
-
-                if (!stack.isEmpty()) {
-                    stackConsumer.accept(stack);
-                }
-
-            }
-
-        }
+        // This logic is stupid and I hate it
+//        List<InventoryPowerType> inventoryPowerTypes = PowerHolderComponent.getOptional(entity)
+//            .stream()
+//            .map(component -> component.getPowerTypes(InventoryPowerType.class))
+//            .flatMap(Collection::stream)
+//            .toList();
+//
+//        for (InventoryPowerType inventoryPowerType : inventoryPowerTypes) {
+//
+//            for (int i = 0; i < inventoryPowerTypes.size(); i++) {
+//
+//                ItemStack stack = inventoryPowerType.getStack(i);
+//
+//                if (!stack.isEmpty()) {
+//                    stackConsumer.accept(stack);
+//                }
+//
+//            }
+//
+//        }
 
     }
 
@@ -379,11 +495,13 @@ public class InventoryUtil {
     }
 
     public static Set<Integer> getAllSlots() {
-        return SlotRangesAccessor.getSlotRanges()
-            .stream()
-            .flatMapToInt(slotRange -> slotRange.getSlotIds().intStream())
-            .boxed()
-            .collect(Collectors.toSet());
+        return ALL_SLOTS;
+
+//        return SlotRangesAccessor.getSlotRanges()
+//            .stream()
+//            .flatMapToInt(slotRange -> slotRange.getSlotIds().intStream())
+//            .boxed()
+//            .collect(Collectors.toSet());
     }
 
     public static Set<Integer> prepSlots(Collection<Integer> slots, Entity entity, Optional<InventoryPowerType> inventoryPowerType) {

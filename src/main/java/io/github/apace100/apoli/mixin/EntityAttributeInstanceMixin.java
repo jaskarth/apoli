@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -58,22 +59,35 @@ public abstract class EntityAttributeInstanceMixin implements OwnableAttributeIn
     @ModifyReturnValue(method = "getValue", at = @At("RETURN"))
     private double apoli$modifyAttribute(double original) {
 
-        List<Modifier> powerModifiers = PowerHolderComponent.getPowerTypes(this.apoli$getOwner(), ModifyAttributePowerType.class)
-            .stream()
-            .filter(p -> p.getAttribute() == this.getAttribute())
-            .flatMap(p -> p.getModifiers().stream())
-            .toList();
+        List<Modifier> powerModifiers = new ArrayList<>();
+//        = PowerHolderComponent.getPowerTypes(this.apoli$getOwner(), ModifyAttributePowerType.class)
+//            .stream()
+//            .filter(p -> p.getAttribute() == this.getAttribute())
+//            .flatMap(p -> p.getModifiers().stream())
+//            .toList();
+        RegistryEntry<EntityAttribute> attr = this.getAttribute();
+
+        for (ModifyAttributePowerType type : PowerHolderComponent.getPowerTypes(this.apoli$getOwner(), ModifyAttributePowerType.class)) {
+            if (type.getAttribute() == attr) {
+                powerModifiers.addAll(type.getModifiers());
+            }
+        }
 
         if (powerModifiers.isEmpty()) {
             return original;
         }
 
-        List<Modifier> vanillaModifiers = this.getModifiers()
-            .stream()
-            .map(ModifierUtil::fromAttributeModifier)
-            .toList();
+        for (EntityAttributeModifier modifier : this.getModifiers()) {
+            powerModifiers.add(ModifierUtil.fromAttributeModifier(modifier));
+        }
 
-        return ModifierUtil.applyModifiers(this.apoli$getOwner(), Stream.concat(powerModifiers.stream(), vanillaModifiers.stream()).toList(), this.getBaseValue());
+//        List<Modifier> vanillaModifiers = new ArrayList<>();
+//        = this.getModifiers()
+//            .stream()
+//            .map(ModifierUtil::fromAttributeModifier)
+//            .toList();
+
+        return ModifierUtil.applyModifiers(this.apoli$getOwner(), powerModifiers, this.getBaseValue());
 
     }
 

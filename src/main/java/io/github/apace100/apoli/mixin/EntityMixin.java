@@ -371,9 +371,10 @@ public abstract class EntityMixin implements MovingEntity, SubmergableEntity, Mo
     @ModifyReturnValue(method = "getType", at = @At("RETURN"))
     private EntityType<?> apoli$modifyTypeTag(EntityType<?> original) {
 
-        if (original instanceof EntityLinkedType linkedType) {
-            linkedType.apoli$setEntity((Entity) (Object) this);
-        }
+        // Disabled because it's unimaginably bad and I hate it
+//        if (original instanceof EntityLinkedType linkedType) {
+//            linkedType.apoli$setEntity((Entity) (Object) this);
+//        }
 
         return original;
 
