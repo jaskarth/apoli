@@ -98,14 +98,14 @@ public class BlockItemMixin {
     @Inject(method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;", at = @At("TAIL"))
     private void apoli$actionOnBlockPlacePost(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> cir, @Share("aipci") LocalRef<Prioritized.CallInstance<ActiveInteractionPowerType>> aipciRef) {
 
-        Prioritized.CallInstance<ActiveInteractionPowerType> aipci = aipciRef.get();
-
-        for (int i = aipci.getMaxPriority(); i >= aipci.getMinPriority(); i--) {
-            aipci.getPowerTypes(i)
-                .stream()
-                .filter(p -> p instanceof ActionOnBlockPlacePowerType)
-                .forEach(p -> ((ActionOnBlockPlacePowerType) p).executeItemActions(context.getHand()));
-        }
+//        Prioritized.CallInstance<ActiveInteractionPowerType> aipci = aipciRef.get();
+//
+//        for (int i = aipci.getMaxPriority(); i >= aipci.getMinPriority(); i--) {
+//            aipci.getPowerTypes(i)
+//                .stream()
+//                .filter(p -> p instanceof ActionOnBlockPlacePowerType)
+//                .forEach(p -> ((ActionOnBlockPlacePowerType) p).executeItemActions(context.getHand()));
+//        }
 
     }
 

@@ -83,9 +83,9 @@ public abstract class CraftingScreenHandlerMixin extends AbstractRecipeScreenHan
         return original || this.apoli$canUse();
     }
 
-    @ModifyVariable(method = "quickMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/CraftingScreenHandler;insertItem(Lnet/minecraft/item/ItemStack;IIZ)Z", ordinal = 0), ordinal = 1)
-    private ItemStack apoli$modifyResultStackOnQuickMove(ItemStack original, PlayerEntity player, int slotId, @Local Slot slot) {
-        return ModifyCraftingPowerType.executeAfterCraftingAction(player, input, slot, original);
-    }
+//    @ModifyVariable(method = "quickMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/CraftingScreenHandler;insertItem(Lnet/minecraft/item/ItemStack;IIZ)Z", ordinal = 0), ordinal = 1)
+//    private ItemStack apoli$modifyResultStackOnQuickMove(ItemStack original, PlayerEntity player, int slotId, @Local Slot slot) {
+//        return ModifyCraftingPowerType.executeAfterCraftingAction(player, input, slot, original);
+//    }
 
 }

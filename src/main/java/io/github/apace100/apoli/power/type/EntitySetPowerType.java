@@ -347,19 +347,19 @@ public class EntitySetPowerType extends PowerType {
             return;
         }
 
-        for (ServerWorld otherWorld : world.getServer().getWorlds()) {
-
-            for (Entity entity : otherWorld.iterateEntities()) {
-
-                 PowerHolderComponent.syncPowers(entity, PowerHolderComponent.getPowerTypes(entity, EntitySetPowerType.class, true)
-                    .stream()
-                    .filter(p -> p.remove(unloadedEntity, false))
-                    .map(PowerType::getPower)
-                    .toList());
-
-            }
-
-        }
+//        for (ServerWorld otherWorld : world.getServer().getWorlds()) {
+//
+//            for (Entity entity : otherWorld.iterateEntities()) {
+//
+//                 PowerHolderComponent.syncPowers(entity, PowerHolderComponent.getPowerTypes(entity, EntitySetPowerType.class, true)
+//                    .stream()
+//                    .filter(p -> p.remove(unloadedEntity, false))
+//                    .map(PowerType::getPower)
+//                    .toList());
+//
+//            }
+//
+//        }
 
     }
 

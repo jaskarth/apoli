@@ -105,11 +105,12 @@ public abstract class EntityMixin implements MovingEntity, SubmergableEntity, Mo
 
     @Shadow public abstract int getId();
 
-    @ModifyReturnValue(method = "isFireImmune", at = @At("RETURN"))
-    private boolean apoli$makeFullyFireImmune(boolean original) {
-        return original
-            || PowerHolderComponent.hasPowerType((Entity) (Object) this, FireImmunityPowerType.class);
-    }
+    // Mixin is too laggy
+//    @ModifyReturnValue(method = "isFireImmune", at = @At("RETURN"))
+//    private boolean apoli$makeFullyFireImmune(boolean original) {
+//        return original
+//            || PowerHolderComponent.hasPowerType((Entity) (Object) this, FireImmunityPowerType.class);
+//    }
 
     @ModifyReturnValue(method = "isTouchingWater", at = @At("RETURN"))
     private boolean apoli$makeEntitiesIgnoreWater(boolean original) {
