@@ -12,10 +12,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public final class StackPowerUtil {
 
@@ -83,7 +80,7 @@ public final class StackPowerUtil {
     public static List<StackPower> getPowers(ItemStack stack, EquipmentSlot slot) {
         NbtCompound nbt = stack.getNbt();
         NbtList list;
-        List<StackPower> powers = new LinkedList<>();
+        List<StackPower> powers = new ArrayList<>();
         if(stack.getItem() instanceof PowerGrantingItem pgi) {
             powers.addAll(pgi.getPowers(stack, slot));
         }

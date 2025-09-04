@@ -25,6 +25,7 @@ import net.minecraft.world.event.listener.EntityGameEventHandler;
 import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -57,7 +58,7 @@ public class GameEventListenerPower extends CooldownPower implements Vibrations 
         this.biEntityCondition = biEntityCondition;
         this.range = Math.max(range, 1);
 
-        this.acceptedGameEvents = new LinkedList<>();
+        this.acceptedGameEvents = new ArrayList<>();
         if (acceptedGameEvent != null) {
             this.acceptedGameEvents.add(acceptedGameEvent);
         }

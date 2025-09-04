@@ -24,6 +24,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,6 +51,8 @@ public interface PowerHolderComponent extends AutoSyncedComponent, ServerTicking
     <T extends Power> T getPower(PowerType<T> powerType);
 
     List<Power> getPowers();
+
+    Iterable<Power> getPowerView();
 
     Set<PowerType<?>> getPowerTypes(boolean getSubPowerTypes);
 
@@ -121,10 +124,18 @@ public interface PowerHolderComponent extends AutoSyncedComponent, ServerTicking
     }
 
     static <T extends Power> boolean hasPower(Entity entity, Class<T> powerClass, Predicate<T> powerFilter) {
-        if(entity instanceof LivingEntity) {
-            return KEY.get(entity).getPowers().stream()
-                .anyMatch(p -> powerClass.isAssignableFrom(p.getClass()) && p.isActive() &&
-                    (powerFilter == null || powerFilter.test((T)p)));
+        if (entity instanceof LivingEntity) {
+
+            for (Power p : KEY.get(entity).getPowers()) {
+                if (powerClass.isAssignableFrom(p.getClass()) && p.isActive() &&
+                    (powerFilter == null || powerFilter.test((T)p))) {
+                    return true;
+                }
+            }
+
+//            return KEY.get(entity).getPowers().stream()
+//                .anyMatch(p -> powerClass.isAssignableFrom(p.getClass()) && p.isActive() &&
+//                    (powerFilter == null || powerFilter.test((T)p)));
         }
         return false;
     }
@@ -149,17 +160,41 @@ public interface PowerHolderComponent extends AutoSyncedComponent, ServerTicking
         if(entity instanceof LivingEntity living) {
             PowerHolderComponent powerHolder = PowerHolderComponent.KEY.get(entity);
             List<T> powers = powerHolder.getPowers(powerClass);
-            List<Modifier> mps = powers.stream()
-                .filter(p -> powerFilter == null || powerFilter.test(p))
-                .flatMap(p -> p.getModifiers().stream()).collect(Collectors.toList());
-            if(powerAction != null) {
-                powers.stream().filter(p -> powerFilter == null || powerFilter.test(p)).forEach(powerAction);
+
+            List<Modifier> list = new ArrayList<>();
+            for (T p : powers) {
+                if (powerFilter == null || powerFilter.test(p)) {
+                    list.addAll(p.getModifiers());
+                }
             }
 
-            powerHolder.getPowers(AttributeModifyTransferPower.class).stream()
-                .filter(p -> p.doesApply(powerClass)).forEach(p -> p.addModifiers(mps));
-            ModifyValueCallback.EVENT.invoker().collectModifiers(living, powerClass, baseValue, mps);
-            return ModifierUtil.applyModifiers(entity, mps, baseValue);
+            if (powerAction != null) {
+                for (T p : powers) {
+                    if (powerFilter == null || powerFilter.test(p)) {
+                        powerAction.accept(p);
+                    }
+                }
+            }
+
+//            List<Modifier> mps = powers.stream()
+//                .filter(p -> powerFilter == null || powerFilter.test(p))
+//                .flatMap(p -> p.getModifiers().stream()).collect(Collectors.toList());
+
+//            if(powerAction != null) {
+//                powers.stream().filter(p -> powerFilter == null || powerFilter.test(p)).forEach(powerAction);
+//            }
+
+            for (AttributeModifyTransferPower p : powerHolder.getPowers(AttributeModifyTransferPower.class)) {
+                if (p.doesApply(powerClass)) {
+                    p.addModifiers(list);
+                }
+            }
+
+//            powerHolder.getPowers(AttributeModifyTransferPower.class).stream()
+//                .filter(p -> p.doesApply(powerClass)).forEach(p -> p.addModifiers(mps));
+
+            ModifyValueCallback.EVENT.invoker().collectModifiers(living, powerClass, baseValue, list);
+            return ModifierUtil.applyModifiers(entity, list, baseValue);
         }
         return baseValue;
     }

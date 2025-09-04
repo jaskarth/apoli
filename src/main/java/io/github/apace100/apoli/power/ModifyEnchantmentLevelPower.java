@@ -13,6 +13,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -23,12 +24,13 @@ import net.minecraft.util.Pair;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 public class ModifyEnchantmentLevelPower extends ValueModifyingPower {
-    private static final ConcurrentHashMap<Entity, ConcurrentHashMap<ItemStack, NbtList>> ENTITY_ITEM_ENCHANTS = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<Entity, ConcurrentHashMap<ModifyEnchantmentLevelPower, Pair<Integer, Boolean>>> POWER_MODIFIER_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Entity, ConcurrentHashMap<ItemStack, NbtList>> ENTITY_ITEM_ENCHANTS = new ConcurrentHashMap<>();
+    private static final Map<Entity, ConcurrentHashMap<ModifyEnchantmentLevelPower, Pair<Integer, Boolean>>> POWER_MODIFIER_CACHE = new ConcurrentHashMap<>();
 
     private final Enchantment enchantment;
     private final Predicate<ItemStack> itemCondition;
@@ -57,6 +59,7 @@ public class ModifyEnchantmentLevelPower extends ValueModifyingPower {
     }
 
     public static boolean isInEnchantmentMap(LivingEntity entity) {
+        if (entity instanceof PlayerEntity) return true; // fuck this
         return ENTITY_ITEM_ENCHANTS.containsKey(entity);
     }
 

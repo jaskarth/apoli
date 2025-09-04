@@ -22,10 +22,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ItemActions {
 
@@ -100,7 +97,7 @@ public class ItemActions {
                 if(!stack.hasNbt()) {
                     return;
                 }
-                List<Enchantment> enchs = new LinkedList<>();
+                List<Enchantment> enchs = new ArrayList<>();
                 data.<Enchantment>ifPresent("enchantment", enchs::add);
                 data.<List<Enchantment>>ifPresent("enchantments", enchs::addAll);
                 int levels = -1;

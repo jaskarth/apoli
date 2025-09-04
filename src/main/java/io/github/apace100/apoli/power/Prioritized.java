@@ -4,6 +4,7 @@ import io.github.apace100.apoli.component.PowerHolderComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +49,7 @@ public interface Prioritized<T extends Power & Prioritized<T>> {
             if(buckets.containsKey(priority)) {
                 return buckets.get(priority);
             }
-            return new LinkedList<>();
+            return new ArrayList<>();
         }
 
         public void add(T t) {
@@ -56,7 +57,7 @@ public interface Prioritized<T extends Power & Prioritized<T>> {
             if(buckets.containsKey(priority)) {
                 buckets.get(priority).add(t);
             } else {
-                List<T> list = new LinkedList<>();
+                List<T> list = new ArrayList<>();
                 list.add(t);
                 buckets.put(priority, list);
             }

@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.event.GameEvent;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -55,7 +56,7 @@ public class PreventGameEventPower extends Power {
                     List<GameEvent> eventList = data.isPresent("events") ? (List<GameEvent>)data.get("events") : null;
                     if(data.isPresent("event")) {
                         if(eventList == null) {
-                            eventList = new LinkedList<>();
+                            eventList = new ArrayList<>();
                         }
                         eventList.add(data.get("event"));
                     }

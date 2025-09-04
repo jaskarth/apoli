@@ -8,13 +8,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 
 public class ValueModifyingPower extends Power {
 
-    private final List<Modifier> modifiers = new LinkedList<>();
+    private final List<Modifier> modifiers = new ArrayList<>();
 
     public ValueModifyingPower(PowerType<?> type, LivingEntity entity) {
         super(type, entity);

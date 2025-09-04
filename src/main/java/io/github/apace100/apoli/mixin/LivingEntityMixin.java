@@ -229,7 +229,11 @@ public abstract class LivingEntityMixin extends Entity implements ModifiableFood
             .stream()
             .filter(mdtp -> mdtp.modifiesArmorApplicance() && !mdtp.shouldApplyArmor())
             .count();
-        apoli$shouldApplyArmor = wantArmor == dontWantArmor ? Optional.empty() : Optional.of(wantArmor > dontWantArmor);
+        if (wantArmor == 0 && dontWantArmor == 0) {
+            apoli$shouldApplyArmor = Optional.of(true);
+        } else {
+            apoli$shouldApplyArmor = wantArmor == dontWantArmor ? Optional.empty() : Optional.of(wantArmor > dontWantArmor);
+        }
 
         long wantDamage = modifyDamageTakenPowers
             .stream()
@@ -239,7 +243,11 @@ public abstract class LivingEntityMixin extends Entity implements ModifiableFood
             .stream()
             .filter(mdtp -> mdtp.modifiesArmorDamaging() && !mdtp.shouldDamageArmor())
             .count();
-        apoli$shouldDamageArmor = wantDamage == dontWantDamage ? Optional.empty() : Optional.of(wantDamage > dontWantDamage);
+        if (wantDamage == 0 && dontWantDamage == 0) {
+            apoli$shouldDamageArmor = Optional.of(true);
+        } else {
+            apoli$shouldDamageArmor = wantDamage == dontWantDamage ? Optional.empty() : Optional.of(wantDamage > dontWantDamage);
+        }
 
         return newValue;
 
@@ -532,7 +540,7 @@ public abstract class LivingEntityMixin extends Entity implements ModifiableFood
 
     @Inject(method = "eatFood", at = @At("TAIL"))
     private void apoli$removeCurrentModifyFoodPowers(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
-        this.apoli$setCurrentModifyFoodPowers(new LinkedList<>());
+        this.apoli$setCurrentModifyFoodPowers(new ArrayList<>());
     }
 
     @Inject(method = "applyFoodEffects", at = @At("HEAD"), cancellable = true)
@@ -588,7 +596,7 @@ public abstract class LivingEntityMixin extends Entity implements ModifiableFood
     }
 
     @Unique
-    private List<ModifyFoodPower> apoli$currentModifyFoodPowers = new LinkedList<>();
+    private List<ModifyFoodPower> apoli$currentModifyFoodPowers = new ArrayList<>();
 
     @Unique
     private ItemStack apoli$originalFoodStack;

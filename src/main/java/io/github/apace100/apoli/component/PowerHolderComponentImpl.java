@@ -47,7 +47,11 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     @Override
     public List<Power> getPowers() {
-        return new LinkedList<>(powers.values());
+        return new ArrayList<>(powers.values());
+    }
+
+    public Iterable<Power> getPowerView() {
+        return powers.values();
     }
 
     public Set<PowerType<?>> getPowerTypes(boolean getSubPowerTypes) {
@@ -68,7 +72,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Power> List<T> getPowers(Class<T> powerClass, boolean includeInactive) {
-        List<T> list = new LinkedList<>();
+        List<T> list = new ArrayList<>();
         for(Power power : powers.values()) {
             if(powerClass.isAssignableFrom(power.getClass()) && (includeInactive || power.isActive())) {
                 list.add((T)power);
@@ -99,7 +103,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
             return;
         }
 
-        List<Identifier> sources = powerSources.getOrDefault(powerType, new LinkedList<>());
+        List<Identifier> sources = powerSources.getOrDefault(powerType, new ArrayList<>());
         if (sources.isEmpty()) {
             return;
         }
@@ -133,7 +137,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     @Override
     public List<PowerType<?>> getPowersFromSource(Identifier source) {
-        List<PowerType<?>> powers = new LinkedList<>();
+        List<PowerType<?>> powers = new ArrayList<>();
         for(Map.Entry<PowerType<?>, List<Identifier>> sourceEntry : powerSources.entrySet()) {
             if(sourceEntry.getValue().contains(source)) {
                 powers.add(sourceEntry.getKey());
@@ -155,7 +159,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
             return false;
         }
 
-        List<Identifier> sources = powerSources.computeIfAbsent(powerType, pt -> new LinkedList<>());
+        List<Identifier> sources = powerSources.computeIfAbsent(powerType, pt -> new ArrayList<>());
         if (sources.contains(source)) {
             return false;
         }
@@ -218,7 +222,7 @@ public class PowerHolderComponentImpl implements PowerHolderComponent {
                 continue;
             }
 
-            List<Identifier> sources = new LinkedList<>();
+            List<Identifier> sources = new ArrayList<>();
             powerTag.getList("Sources", NbtElement.STRING_TYPE)
                 .stream()
                 .map(nbtElement -> Identifier.tryParse(nbtElement.asString()))

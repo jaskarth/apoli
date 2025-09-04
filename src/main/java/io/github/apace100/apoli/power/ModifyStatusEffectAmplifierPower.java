@@ -9,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffect;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class ModifyStatusEffectAmplifierPower extends ValueModifyingPower {
                 .add("modifier", Modifier.DATA_TYPE, null)
                 .add("modifiers", Modifier.LIST_TYPE, null),
             data -> (type, player) -> {
-                List<StatusEffect> statusEffects = new LinkedList<>();
+                List<StatusEffect> statusEffects = new ArrayList<>();
                 data.<StatusEffect>ifPresent("status_effect", statusEffects::add);
                 data.<List<StatusEffect>>ifPresent("status_effects", statusEffects::addAll);
                 ModifyStatusEffectAmplifierPower power = new ModifyStatusEffectAmplifierPower(type, player,

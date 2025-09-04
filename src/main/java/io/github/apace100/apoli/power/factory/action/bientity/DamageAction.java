@@ -14,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.Pair;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class DamageAction {
         }
 
         Float damageAmount = data.get("amount");
-        List<Modifier> modifiers = new LinkedList<>();
+        List<Modifier> modifiers = new ArrayList<>();
 
         data.<Modifier>ifPresent("modifier", modifiers::add);
         data.<List<Modifier>>ifPresent("modifiers", modifiers::addAll);

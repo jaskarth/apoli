@@ -32,10 +32,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ItemStack.class)
@@ -179,7 +176,7 @@ public abstract class ItemStackMixinClient {
     @Unique
     private void apoli$addExpandedTooltip(List<PreventItemUsePower> powers, List<Text> tooltip, String translationKey, Formatting powerTextColor, Formatting baseTextColor) {
 
-        List<Text> powerTexts = new LinkedList<>();
+        List<Text> powerTexts = new ArrayList<>();
         for (PreventItemUsePower power : powers) {
 
             MutableText prependedText = Text.literal("  - ").formatted(baseTextColor);

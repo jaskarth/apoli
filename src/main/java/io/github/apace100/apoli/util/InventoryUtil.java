@@ -7,6 +7,8 @@ import io.github.apace100.apoli.power.InventoryPower;
 import io.github.apace100.apoli.power.factory.action.ActionFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.util.ArgumentWrapper;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,6 +27,124 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class InventoryUtil {
+    private static final IntSet ALL_SLOTS = new IntOpenHashSet(113);
+    private static final int[] SLOTS_ARY;
+    static {
+        ALL_SLOTS.add(0);
+        ALL_SLOTS.add(512);
+        ALL_SLOTS.add(1);
+        ALL_SLOTS.add(513);
+        ALL_SLOTS.add(2);
+        ALL_SLOTS.add(514);
+        ALL_SLOTS.add(3);
+        ALL_SLOTS.add(4);
+        ALL_SLOTS.add(5);
+        ALL_SLOTS.add(6);
+        ALL_SLOTS.add(7);
+        ALL_SLOTS.add(8);
+        ALL_SLOTS.add(9);
+        ALL_SLOTS.add(10);
+        ALL_SLOTS.add(11);
+        ALL_SLOTS.add(12);
+        ALL_SLOTS.add(13);
+        ALL_SLOTS.add(14);
+        ALL_SLOTS.add(15);
+        ALL_SLOTS.add(16);
+        ALL_SLOTS.add(17);
+        ALL_SLOTS.add(18);
+        ALL_SLOTS.add(19);
+        ALL_SLOTS.add(20);
+        ALL_SLOTS.add(21);
+        ALL_SLOTS.add(22);
+        ALL_SLOTS.add(23);
+        ALL_SLOTS.add(24);
+        ALL_SLOTS.add(25);
+        ALL_SLOTS.add(26);
+        ALL_SLOTS.add(27);
+        ALL_SLOTS.add(28);
+        ALL_SLOTS.add(29);
+        ALL_SLOTS.add(30);
+        ALL_SLOTS.add(31);
+        ALL_SLOTS.add(32);
+        ALL_SLOTS.add(33);
+        ALL_SLOTS.add(34);
+        ALL_SLOTS.add(35);
+        ALL_SLOTS.add(36);
+        ALL_SLOTS.add(37);
+        ALL_SLOTS.add(38);
+        ALL_SLOTS.add(39);
+        ALL_SLOTS.add(40);
+        ALL_SLOTS.add(41);
+        ALL_SLOTS.add(42);
+        ALL_SLOTS.add(43);
+        ALL_SLOTS.add(44);
+        ALL_SLOTS.add(300);
+        ALL_SLOTS.add(45);
+        ALL_SLOTS.add(301);
+        ALL_SLOTS.add(46);
+        ALL_SLOTS.add(302);
+        ALL_SLOTS.add(47);
+        ALL_SLOTS.add(303);
+        ALL_SLOTS.add(48);
+        ALL_SLOTS.add(304);
+        ALL_SLOTS.add(49);
+        ALL_SLOTS.add(305);
+        ALL_SLOTS.add(50);
+        ALL_SLOTS.add(306);
+        ALL_SLOTS.add(51);
+        ALL_SLOTS.add(307);
+        ALL_SLOTS.add(52);
+        ALL_SLOTS.add(53);
+        ALL_SLOTS.add(98);
+        ALL_SLOTS.add(99);
+        ALL_SLOTS.add(100);
+        ALL_SLOTS.add(101);
+        ALL_SLOTS.add(102);
+        ALL_SLOTS.add(103);
+        ALL_SLOTS.add(105);
+        ALL_SLOTS.add(400);
+        ALL_SLOTS.add(200);
+        ALL_SLOTS.add(201);
+        ALL_SLOTS.add(202);
+        ALL_SLOTS.add(203);
+        ALL_SLOTS.add(204);
+        ALL_SLOTS.add(205);
+        ALL_SLOTS.add(206);
+        ALL_SLOTS.add(207);
+        ALL_SLOTS.add(208);
+        ALL_SLOTS.add(209);
+        ALL_SLOTS.add(210);
+        ALL_SLOTS.add(211);
+        ALL_SLOTS.add(212);
+        ALL_SLOTS.add(213);
+        ALL_SLOTS.add(214);
+        ALL_SLOTS.add(215);
+        ALL_SLOTS.add(216);
+        ALL_SLOTS.add(217);
+        ALL_SLOTS.add(218);
+        ALL_SLOTS.add(219);
+        ALL_SLOTS.add(220);
+        ALL_SLOTS.add(221);
+        ALL_SLOTS.add(222);
+        ALL_SLOTS.add(223);
+        ALL_SLOTS.add(224);
+        ALL_SLOTS.add(225);
+        ALL_SLOTS.add(226);
+        ALL_SLOTS.add(499);
+        ALL_SLOTS.add(500);
+        ALL_SLOTS.add(501);
+        ALL_SLOTS.add(502);
+        ALL_SLOTS.add(503);
+        ALL_SLOTS.add(504);
+        ALL_SLOTS.add(505);
+        ALL_SLOTS.add(506);
+        ALL_SLOTS.add(507);
+        ALL_SLOTS.add(508);
+        ALL_SLOTS.add(509);
+        ALL_SLOTS.add(510);
+        ALL_SLOTS.add(511);
+        SLOTS_ARY = ALL_SLOTS.toIntArray();
+    }
 
     public enum InventoryType {
         INVENTORY,
@@ -53,7 +173,7 @@ public class InventoryUtil {
         data.<ArgumentWrapper<Integer>>ifPresent("slot", iaw -> slots.add(iaw.get()));
         data.<List<ArgumentWrapper<Integer>>>ifPresent("slots", iaws -> slots.addAll(iaws.stream().map(ArgumentWrapper::get).toList()));
 
-        if (slots.isEmpty()) slots.addAll(ItemSlotArgumentTypeAccessor.getSlotMappings().values());
+        if (slots.isEmpty()) slots.addAll(ALL_SLOTS);
 
         return slots;
 
@@ -249,11 +369,15 @@ public class InventoryUtil {
 
     }
 
-    private static final Map<Entity, ItemStack> ENTITY_EMPTY_STACK_MAP = new ConcurrentHashMap<>();
+    private static final Map<Entity, ItemStack> ENTITY_EMPTY_STACK_MAP = new WeakHashMap<>();
 
-    public static ItemStack getEntityLinkedEmptyStack(Entity entity) {
-        return ENTITY_EMPTY_STACK_MAP.computeIfAbsent(entity, e -> new ItemStack((Void) null));
-    }
+     public static ItemStack getEntityLinkedEmptyStack(Entity entity) {
+        // A crack in the earth opens. Peering down I can see the molten magma, the same shade of orange as the midday sky.
+        // Nothing of value lies beyond here.
+
+//        return ENTITY_EMPTY_STACK_MAP.computeIfAbsent(entity, e -> new ItemStack((Void) null));
+        return new ItemStack((Void) null);
+     }
 
     public static void forEachStack(Entity entity, Consumer<ItemStack> itemStackConsumer) {
         forEachStack(entity, itemStackConsumer, null);
@@ -262,7 +386,9 @@ public class InventoryUtil {
     public static void forEachStack(Entity entity, Consumer<ItemStack> itemStackConsumer, @Nullable Consumer<ItemStack> emptyStackConsumer) {
 
         int slotToSkip = getDuplicatedSlotIndex(entity);
-        for (int slot : ItemSlotArgumentTypeAccessor.getSlotMappings().values()) {
+        ItemStack linkedStack = null;
+        for (int slot : SLOTS_ARY) {
+//        for (int slot : ItemSlotArgumentTypeAccessor.getSlotMappings().values()) {
 
             if (slot == slotToSkip) {
                 slotToSkip = Integer.MIN_VALUE;
@@ -275,7 +401,10 @@ public class InventoryUtil {
             }
 
             ItemStack stack = stackReference.get();
-            if (!stack.isEmpty() || emptyStackConsumer != null && stack == getEntityLinkedEmptyStack(entity)) {
+
+            if (linkedStack == null) linkedStack = getEntityLinkedEmptyStack(entity);
+
+            if (!stack.isEmpty() || emptyStackConsumer != null && stack == linkedStack) {
                 itemStackConsumer.accept(stack);
                 continue;
             }
@@ -285,7 +414,7 @@ public class InventoryUtil {
             }
 
             if (stack == ItemStack.EMPTY) {
-                ItemStack newStack = getEntityLinkedEmptyStack(entity);
+                ItemStack newStack = linkedStack;
                 emptyStackConsumer.accept(newStack);
 
                 ((MutableItemStack) stack).apoli$setFrom(newStack);
@@ -312,7 +441,9 @@ public class InventoryUtil {
                     continue;
                 }
 
-                ItemStack newStack = getEntityLinkedEmptyStack(entity);
+                if (linkedStack == null) linkedStack = getEntityLinkedEmptyStack(entity);
+
+                ItemStack newStack = linkedStack;
                 emptyStackConsumer.accept(newStack);
 
             }
@@ -323,7 +454,7 @@ public class InventoryUtil {
     private static void deduplicateSlots(Entity entity, Set<Integer> slots) {
         int hotbarSlot = getDuplicatedSlotIndex(entity);
         if(hotbarSlot != Integer.MIN_VALUE && slots.contains(hotbarSlot)) {
-            Integer mainHandSlot = ItemSlotArgumentTypeAccessor.getSlotMappings().get("weapon.mainhand");
+            Integer mainHandSlot = 98;
             slots.remove(mainHandSlot);
         }
     }
@@ -338,7 +469,7 @@ public class InventoryUtil {
     private static int getDuplicatedSlotIndex(Entity entity) {
         if(entity instanceof PlayerEntity player) {
             int selectedSlot = player.getInventory().selectedSlot;
-            return ItemSlotArgumentTypeAccessor.getSlotMappings().get("hotbar." + selectedSlot);
+            return selectedSlot;
         }
         return Integer.MIN_VALUE;
     }

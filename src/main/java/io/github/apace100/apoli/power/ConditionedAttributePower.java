@@ -9,12 +9,13 @@ import io.github.apace100.calio.data.SerializableDataTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ConditionedAttributePower extends Power {
 
-    private final List<AttributedEntityAttributeModifier> modifiers = new LinkedList<AttributedEntityAttributeModifier>();
+    private final List<AttributedEntityAttributeModifier> modifiers = new ArrayList<AttributedEntityAttributeModifier>();
     private final int tickRate;
     private final boolean updateHealth;
 

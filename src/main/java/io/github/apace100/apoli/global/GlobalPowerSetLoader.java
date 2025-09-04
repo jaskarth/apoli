@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class GlobalPowerSetLoader extends JsonDataLoader implements IdentifiableResourceReloadListener {
 
     public static final Set<Identifier> DEPENDENCIES = Set.of(Apoli.identifier("powers"));
-    public static final List<GlobalPowerSet> ALL = new LinkedList<>();
+    public static final List<GlobalPowerSet> ALL = new ArrayList<>();
 
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 

@@ -38,6 +38,10 @@ repositories {
 		url "https://maven.terraformersmc.com/"
 	}
 	mavenLocal()
+
+	flatDir {
+		dirs 'libs'
+	}
 }
 
 loom {
@@ -88,8 +92,11 @@ dependencies {
 	modApi "io.github.ladysnake:PlayerAbilityLib:${pal_version}"
 	include "io.github.ladysnake:PlayerAbilityLib:${pal_version}"
 
-	modApi "com.github.apace100:calio:${project.calio_version}"
-	include "com.github.apace100:calio:${project.calio_version}"
+//	modApi "com.github.apace100:calio:${project.calio_version}"
+//	include "com.github.apace100:calio:${project.calio_version}"
+
+	modApi ":Calio-1.20-1.11.0"
+	include ":Calio-1.20-1.11.0"
 
 	modCompileOnlyApi "com.jamieswhiteshirt:reach-entity-attributes:${rea_version}"
 

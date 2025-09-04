@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -36,11 +37,11 @@ public class ModifyFoodPower extends Power {
         this.replaceStack = replaceStack;
         this.consumableAction = consumableAction;
 
-        this.foodModifiers = new LinkedList<>();
+        this.foodModifiers = new ArrayList<>();
         if (foodModifier != null) this.foodModifiers.add(foodModifier);
         if (foodModifiers != null) this.foodModifiers.addAll(foodModifiers);
 
-        this.saturationModifiers = new LinkedList<>();
+        this.saturationModifiers = new ArrayList<>();
         if (saturationModifier != null) this.saturationModifiers.add(saturationModifier);
         if (saturationModifiers != null) this.saturationModifiers.addAll(saturationModifiers);
 

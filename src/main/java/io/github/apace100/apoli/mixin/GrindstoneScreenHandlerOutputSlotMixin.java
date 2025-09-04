@@ -30,6 +30,9 @@ public class GrindstoneScreenHandlerOutputSlotMixin {
     private void executeGrindstoneActions(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
         PowerModifiedGrindstone pmg = (PowerModifiedGrindstone) field_16780;
         List<ModifyGrindstonePower> applyingPowers = pmg.apoli$getAppliedPowers();
+        if (applyingPowers == null) {
+            return;
+        }
         applyingPowers.forEach(mgp -> {
             mgp.applyAfterGrindingItemAction(stack);
             mgp.executeActions(pmg.apoli$getPos());
@@ -39,6 +42,9 @@ public class GrindstoneScreenHandlerOutputSlotMixin {
     @Inject(method = "getExperience(Lnet/minecraft/world/World;)I", at = @At("RETURN"), cancellable = true)
     private void modifyExperience(World world, CallbackInfoReturnable<Integer> cir) {
         PowerModifiedGrindstone pmg = (PowerModifiedGrindstone) field_16780;
+        if (pmg.apoli$getAppliedPowers() == null) {
+            return;
+        }
         if(pmg.apoli$getAppliedPowers().size() == 0) {
             return;
         }

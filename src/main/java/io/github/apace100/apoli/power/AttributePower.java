@@ -10,12 +10,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class AttributePower extends Power {
 
-    private final List<AttributedEntityAttributeModifier> modifiers = new LinkedList<AttributedEntityAttributeModifier>();
+    private final List<AttributedEntityAttributeModifier> modifiers = new ArrayList<AttributedEntityAttributeModifier>();
     private final boolean updateHealth;
 
     public AttributePower(PowerType<?> type, LivingEntity entity, boolean updateHealth) {

@@ -2,9 +2,11 @@ package io.github.apace100.apoli.mixin;
 
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.PhasingPower;
+import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PreventBlockSelectionPower;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -51,14 +53,28 @@ public abstract class AbstractBlockStateMixin {
             EntityShapeContext esc = (EntityShapeContext)context;
             if(esc.getEntity() != null) {
                 Entity entity = esc.getEntity();
-                boolean isAbove = isAbove(entity, blockShape, pos, false);
-                for (PhasingPower phasingPower : PowerHolderComponent.getPowers(entity, PhasingPower.class)) {
-                    if(!isAbove || phasingPower.shouldPhaseDown(entity)) {
-                        if(phasingPower.doesApply(pos)) {
-                            info.setReturnValue(VoxelShapes.empty());
+                // despise this but nothing can be done
+                if (entity instanceof LivingEntity) {
+                    boolean isAbove = isAbove(entity, blockShape, pos, false);
+
+                    for (Power power : PowerHolderComponent.KEY.get(entity).getPowerView()) {
+                        if (power instanceof PhasingPower phasingPower) {
+                            if (!isAbove || phasingPower.shouldPhaseDown(entity)) {
+                                if (phasingPower.doesApply(pos)) {
+                                    info.setReturnValue(VoxelShapes.empty());
+                                }
+                            }
                         }
                     }
                 }
+
+//                for (PhasingPower phasingPower : PowerHolderComponent.getPowers(entity, PhasingPower.class)) {
+//                    if(!isAbove || phasingPower.shouldPhaseDown(entity)) {
+//                        if(phasingPower.doesApply(pos)) {
+//                            info.setReturnValue(VoxelShapes.empty());
+//                        }
+//                    }
+//                }
             }
         }
     }

@@ -11,13 +11,14 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.entity.LivingEntity;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 public class PreventFeatureRenderPower extends Power {
 
-    private final List<String> classStrings = new LinkedList<>();
+    private final List<String> classStrings = new ArrayList<>();
 
     public PreventFeatureRenderPower(PowerType<?> type, LivingEntity entity) {
         super(type, entity);

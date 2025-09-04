@@ -16,6 +16,7 @@ import net.minecraft.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public class GlobalPowerSet implements Comparable<GlobalPowerSet>, DataObject<Gl
 
     private List<PowerType<?>> getSubPowers(List<PowerType<?>> powerTypes) {
 
-        List<PowerType<?>> result = new LinkedList<>();
+        List<PowerType<?>> result = new ArrayList<>();
         for (PowerType<?> powerType : powerTypes) {
 
             //  Add the power to the result list

@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -27,7 +28,7 @@ public class HolderAction {
             return;
         }
 
-        List<Consumer<Entity>> entityActions = new LinkedList<>();
+        List<Consumer<Entity>> entityActions = new ArrayList<>();
 
         data.<Consumer<Entity>>ifPresent("entity_action", entityActions::add);
         data.<Consumer<Entity>>ifPresent("action", entityActions::add);

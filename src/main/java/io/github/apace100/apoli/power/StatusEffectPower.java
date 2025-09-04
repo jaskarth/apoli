@@ -5,12 +5,13 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class StatusEffectPower extends Power {
 
-    protected final List<StatusEffectInstance> effects = new LinkedList<>();
+    protected final List<StatusEffectInstance> effects = new ArrayList<>();
 
     public StatusEffectPower(PowerType<?> type, LivingEntity entity) {
         super(type, entity);

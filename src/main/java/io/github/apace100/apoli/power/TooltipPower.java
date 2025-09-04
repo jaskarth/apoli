@@ -20,6 +20,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +39,8 @@ public class TooltipPower extends Power {
 
     public TooltipPower(PowerType<?> type, LivingEntity entity, Predicate<ItemStack> itemCondition, Text text, List<Text> texts, boolean shouldResolve, int tickRate, int order) {
         super(type, entity);
-        this.texts = new LinkedList<>();
-        this.tooltipTexts = new LinkedList<>();
+        this.texts = new ArrayList<>();
+        this.tooltipTexts = new ArrayList<>();
         if (text != null) {
             this.texts.add(text);
         }

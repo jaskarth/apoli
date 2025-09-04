@@ -4,10 +4,7 @@ import io.github.apace100.calio.data.SerializableData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ModifierUtil {
 
@@ -37,7 +34,7 @@ public class ModifierUtil {
     public static Map<IModifierOperation, List<SerializableData.Instance>> sortModifiers(List<Modifier> modifiers) {
         Map<IModifierOperation, List<SerializableData.Instance>> buckets = new HashMap<>();
         for(Modifier modifier : modifiers) {
-            List<SerializableData.Instance> list = buckets.computeIfAbsent(modifier.getOperation(), op -> new LinkedList<>());
+            List<SerializableData.Instance> list = buckets.computeIfAbsent(modifier.getOperation(), op -> new ArrayList<>());
             list.add(modifier.getData());
         }
         return buckets;
@@ -50,7 +47,7 @@ public class ModifierUtil {
     public static double applyModifiers(Entity entity, Map<IModifierOperation, List<SerializableData.Instance>> modifiers, double baseValue) {
         double currentBase = baseValue;
         double currentValue = baseValue;
-        List<IModifierOperation> operations = new LinkedList<>(modifiers.keySet());
+        List<IModifierOperation> operations = new ArrayList<>(modifiers.keySet());
         operations.sort(((o1, o2) -> {
             if(o1 == o2) {
                 return 0;
@@ -61,9 +58,10 @@ public class ModifierUtil {
             }
         }));
         IModifierOperation.Phase lastPhase = IModifierOperation.Phase.BASE;
-        for(IModifierOperation op : operations) {
+        for (int i = 0, operationsSize = operations.size(); i < operationsSize; i++) {
+            IModifierOperation op = operations.get(i);
             List<SerializableData.Instance> data = modifiers.get(op);
-            if(op.getPhase() != lastPhase) {
+            if (op.getPhase() != lastPhase) {
                 currentBase = currentValue;
             }
             currentValue = op.apply(entity, data, currentBase, currentValue);

@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -141,7 +142,7 @@ public class EntityActions {
                 areaEffectCloudEntity.setRadiusOnUse(data.getFloat("radius_on_use"));
                 areaEffectCloudEntity.setWaitTime(data.getInt("wait_time"));
                 areaEffectCloudEntity.setRadiusGrowth(-areaEffectCloudEntity.getRadius() / (float)areaEffectCloudEntity.getDuration());
-                List<StatusEffectInstance> effects = new LinkedList<>();
+                List<StatusEffectInstance> effects = new ArrayList<>();
                 if(data.isPresent("effect")) {
                     effects.add(data.get("effect"));
                 }

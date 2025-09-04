@@ -58,7 +58,7 @@ public class PowerTypes extends MultiJsonDataLoader implements IdentifiableResou
 
                     Identifier factoryId = Identifier.tryParse(JsonHelper.getString(jo, "type"));
                     if (isMultiple(factoryId)) {
-                        List<Identifier> subPowers = new LinkedList<>();
+                        List<Identifier> subPowers = new ArrayList<>();
                         for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
                             if (entry.getKey().equals("type")
                                 || entry.getKey().equals("loading_priority")

@@ -11,13 +11,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Pair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class StartingEquipmentPower extends Power {
 
-    private final List<ItemStack> itemStacks = new LinkedList<>();
+    private final List<ItemStack> itemStacks = new ArrayList<>();
     private final HashMap<Integer, ItemStack> slottedStacks = new HashMap<>();
     private boolean recurrent;
 

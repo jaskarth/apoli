@@ -8,6 +8,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -26,7 +27,7 @@ public class Power {
     public Power(PowerType<?> type, LivingEntity entity) {
         this.type = type;
         this.entity = entity;
-        this.conditions = new LinkedList<>();
+        this.conditions = new ArrayList<>();
     }
 
     public Power addCondition(Predicate<Entity> condition) {
