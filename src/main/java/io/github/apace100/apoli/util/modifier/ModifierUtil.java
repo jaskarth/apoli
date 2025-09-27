@@ -47,19 +47,30 @@ public class ModifierUtil {
     public static double applyModifiers(Entity entity, Map<IModifierOperation, List<SerializableData.Instance>> modifiers, double baseValue) {
         double currentBase = baseValue;
         double currentValue = baseValue;
-        List<IModifierOperation> operations = new ArrayList<>(modifiers.keySet());
-        operations.sort(((o1, o2) -> {
-            if(o1 == o2) {
-                return 0;
-            } else if(o1.getPhase() == o2.getPhase()) {
-                return o1.getOrder() - o2.getOrder();
-            } else {
-                return o1.getPhase().ordinal() - o2.getPhase().ordinal();
-            }
-        }));
+        IModifierOperation[] array = modifiers.keySet().toArray(IModifierOperation[]::new);
+        Arrays.sort(array, (o1, o2) -> {
+                if (o1 == o2) {
+                    return 0;
+                } else if (o1.getPhase() == o2.getPhase()) {
+                    return o1.getOrder() - o2.getOrder();
+                } else {
+                    return o1.getPhase().ordinal() - o2.getPhase().ordinal();
+                }
+            });
+
+//        List<IModifierOperation> operations = new ArrayList<>(modifiers.keySet());
+//        operations.sort(((o1, o2) -> {
+//            if(o1 == o2) {
+//                return 0;
+//            } else if(o1.getPhase() == o2.getPhase()) {
+//                return o1.getOrder() - o2.getOrder();
+//            } else {
+//                return o1.getPhase().ordinal() - o2.getPhase().ordinal();
+//            }
+//        }));
         IModifierOperation.Phase lastPhase = IModifierOperation.Phase.BASE;
-        for (int i = 0, operationsSize = operations.size(); i < operationsSize; i++) {
-            IModifierOperation op = operations.get(i);
+        for (int i = 0, operationsSize = array.length; i < operationsSize; i++) {
+            IModifierOperation op = array[i];
             List<SerializableData.Instance> data = modifiers.get(op);
             if (op.getPhase() != lastPhase) {
                 currentBase = currentValue;

@@ -3,6 +3,7 @@ package io.github.apace100.apoli.component;
 import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.power.*;
 import io.github.apace100.apoli.util.GainedPowerCriterion;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -19,8 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PowerHolderComponentImpl implements PowerHolderComponent {
 
     private final LivingEntity owner;
-    private final ConcurrentHashMap<PowerType<?>, Power> powers = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<PowerType<?>, List<Identifier>> powerSources = new ConcurrentHashMap<>();
+//    private final ConcurrentHashMap<PowerType<?>, Power> powers = new ConcurrentHashMap<>();
+    private final Object2ObjectOpenHashMap<PowerType<?>, Power> powers = new Object2ObjectOpenHashMap<>();
+//    private final ConcurrentHashMap<PowerType<?>, List<Identifier>> powerSources = new ConcurrentHashMap<>();
+    private final Object2ObjectOpenHashMap<PowerType<?>, List<Identifier>> powerSources = new Object2ObjectOpenHashMap<>();
 
     public PowerHolderComponentImpl(LivingEntity owner) {
         this.owner = owner;

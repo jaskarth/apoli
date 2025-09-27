@@ -77,7 +77,14 @@ public class Power {
     }
 
     public boolean isActive() {
-        return conditions.stream().allMatch(condition -> condition.test(entity));
+        for (Predicate<Entity> cond : conditions) {
+            if (!cond.test(entity)) {
+                return false;
+            }
+        }
+
+        return true;
+//        return conditions.stream().allMatch(condition -> condition.test(entity));
     }
 
     public NbtElement toTag() {
